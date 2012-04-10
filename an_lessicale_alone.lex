@@ -10,6 +10,10 @@ perche il matching da problemi (002 viene matchato come 0 intconst, 0 intconst, 
 e il caso in cui vengono trovati id che cominciano con numeri per lo stesso motivo precedente.
 non viene gestito esplicitamente il caso in cui vengono trovati id con caratteri non alfanumerici perche
 in quel caso viene restituito errore
+
+OSS_IMPORTANTE: a livello lessicale i numeri interi vengono rappresentati come operatore unario (+|-) seguito dal valore positivo
+così si evita il problema di avere problemi di matching. 
+Esempio: a = b +20, per il maximal munch il +20 verrebbe interpretato come numero intero e non come somma
 */
 
 
@@ -18,7 +22,6 @@ in quel caso viene restituito errore
 #include <stdlib.h>
 #include "def.h"  /*Scritto da me che include tutte le costanti che andrò a richiamare*/
 Lexval lexval; /*typedef union {int ival; char *sval} Lexval;*/
-int n_righe=0;
 %}	
 %option	noyywrap
 
@@ -33,7 +36,7 @@ strconst 	\"([^\"])*\"
 boolconst 	false|true
 id 		{letter}({letter}|{digit})*
 numalfa		{digit}+{letter}+{digit}*
-sugar 		[\( \) \; \: \= \[ \]]
+sugar 		[\( \) \; \: \[ \] \,]
 
 %%
 
@@ -42,7 +45,7 @@ sugar 		[\( \) \; \: \= \[ \]]
 {sugar}		{printf("%s\t--->\tSUGAR\n",yytext);}
 
    /*keyword*/
-program	{printf("%s\t--->\tPROGRAM\n",yytext);}
+program		{printf("%s\t--->\tPROGRAM\n",yytext);}
 end		{printf("%s\t--->\tEND\n",yytext);}
 integer		{printf("%s\t--->\tINTEGER\n",yytext);}
 string		{printf("%s\t--->\tSTRING\n",yytext);}
@@ -76,6 +79,7 @@ join 		{lexval.ival = JOIN;	printf("%s\t--->\tHIGH_BIN_OP = JOIN\n",yytext);}
 {id}		{lexval.ival = assign_id(); printf("%s\t--->\tID\n",yytext);}
 
    /*operatori*/
+\=		{printf("%s\t--->\tASSIGN\n",yytext);}
 \=\=		{lexval.ival = EQ; 		printf("%s\t--->\tCOMP_OP\n",yytext);}
 \!\=		{lexval.ival = NOT_EQ;		printf("%s\t--->\tCOMP_OP\n",yytext);}
 \>\=		{lexval.ival = GET;		printf("%s\t--->\tCOMP_OP\n",yytext);}

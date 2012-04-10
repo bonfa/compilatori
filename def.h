@@ -47,6 +47,8 @@
 #define GET		377
 #define LET		378
 
+#define ASSIGN		385
+
 typedef union{int ival; char *sval;} Lexval;
 
 char *my_copy(char *s);

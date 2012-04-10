@@ -5,6 +5,10 @@ perche il matching da problemi (002 viene matchato come 0 intconst, 0 intconst, 
 e il caso in cui vengono trovati id che cominciano con numeri per lo stesso motivo precedente.
 non viene gestito esplicitamente il caso in cui vengono trovati id con caratteri non alfanumerici perche
 in quel caso viene restituito errore
+
+OSS_IMPORTANTE: a livello lessicale i numeri interi vengono rappresentati come operatore unario (+|-) seguito dal valore positivo
+così si evita il problema di avere problemi di matching. 
+Esempio: a = b +20, per il maximal munch il +20 verrebbe interpretato come numero intero e non come somma
 */
 
 %{
@@ -12,7 +16,6 @@ in quel caso viene restituito errore
 #include <stdlib.h>
 #include "def.h"  /*Scritto da me che include tutte le costanti che andrò a richiamare*/
 Lexval lexval; /*typedef union {int ival; char *sval} Lexval;*/
-int n_righe=0;
 %}	
 %option	noyywrap
 
@@ -27,7 +30,7 @@ strconst 	\"([^\"])*\"
 boolconst 	false|true
 id 		{letter}({letter}|{digit})*
 numalfa		{digit}+{letter}+{digit}*
-sugar 		[\( \) \; \: \= \[ \]]
+sugar 		[\( \) \; \: \[ \] \,]
 
 %%
 
@@ -70,6 +73,7 @@ join 		{lexval.ival = JOIN;	return(HIGH_BIN_OP);}
 {id}		{lexval.ival = assign_id(); return(ID);}
 
    /*operatori*/
+\=		{return(ASSIGN);}		
 \=\=		{lexval.ival = EQ; 		return(COMP_OP);}
 \!\=		{lexval.ival = NOT_EQ;		return(COMP_OP);}
 \>\=		{lexval.ival = GET;		return(COMP_OP);}
