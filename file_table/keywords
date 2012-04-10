@@ -13,7 +13,7 @@ and or not
 
 project select exists all join update extend rename
 
-[ ] = ; ( ) :
+[ ] = ; ( ) : { }
 
 identificatori: a ammiro a2p3 c3p8 giovanniReFasulloDiInghilterra bc
 
@@ -24,6 +24,7 @@ costanti: 24  "ciao come ti chiami?"  "scrivo un po' di caratteri casinisti: !£
 	002
 	300
 	-34
+
 
 errori:
 

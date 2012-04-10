@@ -36,7 +36,7 @@ strconst 	\"([^\"])*\"
 boolconst 	false|true
 id 		{letter}({letter}|{digit})*
 numalfa		{digit}+{letter}+{digit}*
-sugar 		[\( \) \; \: \[ \] \,]
+sugar 		[\( \) \; \: \[ \] \, \{ \}]
 
 %%
 

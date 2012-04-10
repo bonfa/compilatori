@@ -30,7 +30,7 @@ strconst 	\"([^\"])*\"
 boolconst 	false|true
 id 		{letter}({letter}|{digit})*
 numalfa		{digit}+{letter}+{digit}*
-sugar 		[\( \) \; \: \[ \] \,]
+sugar 		[\( \) \; \: \[ \] \, \{ \}]
 
 %%
 
@@ -109,8 +109,8 @@ int assign_id()
 
 
 /*main*/
-int main()
+/*int main()
 { 
   yylex();
   return(0);
-}
+}*/

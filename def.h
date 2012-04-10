@@ -50,6 +50,7 @@
 #define ASSIGN		385
 
 typedef union{int ival; char *sval;} Lexval;
+int lookahead;
 
 char *my_copy(char *s);
 int assign_id();
