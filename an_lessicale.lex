@@ -9,8 +9,7 @@ int n_righe=0;
 %}	
 %option	noyywrap
 
-newline 	'\n'
-delimiter 	[ \t{newline}]
+delimiter 	[' '\t\n]
 spacing 	{delimiter}+
 letter 		[a-zA-Z]
 digit 		[0-9]
@@ -19,12 +18,11 @@ intconst 	{no_zero}{digit}*|0
 strconst 	\"([^\"])*\"
 boolconst 	false|true
 id 		{letter}({letter}|{digit})*
-sugar 		[();:=[]]
+sugar 		[\( \) \; \: \= \[ \]]
 
 %%
 
    /*Pseudo simboli*/
-{newline}	{n_righe++;}
 {spacing} 	;
 {sugar}		{return(yytext[0]);}
 
@@ -63,13 +61,13 @@ join 		{lexval.ival = JOIN;	return(HIGH_BIN_OP);}
 {id}		{lexval.ival = assign_id(); return(ID);}
 
    /*operatori*/
-'=='		{lexval.ival = EQ; 		return(COMP_OP);}
-'!='		{lexval.ival = NOT_EQ;		return(COMP_OP);}
-'>='		{lexval.ival = GET;		return(COMP_OP);}
-'<='		{lexval.ival = LET;		return(COMP_OP);}
-['>''<']		{lexval.ival = yytext[0];	return(COMP_OP);}
-['+''-']		{lexval.ival = yytext[0];	return(LOW_BIN_OP);}
-['*''/']		{lexval.ival = yytext[0];	return(HIGH_BIN_OP);}
+\=\=		{lexval.ival = EQ; 		return(COMP_OP);}
+\!\=		{lexval.ival = NOT_EQ;		return(COMP_OP);}
+\>\=		{lexval.ival = GET;		return(COMP_OP);}
+\<\=		{lexval.ival = LET;		return(COMP_OP);}
+[\>\<]		{lexval.ival = yytext[0];	return(COMP_OP);}
+[\+\-]		{lexval.ival = yytext[0];	return(LOW_BIN_OP);}
+[\*\/]		{lexval.ival = yytext[0];	return(HIGH_BIN_OP);}
 
    /*resto*/
 .		{return(ERROR);}
@@ -81,7 +79,7 @@ char *my_copy(char *s)
 {
   char *p;
   p = malloc(strlen(s)+1);
-  strcpy(s,p);
+  strcpy(p,s);
   return p;
 }
 

@@ -72,8 +72,8 @@ join 		{lexval.ival = JOIN;	printf("%s\t--->\tHIGH_BIN_OP = JOIN\n",yytext);}
 \!\=		{lexval.ival = NOT_EQ;		printf("%s\t--->\tCOMP_OP\n",yytext);}
 \>\=		{lexval.ival = GET;		printf("%s\t--->\tCOMP_OP\n",yytext);}
 \<\=		{lexval.ival = LET;		printf("%s\t--->\tCOMP_OP\n",yytext);}
-[><]		{lexval.ival = yytext[0];	printf("%s\t--->\tCOMP_OP\n",yytext);}
-[+\-]		{lexval.ival = yytext[0];	printf("%s\t--->\tLOW_BIN_OP\n",yytext);}
+[\>\<]		{lexval.ival = yytext[0];	printf("%s\t--->\tCOMP_OP\n",yytext);}
+[\+\-]		{lexval.ival = yytext[0];	printf("%s\t--->\tLOW_BIN_OP\n",yytext);}
 [\*\/]		{lexval.ival = yytext[0];	printf("%s\t--->\tHIGH_BIN_OP\n",yytext);}
 
    /*resto*/
