@@ -1,4 +1,11 @@
-/* Analizzatore lessicale del linguaggio table */
+/* Analizzatore lessicale del linguaggio table 
+
+OSS: vengono gestiti esplicitamente (con una regexpr apposita) il caso in cui vengono trovati numeri interi preceduti da zero
+perche il matching da problemi (002 viene matchato come 0 intconst, 0 intconst, 2 intconst)
+e il caso in cui vengono trovati id che cominciano con numeri per lo stesso motivo precedente.
+non viene gestito esplicitamente il caso in cui vengono trovati id con caratteri non alfanumerici perche
+in quel caso viene restituito errore
+*/
 
 %{
 #include <stdio.h>
@@ -15,9 +22,11 @@ letter 		[a-zA-Z]
 digit 		[0-9]
 no_zero 	[1-9]
 intconst 	{no_zero}{digit}*|0
+zeroconst	0{digit}+
 strconst 	\"([^\"])*\"
 boolconst 	false|true
 id 		{letter}({letter}|{digit})*
+numalfa		{digit}+{letter}+{digit}*
 sugar 		[\( \) \; \: \= \[ \]]
 
 %%
@@ -70,6 +79,8 @@ join 		{lexval.ival = JOIN;	return(HIGH_BIN_OP);}
 [\*\/]		{lexval.ival = yytext[0];	return(HIGH_BIN_OP);}
 
    /*resto*/
+{zeroconst}	{return(ERROR);}
+{numalfa}	{return(ERROR);}
 .		{return(ERROR);}
 
 %%

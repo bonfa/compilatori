@@ -3,7 +3,13 @@
 Versione verbose: 
 Il programma restituisce la costante con cui viene riconosciuto il simbolo
 Se il simbolo non viene riconosciuto, viene restituito errore
-In questa versione, il programma continua l'esecuzione
+In questa versione, il programma continua l'esecuzione dopo aver trovato un errore
+
+OSS: vengono gestiti esplicitamente (con una regexpr apposita) il caso in cui vengono trovati numeri interi preceduti da zero
+perche il matching da problemi (002 viene matchato come 0 intconst, 0 intconst, 2 intconst)
+e il caso in cui vengono trovati id che cominciano con numeri per lo stesso motivo precedente.
+non viene gestito esplicitamente il caso in cui vengono trovati id con caratteri non alfanumerici perche
+in quel caso viene restituito errore
 */
 
 
@@ -22,9 +28,11 @@ letter 		[a-zA-Z]
 digit 		[0-9]
 no_zero 	[1-9]
 intconst 	{no_zero}{digit}*|0
+zeroconst	0{digit}+
 strconst 	\"([^\"])*\"
 boolconst 	false|true
 id 		{letter}({letter}|{digit})*
+numalfa		{digit}+{letter}+{digit}*
 sugar 		[\( \) \; \: \= \[ \]]
 
 %%
@@ -77,6 +85,8 @@ join 		{lexval.ival = JOIN;	printf("%s\t--->\tHIGH_BIN_OP = JOIN\n",yytext);}
 [\*\/]		{lexval.ival = yytext[0];	printf("%s\t--->\tHIGH_BIN_OP\n",yytext);}
 
    /*resto*/
+{zeroconst}	{printf("%s\t--->\tERROR\n",yytext);}
+{numalfa}	{printf("%s\t--->\tERROR\n",yytext);}
 .		{printf("%s\t--->\tERROR\n",yytext);}
 
 
