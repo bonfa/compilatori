@@ -1,6 +1,6 @@
-#line 2 "analizzatore_lessicale.c"
+#line 2 "an_lessicale_alone.c"
 
-#line 4 "analizzatore_lessicale.c"
+#line 4 "an_lessicale_alone.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -551,15 +551,15 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "analizzatore_lessicale.lex"
+#line 1 "an_lessicale_alone.lex"
 /* Analizzatore lessicale del linguaggio table */
-#line 4 "analizzatore_lessicale.lex"
+#line 4 "an_lessicale_alone.lex"
 #include <stdio.h>
 #include <stdlib.h>
 #include "def.h"  /*Scritto da me che include tutte le costanti che andrò a richiamare*/
 Lexval lexval; /*typedef union {int ival; char *sval} Lexval;*/
 int n_righe=0;
-#line 563 "analizzatore_lessicale.c"
+#line 563 "an_lessicale_alone.c"
 
 #define INITIAL 0
 
@@ -746,11 +746,11 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 24 "analizzatore_lessicale.lex"
+#line 24 "an_lessicale_alone.lex"
 
 
    /*Pseudo simboli*/
-#line 754 "analizzatore_lessicale.c"
+#line 754 "an_lessicale_alone.c"
 
 	if ( !(yy_init) )
 		{
@@ -836,211 +836,211 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 27 "analizzatore_lessicale.lex"
+#line 27 "an_lessicale_alone.lex"
 {n_righe++;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 28 "analizzatore_lessicale.lex"
+#line 28 "an_lessicale_alone.lex"
 ;
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 29 "analizzatore_lessicale.lex"
+#line 29 "an_lessicale_alone.lex"
 {return(yytext[0]);}
 	YY_BREAK
 /*keyword*/
 case 4:
 YY_RULE_SETUP
-#line 32 "analizzatore_lessicale.lex"
+#line 32 "an_lessicale_alone.lex"
 {return(PROGRAM);}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 33 "analizzatore_lessicale.lex"
+#line 33 "an_lessicale_alone.lex"
 {return(END);}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 34 "analizzatore_lessicale.lex"
+#line 34 "an_lessicale_alone.lex"
 {return(INTEGER);}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 35 "analizzatore_lessicale.lex"
+#line 35 "an_lessicale_alone.lex"
 {return(STRING);}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 36 "analizzatore_lessicale.lex"
+#line 36 "an_lessicale_alone.lex"
 {return(BOOLEAN);}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 37 "analizzatore_lessicale.lex"
+#line 37 "an_lessicale_alone.lex"
 {return(TABLE);}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 38 "analizzatore_lessicale.lex"
+#line 38 "an_lessicale_alone.lex"
 {return(IF);}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 39 "analizzatore_lessicale.lex"
+#line 39 "an_lessicale_alone.lex"
 {return(THEN);}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 40 "analizzatore_lessicale.lex"
+#line 40 "an_lessicale_alone.lex"
 {return(ELSE);}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 41 "analizzatore_lessicale.lex"
+#line 41 "an_lessicale_alone.lex"
 {return(WHILE);}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 42 "analizzatore_lessicale.lex"
+#line 42 "an_lessicale_alone.lex"
 {return(DO);}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 43 "analizzatore_lessicale.lex"
+#line 43 "an_lessicale_alone.lex"
 {return(READ);}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 44 "analizzatore_lessicale.lex"
+#line 44 "an_lessicale_alone.lex"
 {return(WRITE);}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 45 "analizzatore_lessicale.lex"
+#line 45 "an_lessicale_alone.lex"
 {lexval.ival = AND;	return(BOOL_OP);}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 46 "analizzatore_lessicale.lex"
+#line 46 "an_lessicale_alone.lex"
 {lexval.ival = OR;	return(BOOL_OP);}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 47 "analizzatore_lessicale.lex"
+#line 47 "an_lessicale_alone.lex"
 {lexval.ival = NOT;	return(UNARY_OP);}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 48 "analizzatore_lessicale.lex"
+#line 48 "an_lessicale_alone.lex"
 {lexval.ival = PROJECT;	return(UNARY_OP);}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 49 "analizzatore_lessicale.lex"
+#line 49 "an_lessicale_alone.lex"
 {lexval.ival = SELECT;  return(UNARY_OP);}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 50 "analizzatore_lessicale.lex"
+#line 50 "an_lessicale_alone.lex"
 {lexval.ival = EXISTS;  return(UNARY_OP);}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 51 "analizzatore_lessicale.lex"
+#line 51 "an_lessicale_alone.lex"
 {lexval.ival = ALL;	return(UNARY_OP);}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 52 "analizzatore_lessicale.lex"
+#line 52 "an_lessicale_alone.lex"
 {lexval.ival = UPDATE;	return(UNARY_OP);}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 53 "analizzatore_lessicale.lex"
+#line 53 "an_lessicale_alone.lex"
 {lexval.ival = EXTEND;	return(UNARY_OP);}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 54 "analizzatore_lessicale.lex"
+#line 54 "an_lessicale_alone.lex"
 {lexval.ival = RENAME;	return(UNARY_OP);}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 55 "analizzatore_lessicale.lex"
+#line 55 "an_lessicale_alone.lex"
 {lexval.ival = JOIN;	return(HIGH_BIN_OP);}
 	YY_BREAK
 /*costanti*/
 case 28:
 YY_RULE_SETUP
-#line 58 "analizzatore_lessicale.lex"
+#line 58 "an_lessicale_alone.lex"
 {if (yytext[0]=='t') lexval.ival=1; else lexval.ival=0; return(BOOL_CONST);}	
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 59 "analizzatore_lessicale.lex"
+#line 59 "an_lessicale_alone.lex"
 {lexval.ival = atoi(yytext); return(INT_CONST);}
 	YY_BREAK
 case 30:
 /* rule 30 can match eol */
 YY_RULE_SETUP
-#line 60 "analizzatore_lessicale.lex"
+#line 60 "an_lessicale_alone.lex"
 {lexval.sval = my_copy(yytext); return(STR_CONST);}
 	YY_BREAK
 /*id*/
 case 31:
 YY_RULE_SETUP
-#line 63 "analizzatore_lessicale.lex"
+#line 63 "an_lessicale_alone.lex"
 {lexval.ival = assign_id(); return(ID);}
 	YY_BREAK
 /*operatori*/
 case 32:
 YY_RULE_SETUP
-#line 66 "analizzatore_lessicale.lex"
+#line 66 "an_lessicale_alone.lex"
 {lexval.ival = EQ; 		return(COMP_OP);}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 67 "analizzatore_lessicale.lex"
+#line 67 "an_lessicale_alone.lex"
 {lexval.ival = NOT_EQ;		return(COMP_OP);}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 68 "analizzatore_lessicale.lex"
+#line 68 "an_lessicale_alone.lex"
 {lexval.ival = GET;		return(COMP_OP);}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 69 "analizzatore_lessicale.lex"
+#line 69 "an_lessicale_alone.lex"
 {lexval.ival = LET;		return(COMP_OP);}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 70 "analizzatore_lessicale.lex"
+#line 70 "an_lessicale_alone.lex"
 {lexval.ival = yytext[0];	return(COMP_OP);}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 71 "analizzatore_lessicale.lex"
+#line 71 "an_lessicale_alone.lex"
 {lexval.ival = yytext[0];	return(LOW_BIN_OP);}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 72 "analizzatore_lessicale.lex"
+#line 72 "an_lessicale_alone.lex"
 {lexval.ival = yytext[0];	return(HIGH_BIN_OP);}
 	YY_BREAK
 /*resto*/
 case 39:
 YY_RULE_SETUP
-#line 75 "analizzatore_lessicale.lex"
+#line 75 "an_lessicale_alone.lex"
 {return(ERROR);}
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 77 "analizzatore_lessicale.lex"
+#line 77 "an_lessicale_alone.lex"
 ECHO;
 	YY_BREAK
-#line 1044 "analizzatore_lessicale.c"
+#line 1044 "an_lessicale_alone.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2038,7 +2038,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 77 "analizzatore_lessicale.lex"
+#line 77 "an_lessicale_alone.lex"
 
 
 

@@ -2,33 +2,33 @@
 
 %{
 #include <stdio.h>
-#include  <stdlib.h>
+#include <stdlib.h>
 #include "def.h"  /*Scritto da me che include tutte le costanti che andrò a richiamare*/
-Lexval lexval; /*typedef union {int ival; char *sval;boolean bval} Lexval;*/
+Lexval lexval; /*typedef union {int ival; char *sval} Lexval;*/
 int n_righe=0;
 %}	
 %option	noyywrap
 
-newline \n
-delimiter [ \t{newline}]
-spacing {delimiter}+
-letter [A-­Za-­z]
-digit [0­-9]
-no_zero [1-9]
-intconst {no_zero}{digit}*|0
-strconst \"([^\"])*\"
-boolconst false|true
-id {letter}({letter}|{digit})*
-sugar [();:=[]]
+newline 	'\n'
+delimiter 	[ \t{newline}]
+spacing 	{delimiter}+
+letter 		[a-zA-Z]
+digit 		[0-9]
+no_zero 	[1-9]
+intconst 	{no_zero}{digit}*|0
+strconst 	\"([^\"])*\"
+boolconst 	false|true
+id 		{letter}({letter}|{digit})*
+sugar 		[();:=[]]
 
 %%
 
-/*Pseudo simboli*/
+   /*Pseudo simboli*/
 {newline}	{n_righe++;}
 {spacing} 	;
 {sugar}		{return(yytext[0]);}
 
-/*keyword*/
+   /*keyword*/
 program 	{return(PROGRAM);}
 end		{return(END);}
 integer		{return(INTEGER);}
@@ -42,56 +42,62 @@ while		{return(WHILE);}
 do		{return(DO);}
 read		{return(READ);}
 write 		{return(WRITE);}
-and 		{return(AND);}
-or 		{return(OR);}
-not 		{return(NOT);}
-project 	{return(PROJECT);}
-select 		{return(SELECT);}
-exists 		{return(EXISTS);}
-all 		{return(ALL);}
-update 		{return(UPDATE);}
-extend 		{return(EXTEND);}
-rename 		{return(RENAME);}
-join 		{return(JOIN);}
+and 		{lexval.ival = AND;	return(BOOL_OP);}
+or 		{lexval.ival = OR;	return(BOOL_OP);}
+not 		{lexval.ival = NOT;	return(UNARY_OP);}
+project 	{lexval.ival = PROJECT;	return(UNARY_OP);}
+select 		{lexval.ival = SELECT;  return(UNARY_OP);}
+exists 		{lexval.ival = EXISTS;  return(UNARY_OP);}
+all 		{lexval.ival = ALL;	return(UNARY_OP);}
+update 		{lexval.ival = UPDATE;	return(UNARY_OP);}
+extend 		{lexval.ival = EXTEND;	return(UNARY_OP);}
+rename 		{lexval.ival = RENAME;	return(UNARY_OP);}
+join 		{lexval.ival = JOIN;	return(HIGH_BIN_OP);}
 
-/*id*/
-{id}		{lexval.sval = assign_id(); return(ID);}
-
-/*costanti*/
+   /*costanti*/
+{boolconst}	{if (yytext[0]=='t') lexval.ival=1; else lexval.ival=0; return(BOOL_CONST);}	
 {intconst}	{lexval.ival = atoi(yytext); return(INT_CONST);}
-{strconst}	{lexval.sval = copy(yytext); return(STR_CONST)}
-{boolconst}	{if (yytext[0]=='t') lexval.bval=1; else lexval.bval=0; return(BOOL_CONST);}
+{strconst}	{lexval.sval = my_copy(yytext); return(STR_CONST);}
 
-/*operatori*/
-==		{return(EQ);}
-!=		{return(NOT_EQ);}
->=		{return(GET);}
-<=		{return(LET);}
-[><+*-/]	{return(yytext[0]);}
+   /*id*/
+{id}		{lexval.ival = assign_id(); return(ID);}
 
-/*resto*/
+   /*operatori*/
+'=='		{lexval.ival = EQ; 		return(COMP_OP);}
+'!='		{lexval.ival = NOT_EQ;		return(COMP_OP);}
+'>='		{lexval.ival = GET;		return(COMP_OP);}
+'<='		{lexval.ival = LET;		return(COMP_OP);}
+['>''<']		{lexval.ival = yytext[0];	return(COMP_OP);}
+['+''-']		{lexval.ival = yytext[0];	return(LOW_BIN_OP);}
+['*''/']		{lexval.ival = yytext[0];	return(HIGH_BIN_OP);}
+
+   /*resto*/
 .		{return(ERROR);}
 
 %%
 
 /*Salva in memoria il valore di yytext e ne restituisce un puntatore*/
-char *copy(s){
-	char *p = malloc(strlen(s)+1);
-	strcpy(s,p);
-	return p;
+char *my_copy(char *s)
+{
+  char *p;
+  p = malloc(strlen(s)+1);
+  strcpy(s,p);
+  return p;
 }
 
 /*Controlla se nella TABELLA DEI SIMBOLI c'è già un simbolo con quell'id, altrimenti lo inserisce e ritorna il numero di linea nella tabella dei simboli*/
 int assign_id()
 { 
-  int line;
-  if((line = lookup(yytext)) == 0) line = insert(yytext);
-  return(line);
+  /*int line;
+  if((line = lookup(yytext)) == 0) 
+	line = insert(yytext);
+  return(line);*/ return 0;
 }
 
 
 /*main*/
-main()
+int main()
 { 
   yylex(); 
+  return(0);
 }
