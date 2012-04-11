@@ -1,0 +1,7 @@
+i, j: integer;
+t, r, z: table(a: integer, b: string);
+read t;
+r = select [a == i] t;
+read ["t.dat"] t;
+z = select [a > j] t;
+

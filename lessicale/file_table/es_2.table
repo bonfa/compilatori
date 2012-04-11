@@ -1,0 +1,13 @@
+a, b, c: integer;
+t, r: table(x: integer, y: string);
+
+if a==b then
+  t = select [x>0] r
+else
+  a = b+c
+end;
+
+if t != r then
+  write "Different tables!"
+end;
+

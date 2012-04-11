@@ -1,0 +1,6 @@
+i, j: integer;
+name: string;
+t: table(a: integer, b: string);
+write select [a==i] t;
+read name;
+write [name] select [a>j] t;
