@@ -1,7 +1,8 @@
 #include "def.h"
+#define DEBUG
 
-extern Lexval lexval;
-extern char yytext[];
+extern char *yytext;
+extern Value lexval;
 extern FILE *yyin;
 int lookahead;
 
@@ -12,7 +13,6 @@ int main(){
 	parse();
 	return(0);		
 }
-
 
 
 /*legge il primo simbolo in input e chiama l'assioma*/
@@ -37,8 +37,12 @@ void next()
 
 /*fa il match tra il simbolo ricevuto in ingresso e la variabile di lookahead*/
 void match(int simbolo){
-if (lookahead == simbolo)
+if (lookahead == simbolo){
 	next();
+#ifdef DEBUG
+	printf("lookahead: %d\t symbol: %s\n",lookahead,yytext);
+#endif
+}
 else
 	error();
 }
@@ -47,7 +51,10 @@ else
 
 /* stampa un messaggio di errore ed esce*/
 void error(){
-	printf("Errore nel parsing");
+	fprintf(stderr,"Error at line %d\t : %s\n",1,yytext);
+#ifdef DEBUG
+	printf("lookahead: %d\t symbol: %s\n",lookahead,yytext);
+#endif
 	exit(-1);
 }
 //-------------------------------------------------------------
@@ -148,7 +155,7 @@ void atomic_type(){
 	else if (lookahead == BOOLEAN)
 		next();
 	else 
-		error();
+		error(); //Qui l'error c'e' perche' non e' stata usata la funzione match()
 }
 
 
@@ -239,13 +246,10 @@ void join_op(){
 
 
 void constant(){
-	if (lookahead == INT_CONST)
-		next();
-	else if (lookahead == BOOL_CONST) 
-		next();
-	else if (lookahead == STR_CONST)
-		next();
-	elseerror(); //table
+	if (lookahead == INT_CONST || lookahead == BOOL_CONST || lookahead == STR_CONST)
+		atomic_const();
+	else 
+		table_const();
 }
 
 
@@ -384,5 +388,6 @@ void specifier(){
 	}
 	//non genera errore perche' c'e' eps
 }
+
 
 

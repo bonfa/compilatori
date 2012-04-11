@@ -55,12 +55,12 @@
 typedef union{
 	int ival;
 	char *sval;
-} Lexval;
+} Value;
+
+Value lexval;
 
 char *my_copy(char *s);
 int assign_id();
-
-
 
 //---------------------------------------------------
 void error();
