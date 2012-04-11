@@ -1,0 +1,11 @@
+COMPILATORE
+
+La cartella /lessicale contiene un analizzatore lessicale del linguaggio. La cartella contiene:
+an_lessicale_alone.lex: file lex
+def.h: file di intestazione
+makefile: con le direttive per la compilazione
+
+Questa versione dell'analizzatore lessicale riceve in input un file e per ogni token nel file, ritorna la codifica di tale simbolo.
+Esempio di utilizzo (dopo aver compilato):
+
+cat ./file_table/keywords.table | ./an_lessicale_alone
