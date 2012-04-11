@@ -12,10 +12,9 @@ Esempio: a = b +20, per il maximal munch il +20 verrebbe interpretato come numer
 */
 
 %{
-#include <stdio.h>
-#include <stdlib.h>
 #include "def.h"  /*Scritto da me che include tutte le costanti che andrò a richiamare*/
 Lexval lexval; /*typedef union {int ival; char *sval} Lexval;*/
+int line = 1;
 %}	
 %option	noyywrap
 

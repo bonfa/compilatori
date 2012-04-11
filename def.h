@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <stdlib.h>
+
 #define ERROR 		-1
 
 #define IF		300
@@ -49,8 +52,53 @@
 
 #define ASSIGN		385
 
-typedef union{int ival; char *sval;} Lexval;
-int lookahead;
+typedef union{
+	int ival;
+	char *sval;
+} Lexval;
 
 char *my_copy(char *s);
 int assign_id();
+
+
+
+//---------------------------------------------------
+void error();
+void match(int simbolo);
+void program();
+void stat_list();
+void stat();
+void def_stat();
+void assign_stat();
+void if_stat();
+void while_stat();
+void read_stat();
+void write_stat();
+void type();
+void atomic_type();
+void table_type();
+void attr_list();
+void attr_decl();
+void expr();
+void bool_term();
+void comp_term();
+void low_term();
+void factor();
+void join_op();
+void unary_op();
+void constant();
+void unary_op();
+void project_op();
+void select_op();
+void exists_op();
+void all_op();
+void update_op();
+void extend_op();
+void rename_op();
+void id_list();
+void atomic_const();
+void table_const();
+void tuple_const();
+void specifier();
+void next();
+void parse();
