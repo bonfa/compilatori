@@ -6,8 +6,6 @@ if a==b then
 else
   a = b+c
 end;
-
 if t != r then
   write "Different tables!"
 end;
-

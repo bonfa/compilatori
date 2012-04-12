@@ -22,10 +22,12 @@ Esempio: a = b +20, per il maximal munch il +20 verrebbe interpretato come numer
 #include <stdlib.h>
 #include "def.h"  /*Scritto da me che include tutte le costanti che andrò a richiamare*/
 Lexval lexval; /*typedef union {int ival; char *sval} Lexval;*/
+int line =1;
 %}	
 %option	noyywrap
 
-delimiter 	[' '\t\n]
+newline		[\n]
+delimiter 	[' '\t]
 spacing 	{delimiter}+
 letter 		[a-zA-Z]
 digit 		[0-9]
@@ -41,6 +43,7 @@ sugar 		[\( \) \; \: \[ \] \, \{ \}]
 %%
 
    /*Pseudo simboli*/
+{newline}	{line++;printf("--->\tA CAPO\n");}
 {spacing} 	;
 {sugar}		{printf("%s\t--->\tSUGAR\n",yytext);}
 
@@ -119,5 +122,7 @@ int assign_id()
 int main()
 { 
   yylex();
+  line--;
+  printf("NUMERO LINEE = %d\n",line);
   return(0);
 }

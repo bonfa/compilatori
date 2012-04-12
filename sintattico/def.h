@@ -51,6 +51,7 @@
 #define LET		378
 
 #define ASSIGN		385
+#define END_OF_FILE	0
 
 typedef union{
 	int ival;
@@ -63,7 +64,7 @@ char *my_copy(char *s);
 int assign_id();
 
 //---------------------------------------------------
-void error();
+void error(int err_code);
 void match(int simbolo);
 void program();
 void stat_list();

@@ -18,7 +18,8 @@ int line = 1;
 %}	
 %option	noyywrap
 
-delimiter 	[' '\t\n]
+newline		[\n]
+delimiter 	[' '\t]
 spacing 	{delimiter}+
 letter 		[a-zA-Z]
 digit 		[0-9]
@@ -34,6 +35,7 @@ sugar 		[\( \) \; \: \[ \] \, \{ \}]
 %%
 
    /*Pseudo simboli*/
+{newline}	{line++;}
 {spacing} 	;
 {sugar}		{return(yytext[0]);}
 

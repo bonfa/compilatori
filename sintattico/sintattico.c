@@ -4,13 +4,24 @@
 extern char *yytext;
 extern Value lexval;
 extern FILE *yyin;
+extern line;
 int lookahead;
 
-//--------------------------------------------------------------
-/*main*/
+
+/*
+Per come è definita la sintassi non si possono dichiarare interi positivi con segno. 
+Ad esempio a = +5; ritorna errore.
+Il caso corretto è a = 5;
+E' corretto, invece scrivere a = -5;
+
+Gestire i match correttamente per gli zuccheri sintattici
+
+*/
+
 int main(){	
 	yyin = stdin;
 	parse();
+	fprintf(stderr,"frase sintatticamente corretta\n");
 	return(0);		
 }
 
@@ -34,26 +45,29 @@ void next()
 }
 
 
-
 /*fa il match tra il simbolo ricevuto in ingresso e la variabile di lookahead*/
 void match(int simbolo){
-if (lookahead == simbolo){
-	next();
+if ((lookahead == simbolo) && (lookahead != END_OF_FILE)){
 #ifdef DEBUG
-	printf("lookahead: %d\t symbol: %s\n",lookahead,yytext);
+	printf("lah=%d;sim=%d\t symbol: %s\n",lookahead,simbolo,yytext);
 #endif
+	next();
 }
+else if ((lookahead == simbolo) && (lookahead == END_OF_FILE))
+	;
 else
-	error();
+	error(simbolo);
 }
 
 
 
 /* stampa un messaggio di errore ed esce*/
-void error(){
-	fprintf(stderr,"Error at line %d\t : %s\n",1,yytext);
+void error(int err_code){
+#ifndef DEBUG
+	fprintf(stderr,"Sintax error: line %d\t : %s\n",line,yytext);
+#endif
 #ifdef DEBUG
-	printf("lookahead: %d\t symbol: %s\n",lookahead,yytext);
+	printf("Sintax error [line = %d]: lah=%d;sim=%d\t symbol: %s\n",line,lookahead,err_code,yytext);
 #endif
 	exit(-1);
 }
@@ -63,6 +77,7 @@ void program(){
 	match(PROGRAM);
 	stat_list();
 	match(END);
+	match(END_OF_FILE); //end of file
 }
 
 
@@ -86,7 +101,7 @@ void stat(){
 		while_stat();
 	else if (lookahead == READ)
 		read_stat();
-	else if (lookahead == WRITE)
+	else //(lookahead == WRITE)
 		write_stat();
 }
 
@@ -106,8 +121,9 @@ void assign_stat(){
 
 void if_stat(){
 	match(IF);
-	stat();
+	expr();
 	match(THEN);
+	stat_list();
 	if (lookahead == ELSE){
 		match(ELSE);
 		stat_list();
@@ -149,13 +165,11 @@ void type(){
 
 void atomic_type(){
 	if (lookahead == INTEGER)
-		next();
+		match(INTEGER);
 	else if (lookahead == STRING) 
-		next();
-	else if (lookahead == BOOLEAN)
-		next();
-	else 
-		error(); //Qui l'error c'e' perche' non e' stata usata la funzione match()
+		match(STRING);
+	else //(lookahead == BOOLEAN)
+		match(BOOLEAN);
 }
 
 
@@ -184,8 +198,8 @@ void attr_decl(){
 
 void expr(){
 	bool_term();
-	while (lookahead == AND || lookahead == OR){
-		next();
+	while (lookahead == BOOL_OP){
+		match(BOOL_OP);
 		bool_term();	
 	}		
 }
@@ -194,7 +208,7 @@ void expr(){
 void bool_term(){
 	comp_term();
 	if (lookahead == COMP_OP){
-		next();
+		match(COMP_OP);
 		comp_term();
 	}
 }
@@ -203,7 +217,7 @@ void bool_term(){
 void comp_term(){
 	low_term();
 	while (lookahead == LOW_BIN_OP){
-		next();
+		match(LOW_BIN_OP);
 		low_term();		
 	}
 }
@@ -212,7 +226,7 @@ void comp_term(){
 void low_term(){
 	factor();
 	while (lookahead == HIGH_BIN_OP){
-		next();
+		match(HIGH_BIN_OP);
 		factor();		
 	}
 }
@@ -223,14 +237,14 @@ void factor(){
 		factor();
 	}
 	else if (lookahead == '('){
-		next();
+		match('(');
 		expr();
 		match(')');
 	}
 	else if (lookahead == ID){
-		next();
+		match(ID);
 	}
-	else if (lookahead == INT_CONST || lookahead == STR_CONST || lookahead == BOOL_CONST || lookahead == '{'){
+	else { //(lookahead == INT_CONST || lookahead == STR_CONST || lookahead == BOOL_CONST || lookahead == '{')
 		constant();
 	}
 }
@@ -255,7 +269,7 @@ void constant(){
 
 void unary_op(){
 	if (lookahead == LOW_BIN_OP && lexval.ival == '-')	
-		next();
+		match(LOW_BIN_OP);
 	else if (lexval.ival == PROJECT)
 		project_op();
 	else if (lexval.ival == SELECT)
@@ -268,13 +282,13 @@ void unary_op(){
 		extend_op();	
 	else if (lexval.ival == UPDATE)
 		update_op();
-	else if (lexval.ival == RENAME)
+	else //(lexval.ival == RENAME)
 		rename_op();
 }
 
 
 void project_op(){
-	match(PROJECT);	
+	match(UNARY_OP);	
 	match('[');
 	id_list();
 	match(']');
@@ -282,7 +296,7 @@ void project_op(){
 
 
 void select_op(){
-	match(SELECT);
+	match(UNARY_OP);
 	match('[');
 	expr();
 	match(']');
@@ -290,7 +304,7 @@ void select_op(){
 
 
 void exists_op(){
-	match(EXISTS);
+	match(UNARY_OP);
 	match('[');
 	expr();
 	match(']');
@@ -299,7 +313,7 @@ void exists_op(){
 
 
 void all_op(){
-	match(ALL);
+	match(UNARY_OP);
 	match('[');
 	expr();
 	match(']');
@@ -307,7 +321,7 @@ void all_op(){
 
 
 void update_op(){
-	match(UPDATE);
+	match(UNARY_OP);
 	match('[');
 	match(ID);
 	match(ASSIGN);
@@ -317,7 +331,7 @@ void update_op(){
 
 
 void extend_op(){
-	match(EXTEND);
+	match(UNARY_OP);
 	match('[');
 	atomic_type();
 	match(ID);
@@ -329,7 +343,7 @@ void extend_op(){
 
 
 void rename_op(){
-	match(RENAME);
+	match(UNARY_OP);
 	match('[');
 	id_list();
 	match(']');
@@ -339,7 +353,7 @@ void rename_op(){
 void id_list(){
 	match(ID);
 	while (lookahead == ',') {
-		next();
+		match(',');
 		match(ID);
 	}
 }
@@ -347,13 +361,11 @@ void id_list(){
 
 void atomic_const(){
 	if (lookahead == INT_CONST)
-		next();
+		match(INT_CONST);
 	else if (lookahead == BOOL_CONST) 
-		next();
-	else if (lookahead == STR_CONST)
-		next();
-	else
-		error();
+		match(BOOL_CONST);
+	else //(lookahead == STR_CONST)
+		match(STR_CONST);
 }
 
 
@@ -362,7 +374,7 @@ void table_const(){
 	if (lookahead == '('){
 		tuple_const();
 		while (lookahead == ',') {
-			next();
+			match(',');
 			tuple_const();
 		}
 	}
@@ -374,6 +386,7 @@ void tuple_const(){
 	match('(');
 	atomic_const();
 	while (lookahead == ',') {
+		match(',');
 		atomic_const();
 	}
 	match(')');	
@@ -382,11 +395,10 @@ void tuple_const(){
 
 void specifier(){
 	if (lookahead == '['){
-		next();
+		match('[');
 		expr();
 		match(']');
 	}
-	//non genera errore perche' c'e' eps
 }
 
 
