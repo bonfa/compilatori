@@ -226,7 +226,10 @@ void comp_term(){
 void low_term(){
 	factor();
 	while (lookahead == HIGH_BIN_OP){
-		match(HIGH_BIN_OP);
+		if (lexval.ival == JOIN)
+			join_op();
+		else
+			match(HIGH_BIN_OP);
 		factor();		
 	}
 }
@@ -251,7 +254,7 @@ void factor(){
 
 
 void join_op(){
-	match(JOIN);
+	match(HIGH_BIN_OP);
 	match('[');
 	expr();
 	match(']');
@@ -282,6 +285,8 @@ void unary_op(){
 		extend_op();	
 	else if (lexval.ival == UPDATE)
 		update_op();
+	else if (lexval.ival == NOT)
+		match(UNARY_OP);
 	else //(lexval.ival == RENAME)
 		rename_op();
 }

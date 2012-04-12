@@ -6,9 +6,10 @@ e il caso in cui vengono trovati id che cominciano con numeri per lo stesso moti
 non viene gestito esplicitamente il caso in cui vengono trovati id con caratteri non alfanumerici perche
 in quel caso viene restituito errore
 
-OSS_IMPORTANTE: a livello lessicale i numeri interi vengono rappresentati come operatore unario (+|-) seguito dal valore positivo
+OSS_IMPORTANTE: a livello lessicale i numeri interi vengono rappresentati come operatore unario (-) seguito dal valore positivo
 così si evita il problema di avere problemi di matching. 
 Esempio: a = b +20, per il maximal munch il +20 verrebbe interpretato come numero intero e non come somma
+Questo discorso vale solo per il meno (-). Non viene definito l'operatore unario (+)
 */
 
 %{
@@ -107,11 +108,3 @@ int assign_id()
 	line = insert(yytext);
   return(line);*/ return 0;
 }
-
-
-/*main*/
-/*int main()
-{ 
-  yylex();
-  return(0);
-}*/

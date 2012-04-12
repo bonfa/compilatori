@@ -9,3 +9,16 @@ Questa versione dell'analizzatore lessicale riceve in input un file e per ogni t
 Esempio di utilizzo (dopo aver compilato):
 
 cat ./file_table/keywords.table | ./an_lessicale_alone
+
+
+La cartella /sintattico contiene un analizzatore sintattico del linguaggio.  La cartella contiene:
+def.h: file di intestazione
+lessicale.lex: analizzatore lessicale
+sintattico.c: analizzatore sintattico
+makefile: con le direttive per la compilazione
+
+L'analizzatore restituisce i codici del matching tra il simbolo in ingresso e la grammatica mostrando le due codifiche. Se viene trovato un errore, viene stampata una stringa che mostra a che riga s trova l'errore.
+In questa versione l'analizzatore sintattico NON crea l'albero della frase.
+Esempio di utilizzo:
+
+cat ./file_table/keywords.table | ./sintattico
