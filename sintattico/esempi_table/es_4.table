@@ -1,0 +1,10 @@
+program
+	integer i,j,t;
+	string a,prova,g45ePtreddu;
+	boolean giovanniReFasulloDInghilterra99;
+	table(integer a, string b , boolean ciao) tabella;
+	read t;
+	r = select [a == i] t;
+	read ["t.dat"] t;
+	z = select [a > j] t
+end

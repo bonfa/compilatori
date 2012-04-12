@@ -1,0 +1,38 @@
+program
+	integer a, b, c;
+	table(integer x, string y) t;
+	if a == b then	
+	t = select [x>0] r
+	else
+	  a = b+c
+	end;
+	if t != r then
+	  write "Different tables!"
+	end;
+
+
+	integer n, fact;
+	read n;
+	fact = 1;
+	while n > 1 do
+	  fact = fact * n;
+	  n = n + 1
+	end;
+	write fact;
+
+
+	integer i, j;
+	read [ filename ] id;
+	table(integer a, string b) t, r, z;
+	read t;
+	r = select [a == i] t;
+	read ["t.dat"] t;
+	z = select [a > j] t;
+
+	integer i, j;
+	string name;
+	table(integer a, string b) t;
+	write select [a==i] t;
+	read name;
+	write [name] select [a>j] t
+end

@@ -1,0 +1,3 @@
+program
+	a = exists [a == 5] t
+end

@@ -1,0 +1,66 @@
+program
+	integer a, bello, c;
+	integer d;	
+	string name;	
+	string d34,ak47;
+	boolean prova, carlo, felpa;
+	boolean ciao;
+	table(integer e, string f) x,y,w23;
+	table(boolean a, string prova, integer foglio) tabella;
+	
+
+	a = 5;
+	bello = -25;
+	c = a-b;
+	d = b*c;
+	e = c/d;
+	f = a+b;
+	
+	name= "giovanni";
+	d34 = "anni";
+	ak47 = "fucile";
+	prova = false;
+	carlo = true;
+	felpa = carlo and prova;
+	ciao = carlo or prova ;
+	temp = ((carlo and prova) or ((ciao and true) or false));
+	x = {(5,"schermo"),("temp",5),(4,3),("sempre","vite")};
+
+
+	tabella = y join [b == a ] x;
+	w23 = project [e,f] y;
+	y = select [x>0] r;	
+	a = exists [a == 5] t;
+	if exists [a == 5] t then 
+		b = 1
+	end;
+	var = all[x<10]tabella;
+	a = extend[integer a = (2*b)+c-5] tabella;
+	temp = update [x = a+b] tabella ;
+	c = rename[e,f] x;
+
+	if not(prova) then
+		t = select [x>0] r
+	else
+		a = b+c
+	end;
+
+	if (t != r) then
+	  write "Different tables!"
+	end;
+
+
+	while n > 1 do
+	  fact = fact * n;
+	  n = n + 1
+	end;
+	
+	write fact;
+	read [ filename ] id;
+	read t;
+	read ["t.dat"] t;
+	z = select [a > j] t;
+	write select [a==i] t;
+	read name;
+	write [name] select [a>j] t
+end
