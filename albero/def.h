@@ -58,11 +58,29 @@
 
 //Tipi di nodi
 typedef enum{
-
+//keyword
 T_INTEGER,
 T_STRING,
 T_BOOLEAN,
 
+T_AND,
+T_OR,
+T_NOT,
+T_UNARY_MINUS,
+
+//operator
+T_EQ,
+T_NOT_EQ,
+T_GT,
+T_GET,
+T_LT,
+T_LET,
+T_ADD,
+T_SUB,
+T_MUL,
+T_DIV,
+
+// costanti
 T_INTCONST,
 T_BOOLCONST,
 T_STRCONST,
@@ -122,8 +140,8 @@ typedef union{
 
 
 typedef struct snode{
-typenode type;
-value Value;
+Typenode type;
+Value value;
 struct snode *child,*brother; 
 } Node;
 
@@ -145,13 +163,13 @@ int assign_id();
 	void parse();
 
 	/*Funzioni per la creazione dei nodi dell'albero*/
-	Pnode new_node(Typenode type_node);
-	Pnode non_term_node(Nonterminal nonterm);
-	Pnode id_node();
-	Pnode str_const_node();
-	Pnode int_const_node();
-	Pnode bool_const_node();
-	Pnode key_node();
+	pNode new_node(Typenode type_node);
+	pNode non_term_node(Nonterminal nonterm);
+	pNode id_node();
+	pNode str_const_node();
+	pNode int_const_node();
+	pNode bool_const_node();
+	pNode key_node(Typenode keyword);
 	
 
 	/*Funzioni dei nonterminali*/

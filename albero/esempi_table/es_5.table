@@ -1,0 +1,5 @@
+program
+	if a == b then	
+		a = a + b
+	end		
+end

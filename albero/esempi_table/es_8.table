@@ -1,0 +1,3 @@
+program
+	c = a join [a==d] b
+end

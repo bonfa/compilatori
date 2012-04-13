@@ -1,0 +1,11 @@
+program
+	if not(all [c == 5] tabella) and (exists [c == 5] tabella) then
+		ridotta = project [a,b] (select [c == 5] tabella);
+		write ridotta
+	else if (all [c == 5] tabella) then
+			write tabella
+		else
+			write "nessun record con c = 5\n"
+		end
+	end
+end
