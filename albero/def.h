@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/*Costanti che servono all'analizzatore lessicale*/
 #define ERROR 		-1
 
 #define IF		300
@@ -53,56 +54,138 @@
 #define ASSIGN		385
 #define END_OF_FILE	0
 
+/*Costanti che servono all'analizzatore sintattico per generare i nodi corretti dell'albero*/
+
+//Tipi di nodi
+typedef enum{
+
+T_INTEGER,
+T_STRING,
+T_BOOLEAN,
+
+T_INTCONST,
+T_BOOLCONST,
+T_STRCONST,
+//table-const: la table const viene costruita a partire da operatori semplici
+
+T_ID,
+
+T_NONTERMINAL
+} Typenode;
+
+
+//Non terminali
+typedef enum{
+N_PROGRAM,
+N_STAT_LIST,
+N_STAT,
+N_DEF_STAT,
+N_ID_LIST,
+N_TYPE,
+N_ATOMIC_TYPE,
+N_TABLE_TYPE,
+N_ATTR_LIST,
+N_ATTR_DECL,
+N_ASSIGN_STAT,
+N_EXPR,
+N_BOOL_TERM,
+N_COMP_TERM,
+N_LOW_TERM,
+N_FACTOR,
+N_UNARY_OP,
+N_JOIN_OP,
+N_PROJECT_OP,
+N_SELECT_OP,
+N_EXISTS_OP,
+N_ALL_OP,
+N_EXTEND_OP,
+N_UPDATE_OP,
+N_RENAME_OP,
+N_CONSTANT,
+N_ATOMIC_CONST,
+N_TABLE_CONST,
+N_TUPLE_CONST,
+N_IF_STAT,
+N_WHILE_STAT,
+N_READ_STAT,
+N_SPECIFIER,
+N_WRITE_STAT
+} Nonterminal;
+
+
+
+
 typedef union{
 	int ival;
 	char *sval;
 } Value;
 
-Value lexval;
 
-char *my_copy(char *s);
+typedef struct snode{
+typenode type;
+value Value;
+struct snode *child,*brother; 
+} Node;
+
+
+typedef Node *pNode;
+
+
+
+/*Funzioni dell'analizzatore lessicale*/
+char *new_string(char *s);
 int assign_id();
-//---------------------------------------------------
 
 
+/*Funzioni dell'analizzatore sintattico*/
+	/*Funzioni di gestione del parser*/
+	void parse_error();
+	void match(int simbolo);
+	void next();
+	void parse();
 
-//---------------------------------------------------
-void error(int err_code);
-void match(int simbolo);
-void program();
-void stat_list();
-void stat();
-void def_stat();
-void assign_stat();
-void if_stat();
-void while_stat();
-void read_stat();
-void write_stat();
-void type();
-void atomic_type();
-void table_type();
-void attr_list();
-void attr_decl();
-void expr();
-void bool_term();
-void comp_term();
-void low_term();
-void factor();
-void join_op();
-void unary_op();
-void constant();
-void unary_op();
-void project_op();
-void select_op();
-void exists_op();
-void all_op();
-void update_op();
-void extend_op();
-void rename_op();
-void id_list();
-void atomic_const();
-void table_const();
-void tuple_const();
-void specifier();
-void next();
-void parse();
+	/*Funzioni per la creazione dei nodi dell'albero*/
+	Pnode new_node(Typenode type_node);
+	Pnode non_term_node(Nonterminal nonterm);
+	Pnode id_node();
+	Pnode str_const_node();
+	Pnode int_const_node();
+	Pnode bool_const_node();
+	Pnode key_node();
+	
+
+	/*Funzioni dei nonterminali*/
+	pNode program();
+	pNode stat_list();
+	pNode stat();
+	pNode def_stat();
+	pNode id_list();
+	pNode type();
+	pNode atomic_type();
+	pNode table_type();
+	pNode attr_list();
+	pNode attr_decl();
+	pNode assign_stat();
+	pNode expr();
+	pNode bool_term();
+	pNode comp_term();
+	pNode low_term();
+	pNode factor();
+	pNode unary_op();
+	pNode join_op();
+	pNode project_op();
+	pNode select_op();
+	pNode exists_op();
+	pNode all_op();
+	pNode extend_op();
+	pNode update_op();
+	pNode rename_op();
+	pNode constant();
+	pNode atomic_const();
+	pNode table_const();
+	pNode tuple_const();
+	pNode if_stat();
+	pNode while_stat();
+	pNode read_stat();
+	pNode specifier();
+	pNode write_stat();

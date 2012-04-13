@@ -58,8 +58,6 @@ typedef union{
 	char *sval;
 } Value;
 
-Value lexval;
-
 char *my_copy(char *s);
 int assign_id();
 

@@ -5,7 +5,9 @@ extern char *yytext;
 extern Value lexval;
 extern FILE *yyin;
 extern line;
+
 int lookahead;
+
 
 
 /*
@@ -13,9 +15,6 @@ Per come è definita la sintassi non si possono dichiarare interi positivi con s
 Ad esempio a = +5; ritorna errore.
 Il caso corretto è a = 5;
 E' corretto, invece scrivere a = -5;
-
-Gestire i match correttamente per gli zuccheri sintattici
-
 */
 
 int main(){	
@@ -26,12 +25,16 @@ int main(){
 }
 
 
+
+
+
+/*Funzioni di gestione del parser*/
+
 /*legge il primo simbolo in input e chiama l'assioma*/
 void parse(){	
 	next();
 	program();	
 }
-
 
 
 /*riceve dall'analizzatore lessicale la codifica del prossimo simbolo in ingresso e lo salva nella variabile lookahead
@@ -48,30 +51,106 @@ void next()
 /*fa il match tra il simbolo ricevuto in ingresso e la variabile di lookahead*/
 void match(int simbolo){
 if ((lookahead == simbolo) && (lookahead != END_OF_FILE)){
-#ifdef DEBUG
-	printf("lah=%d;sim=%d\t symbol: %s\n",lookahead,simbolo,yytext);
-#endif
 	next();
 }
 else if ((lookahead == simbolo) && (lookahead == END_OF_FILE))
 	;
 else
-	error(simbolo);
+	parse_error();
 }
-
 
 
 /* stampa un messaggio di errore ed esce*/
-void error(int err_code){
-#ifndef DEBUG
-	fprintf(stderr,"Sintax error: line %d\t : %s\n",line,yytext);
-#endif
-#ifdef DEBUG
-	printf("Sintax error [line = %d]: lah=%d;sim=%d\t symbol: %s\n",line,lookahead,err_code,yytext);
-#endif
+void parse_error(){
+	fprintf(stderr,"[line %d]: sintax error on symbol: '%s'\n",line,yytext);
 	exit(-1);
 }
-//-------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+/*Funzioni per la creazione dei nodi dell'albero*/
+
+/*Funzione per la creazione di un nodo generico.
+  Crea il nodo e annulla i puntatori al figlio e al fratello
+*/
+pNode new_node(Typenode type_node){
+	pNode p;
+
+	pNode p = (pNode) malloc(sizeof(Node));
+	p->type = type_node;
+	p->child = NULL;
+	p->brother = NULL;
+	return p;
+}
+
+
+/*Crea un nodo di tipo non_terminale.
+  Chiama la funzione new_node e assegna al campo value.ival il tipo di terminale*/	
+pNode non_term_node(Nonterminal nonterm){
+	pNode p = new_node(T_NONTERMINAL);
+	p->value.ival = nonterm;
+	return p;
+}
+
+
+/*Crea un nodo di tipo id.
+  Chiama la funzione new_node e assegna al campo value.sval il nome dell'id*/
+pNode id_node(){
+	pNode p = new_node(T_ID);
+	p->value.sval = lexval.sval;
+	return p;
+}
+
+/*Crea un nodo di tipo str_const.
+  Chiama la funzione new_node e assegna al campo value.sval la stringa*/
+pNode str_const_node(){
+	pNode p = new_node(T_STRCONST);
+	p->value.sval = lexval.sval;
+	return p;
+}
+
+
+/*Crea un nodo di tipo int_const.
+  Chiama la funzione new_node e assegna al campo value.ival il valore*/
+pNode int_const_node(){
+	pNode p = new_node(T_INTCONST);
+	p->value.ivalue = lexval.ivalue;
+	return p;
+}
+
+
+/*Crea un nodo di tipo bool_const.
+  Chiama la funzione new_node e assegna al campo value.ival il valore*/
+pNode bool_const_node(){
+	pNode p = new_node(T_BOOLCONST);
+	p->value.ivalue = lexval.ivalue;
+	return p;
+}
+
+
+
+pNode key_node(){
+
+	return p;
+}
+
+
+
+
+
+
+
+
+
+
+/*Funzioni dei nonterminali*/
 
 void program(){
 	match(PROGRAM);

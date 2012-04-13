@@ -13,8 +13,8 @@ Questo discorso vale solo per il meno (-). Non viene definito l'operatore unario
 */
 
 %{
-#include "def.h"  /*Scritto da me che include tutte le costanti che andrò a richiamare*/
-Value lexval; /*typedef union {int ival; char *sval} Value;*/
+#include "def.h"
+Value lexval;
 int line = 1;
 %}	
 %option	noyywrap
@@ -69,10 +69,10 @@ join 		{lexval.ival = JOIN;	return(HIGH_BIN_OP);}
    /*costanti*/
 {boolconst}	{if (yytext[0]=='t') lexval.ival=1; else lexval.ival=0; return(BOOL_CONST);}	
 {intconst}	{lexval.ival = atoi(yytext); return(INT_CONST);}
-{strconst}	{lexval.sval = my_copy(yytext); return(STR_CONST);}
+{strconst}	{lexval.sval = new_string(yytext); return(STR_CONST);}
 
    /*id*/
-{id}		{lexval.ival = assign_id(); return(ID);}
+{id}		{lexval.sval = new_string(yytext); return(ID);}
 
    /*operatori*/
 \=		{return(ASSIGN);}		
@@ -92,19 +92,10 @@ join 		{lexval.ival = JOIN;	return(HIGH_BIN_OP);}
 %%
 
 /*Salva in memoria il valore di yytext e ne restituisce un puntatore*/
-char *my_copy(char *s)
+char *new_string(char *s)
 {
   char *p;
   p = malloc(strlen(s)+1);
   strcpy(p,s);
   return p;
-}
-
-/*Controlla se nella TABELLA DEI SIMBOLI c'è già un simbolo con quell'id, altrimenti lo inserisce e ritorna il numero di linea nella tabella dei simboli*/
-int assign_id()
-{ 
-  /*int line;
-  if((line = lookup(yytext)) == 0) 
-	line = insert(yytext);
-  return(line);*/ return 0;
 }
