@@ -161,6 +161,7 @@ int assign_id();
 	void match(int simbolo);
 	void next();
 	void parse();
+	void tree_print(pNode p, int indent);
 
 	/*Funzioni per la creazione dei nodi dell'albero*/
 	pNode new_node(Typenode type_node);

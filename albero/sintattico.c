@@ -21,6 +21,7 @@ int main(){
 	yyin = stdin;
 	parse();
 	fprintf(stderr,"frase sintatticamente corretta\n");
+	tree_print(root,0);
 	return(0);		
 }
 
