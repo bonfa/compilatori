@@ -20,7 +20,7 @@ E' corretto, invece scrivere a = -5;
 int main(){	
 	yyin = stdin;
 	parse();
-	fprintf(stderr,"frase sintatticamente corretta\n");
+	//fprintf(stderr,"frase sintatticamente corretta\n");
 	tree_print(root,0);
 	return(0);		
 }
@@ -352,7 +352,7 @@ pNode table_type(){
 
 	match(TABLE);
 	match('(');
-	head = non_term_node(N_TABLE_TYPE);
+	head = non_term_node(N_ATTR_LIST);
 	head->child = attr_list();
 	match(')');
 	
@@ -726,15 +726,15 @@ pNode atomic_const(){
 	pNode head;
 
 	if (lookahead == INT_CONST){
-		head = key_node(T_INTCONST);
+		head = int_const_node(T_INTCONST);
 		match(INT_CONST);
 	}
 	else if (lookahead == BOOL_CONST) {
-		head = key_node(T_BOOLCONST);
+		head = bool_const_node(T_BOOLCONST);
 		match(BOOL_CONST);
 	}
 	else {//(lookahead == STR_CONST)
-		head = key_node(T_STRCONST);
+		head = str_const_node(T_STRCONST);
 		match(STR_CONST);
 	}
 
