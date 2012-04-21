@@ -376,14 +376,29 @@ void atomic_const(){
 
 void table_const(){
 	match('{');
-	if (lookahead == '('){
-		tuple_const();
-		while (lookahead == ',') {
-			match(',');
-			tuple_const();
-		}
-	}
+	if (lookahead == '(')
+		tuple_list();
+	else
+		atomic_type_list();		
 	match('}');
+}
+
+
+void tuple_list(){
+	tuple_const();
+	while (lookahead == ',') {
+		match(',');
+		tuple_const();
+	}
+}
+
+
+void atomic_type_list(){
+	atomic_type();
+	while (lookahead == ',') {
+		match(',');
+		atomic_type();
+	}
 }
 
 

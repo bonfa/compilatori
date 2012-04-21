@@ -97,6 +97,8 @@ void rename_op();
 void id_list();
 void atomic_const();
 void table_const();
+void atomic_type_list();
+void tuple_list();
 void tuple_const();
 void specifier();
 void next();
