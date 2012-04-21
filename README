@@ -10,6 +10,7 @@ Esempio di utilizzo (dopo aver compilato):
 
 cat ./file_table/keywords.table | ./an_lessicale_alone
 
+-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
 La cartella /sintattico contiene un analizzatore sintattico del linguaggio.  La cartella contiene:
 def.h: file di intestazione
@@ -17,8 +18,25 @@ lessicale.lex: analizzatore lessicale
 sintattico.c: analizzatore sintattico
 makefile: con le direttive per la compilazione
 
-L'analizzatore restituisce i codici del matching tra il simbolo in ingresso e la grammatica mostrando le due codifiche. Se viene trovato un errore, viene stampata una stringa che mostra a che riga s trova l'errore.
+L'analizzatore si basa su un metodo top-down e restituisce i codici del matching tra il simbolo in ingresso e la grammatica mostrando le due codifiche. Se viene trovato un errore, viene stampata una stringa che mostra il numero della riga che lo contiene.
 In questa versione l'analizzatore sintattico NON crea l'albero della frase.
 Esempio di utilizzo:
 
 cat ./file_table/keywords.table | ./sintattico
+
+-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+
+La cartella /albero contiene un analizzatore sintattico del linguaggio che genera un albero sintattico. La cartella contiene:
+albero.c: stampa l'albero
+def.h: file di intestazione
+lessicale.lex: analizzatore lessicale
+sintattico.c: analizzatore sintattico
+makefile: con le direttive per la compilazione
+
+L'analizzatore si basa su un metodo top-down e restituisce un albero i cui nodi sono gli elementi terminali e non terminali della grammatica del linguaggio. Se viene trovato un errore, viene stampata una stringa che mostra il numero della riga che lo contiene.
+Esempio di utilizzo:
+
+cat ./file_table/keywords.table | ./sintattico
+
+-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+
