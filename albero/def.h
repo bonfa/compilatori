@@ -122,6 +122,8 @@ N_RENAME_OP,
 N_CONSTANT,
 N_ATOMIC_CONST,
 N_TABLE_CONST,
+N_TUPLE_LIST,
+N_ATOMIC_TYPE_LIST,
 N_TUPLE_CONST,
 N_IF_STAT,
 N_WHILE_STAT,
@@ -201,6 +203,8 @@ int assign_id();
 	pNode rename_op();
 	pNode constant();
 	pNode atomic_const();
+	pNode atomic_type_list();
+	pNode tuple_list();
 	pNode table_const();
 	pNode tuple_const();
 	pNode if_stat();

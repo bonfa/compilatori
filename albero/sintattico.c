@@ -744,21 +744,47 @@ pNode atomic_const(){
 
 /*Se c'è la tabella vuota, viene restituito NULL*/
 pNode table_const(){
-	pNode head,p;
-	head = NULL;
+	pNode head;
 	match('{');
 	if (lookahead == '('){
-		head = non_term_node(N_TUPLE_CONST);
-		head -> child = tuple_const();
-		p = head;
-		while (lookahead == ',') {
-			match(',');
-			p-> brother = non_term_node(N_TUPLE_CONST);
-			p = p-> brother;
-			p->child = tuple_const();
-		}
+		head = non_term_node(N_TUPLE_LIST);
+		head->child = tuple_list();
+	}
+	else {
+		head = non_term_node(N_ATOMIC_TYPE_LIST);
+		head->child = atomic_type_list();
 	}
 	match('}');
+	return head;
+}
+
+
+pNode tuple_list(){
+	pNode head,p;
+	head = non_term_node(N_TUPLE_CONST);
+	head -> child = tuple_const();
+	p = head;
+	while (lookahead == ',') {
+		match(',');
+		p-> brother = non_term_node(N_TUPLE_CONST);
+		p = p-> brother;
+		p->child = tuple_const();
+	}
+	return head;
+}
+
+
+pNode atomic_type_list(){
+	pNode head,p;
+	head = non_term_node(N_ATOMIC_TYPE);
+	head->child = atomic_type();
+	p = head;
+	while (lookahead == ',') {
+		match(',');
+		p-> brother = non_term_node(N_ATOMIC_TYPE);
+		p = p-> brother;
+		p->child = atomic_type();
+	}
 	return head;
 }
 
