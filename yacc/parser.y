@@ -21,34 +21,34 @@ pNode root = NULL;
 %token ERROR
 
 %%
-program 	: PROGRAM stat_list END {root = non_term_node((N_PROGRAM); root->child = $2)}
+program 	: PROGRAM stat_list END {root = non_term_node((N_PROGRAM); root->child = $2);}
 		;
-stat_list	: stat ';' stat_list
-	 	| stat
+stat_list	: stat ';' stat_list {$$ = $1; $1->brother = $2;}
+	 	| stat {$$ = $1;}
 		;
-stat 		: def_stat
-		| assign_stat
-		| if_stat
-		| while_stat
-		| read_stat
-		| write_stat
+stat 		: def_stat {$$ = non_term_node(N_STAT); $$->child = $1; }
+		| assign_stat  {$$ = non_term_node(N_STAT); $$->child = $1; }
+		| if_stat {$$ = non_term_node(N_STAT); $$->child = $1; }
+		| while_stat {$$ = non_term_node(N_STAT); $$->child = $1; }
+		| read_stat {$$ = non_term_node(N_STAT); $$->child = $1; }
+		| write_stat {$$ = non_term_node(N_STAT); $$->child = $1; }
 		;
-def_stat 	: type id_list
+def_stat 	: type id_list  {$$ = non_term_node(N_DEF_STAT); $$->child = $1; $1->brother = $2; }
 		;
-id_list		: ID ',' id_list
-		| ID
+id_list		: ID {$$ = id_node();} ',' id_list {$$ = non_term_node(N_ID_LIST); $$->child = $1; $1->brother = $3; }
+		| ID {$$ = id_node();}
 		;
-type		: atomic_type
-		| table_type
+type		: atomic_type { $$ = non_term_node(N_TYPE); $$->child = $1; }
+		| table_type { $$ = non_term_node(N_TYPE); $$->child = $1; }
 		;
-atomic_type	: INTEGER
-		| STRING
-		| BOOLEAN
+atomic_type	: INTEGER {$$ = non_term_node(N_ATOMIC_TYPE); $$->child = key_node(T_INTEGER);}
+		| STRING {$$ = non_term_node(N_ATOMIC_TYPE); $$->child = key_node(T_STRING);}
+		| BOOLEAN {$$ = non_term_node(N_ATOMIC_TYPE); $$->child = key_node(T_BOOLEAN);}
 		;
-table_type	: TABLE '(' attr_list ')' 
+table_type	: TABLE '(' attr_list ')' { $$ = non_term_node(N_TABLE_TYPE); $$->child = $1; }
 		;
-attr_list	: attr_decl ',' attr_list
-		| attr_decl
+attr_list	: attr_decl ',' attr_list { $$ = $1; $1->brother =  }
+		| attr_decl { $$ = $1; }
 		;
 attr_decl	: atomic_type ID
 		;
