@@ -1,0 +1,2207 @@
+Terminals unused in grammar
+
+   BOOL_OP
+   UNARY_OP
+   HIGH_BIN_OP
+   LOW_BIN_OP
+   COMP_OP
+   ASSIGN
+   END_OF_FILE
+   ERROR
+
+
+Grammatica
+
+    0 $accept: program $end
+
+    1 program: PROGRAM stat_list END
+
+    2 stat_list: stat ';' stat_list
+    3          | stat
+
+    4 stat: def_stat
+    5     | assign_stat
+    6     | if_stat
+    7     | while_stat
+    8     | read_stat
+    9     | write_stat
+
+   10 def_stat: type id_list
+
+   11 id_list: ID ',' id_list
+   12        | ID
+
+   13 type: atomic_type
+   14     | table_type
+
+   15 atomic_type: INTEGER
+   16            | STRING
+   17            | BOOLEAN
+
+   18 table_type: TABLE '(' attr_list ')'
+
+   19 attr_list: attr_decl ',' attr_list
+   20          | attr_decl
+
+   21 attr_decl: atomic_type ID
+
+   22 assign_stat: ID '=' expr
+
+   23 expr: expr bool_op bool_term
+   24     | bool_term
+
+   25 bool_op: AND
+   26        | OR
+
+   27 bool_term: comp_term comp_op comp_term
+   28          | comp_term
+
+   29 comp_op: EQ
+   30        | NOT_EQ
+   31        | '>'
+   32        | GET
+   33        | '<'
+   34        | LET
+
+   35 comp_term: comp_term low_bin_op low_term
+   36          | low_term
+
+   37 low_bin_op: '+'
+   38           | '-'
+
+   39 low_term: low_term high_bin_op factor
+   40         | factor
+
+   41 high_bin_op: '*'
+   42            | '/'
+   43            | join_op
+
+   44 factor: unary_op factor
+   45       | '(' expr ')'
+   46       | ID
+   47       | constant
+
+   48 unary_op: '-'
+   49         | NOT
+   50         | project_op
+   51         | select_op
+   52         | exists_op
+   53         | all_op
+   54         | update_op
+   55         | extend_op
+   56         | rename_op
+
+   57 join_op: JOIN '[' expr ']'
+
+   58 project_op: PROJECT '[' id_list ']'
+
+   59 select_op: SELECT '[' expr ']'
+
+   60 exists_op: EXISTS '[' expr ']'
+
+   61 all_op: ALL '[' expr ']'
+
+   62 extend_op: EXTEND '[' atomic_type ID '=' expr ']'
+
+   63 update_op: UPDATE '[' ID '=' expr ']'
+
+   64 rename_op: RENAME '[' id_list ']'
+
+   65 constant: atomic_const
+   66         | table_const
+
+   67 atomic_const: INT_CONST
+   68             | STR_CONST
+   69             | BOOL_CONST
+
+   70 table_const: '{' table_instance '}'
+
+   71 table_instance: tuple_list
+   72               | atomic_type_l
+
+   73 tuple_list: tuple_const ',' tuple_list
+   74           | tuple_const
+
+   75 tuple_const: '(' atomic_const_l ')'
+
+   76 atomic_const_l: atomic_const ',' atomic_const_l
+   77               | atomic_const
+
+   78 atomic_type_l: atomic_type ',' atomic_type_l
+   79              | atomic_type
+
+   80 if_stat: IF expr THEN stat_list else_part END
+
+   81 else_part: ELSE stat_list
+   82          | /* vuoto */
+
+   83 while_stat: WHILE expr DO stat_list END
+
+   84 read_stat: READ specifier ID
+
+   85 specifier: '[' expr ']'
+   86          | /* vuoto */
+
+   87 write_stat: WRITE specifier expr
+
+
+Simboli terminali e regole in cui appaiono
+
+$end (0) 0
+'(' (40) 18 45 75
+')' (41) 18 45 75
+'*' (42) 41
+'+' (43) 37
+',' (44) 11 19 73 76 78
+'-' (45) 38 48
+'/' (47) 42
+';' (59) 2
+'<' (60) 33
+'=' (61) 22 62 63
+'>' (62) 31
+'[' (91) 57 58 59 60 61 62 63 64 85
+']' (93) 57 58 59 60 61 62 63 64 85
+'{' (123) 70
+'}' (125) 70
+error (256)
+IF (258) 80
+THEN (259) 80
+ELSE (260) 81
+WHILE (261) 83
+DO (262) 83
+END (263) 1 80 83
+INTEGER (264) 15
+STRING (265) 16
+BOOLEAN (266) 17
+TABLE (267) 18
+READ (268) 84
+WRITE (269) 87
+ID (270) 11 12 21 22 46 62 63 84
+BOOL_OP (271)
+UNARY_OP (272)
+HIGH_BIN_OP (273)
+LOW_BIN_OP (274)
+COMP_OP (275)
+INT_CONST (276) 67
+STR_CONST (277) 68
+BOOL_CONST (278) 69
+AND (279) 25
+OR (280) 26
+NOT (281) 49
+PROJECT (282) 58
+SELECT (283) 59
+EXISTS (284) 60
+ALL (285) 61
+UPDATE (286) 63
+EXTEND (287) 62
+RENAME (288) 64
+JOIN (289) 57
+PROGRAM (290) 1
+EQ (291) 29
+NOT_EQ (292) 30
+GET (293) 32
+LET (294) 34
+ASSIGN (295)
+END_OF_FILE (296)
+ERROR (297)
+
+
+Simboli nonterminali e regole in cui appaiono
+
+$accept (58)
+    nel primo membro: 0
+program (59)
+    nel primo membro: 1, nel secondo membro: 0
+stat_list (60)
+    nel primo membro: 2 3, nel secondo membro: 1 2 80 81 83
+stat (61)
+    nel primo membro: 4 5 6 7 8 9, nel secondo membro: 2 3
+def_stat (62)
+    nel primo membro: 10, nel secondo membro: 4
+id_list (63)
+    nel primo membro: 11 12, nel secondo membro: 10 11 58 64
+type (64)
+    nel primo membro: 13 14, nel secondo membro: 10
+atomic_type (65)
+    nel primo membro: 15 16 17, nel secondo membro: 13 21 62 78 79
+table_type (66)
+    nel primo membro: 18, nel secondo membro: 14
+attr_list (67)
+    nel primo membro: 19 20, nel secondo membro: 18 19
+attr_decl (68)
+    nel primo membro: 21, nel secondo membro: 19 20
+assign_stat (69)
+    nel primo membro: 22, nel secondo membro: 5
+expr (70)
+    nel primo membro: 23 24, nel secondo membro: 22 23 45 57 59 60
+    61 62 63 80 83 85 87
+bool_op (71)
+    nel primo membro: 25 26, nel secondo membro: 23
+bool_term (72)
+    nel primo membro: 27 28, nel secondo membro: 23 24
+comp_op (73)
+    nel primo membro: 29 30 31 32 33 34, nel secondo membro: 27
+comp_term (74)
+    nel primo membro: 35 36, nel secondo membro: 27 28 35
+low_bin_op (75)
+    nel primo membro: 37 38, nel secondo membro: 35
+low_term (76)
+    nel primo membro: 39 40, nel secondo membro: 35 36 39
+high_bin_op (77)
+    nel primo membro: 41 42 43, nel secondo membro: 39
+factor (78)
+    nel primo membro: 44 45 46 47, nel secondo membro: 39 40 44
+unary_op (79)
+    nel primo membro: 48 49 50 51 52 53 54 55 56, nel secondo membro:
+    44
+join_op (80)
+    nel primo membro: 57, nel secondo membro: 43
+project_op (81)
+    nel primo membro: 58, nel secondo membro: 50
+select_op (82)
+    nel primo membro: 59, nel secondo membro: 51
+exists_op (83)
+    nel primo membro: 60, nel secondo membro: 52
+all_op (84)
+    nel primo membro: 61, nel secondo membro: 53
+extend_op (85)
+    nel primo membro: 62, nel secondo membro: 55
+update_op (86)
+    nel primo membro: 63, nel secondo membro: 54
+rename_op (87)
+    nel primo membro: 64, nel secondo membro: 56
+constant (88)
+    nel primo membro: 65 66, nel secondo membro: 47
+atomic_const (89)
+    nel primo membro: 67 68 69, nel secondo membro: 65 76 77
+table_const (90)
+    nel primo membro: 70, nel secondo membro: 66
+table_instance (91)
+    nel primo membro: 71 72, nel secondo membro: 70
+tuple_list (92)
+    nel primo membro: 73 74, nel secondo membro: 71 73
+tuple_const (93)
+    nel primo membro: 75, nel secondo membro: 73 74
+atomic_const_l (94)
+    nel primo membro: 76 77, nel secondo membro: 75 76
+atomic_type_l (95)
+    nel primo membro: 78 79, nel secondo membro: 72 78
+if_stat (96)
+    nel primo membro: 80, nel secondo membro: 6
+else_part (97)
+    nel primo membro: 81 82, nel secondo membro: 80
+while_stat (98)
+    nel primo membro: 83, nel secondo membro: 7
+read_stat (99)
+    nel primo membro: 84, nel secondo membro: 8
+specifier (100)
+    nel primo membro: 85 86, nel secondo membro: 84 87
+write_stat (101)
+    nel primo membro: 87, nel secondo membro: 9
+
+
+stato 0
+
+    0 $accept: . program $end
+
+    PROGRAM  shift e prosecuzione allo stato 1
+
+    program  prosecuzione allo stato 2
+
+
+stato 1
+
+    1 program: PROGRAM . stat_list END
+
+    IF       shift e prosecuzione allo stato 3
+    WHILE    shift e prosecuzione allo stato 4
+    INTEGER  shift e prosecuzione allo stato 5
+    STRING   shift e prosecuzione allo stato 6
+    BOOLEAN  shift e prosecuzione allo stato 7
+    TABLE    shift e prosecuzione allo stato 8
+    READ     shift e prosecuzione allo stato 9
+    WRITE    shift e prosecuzione allo stato 10
+    ID       shift e prosecuzione allo stato 11
+
+    stat_list    prosecuzione allo stato 12
+    stat         prosecuzione allo stato 13
+    def_stat     prosecuzione allo stato 14
+    type         prosecuzione allo stato 15
+    atomic_type  prosecuzione allo stato 16
+    table_type   prosecuzione allo stato 17
+    assign_stat  prosecuzione allo stato 18
+    if_stat      prosecuzione allo stato 19
+    while_stat   prosecuzione allo stato 20
+    read_stat    prosecuzione allo stato 21
+    write_stat   prosecuzione allo stato 22
+
+
+stato 2
+
+    0 $accept: program . $end
+
+    $end  shift e prosecuzione allo stato 23
+
+
+stato 3
+
+   80 if_stat: IF . expr THEN stat_list else_part END
+
+    ID          shift e prosecuzione allo stato 24
+    INT_CONST   shift e prosecuzione allo stato 25
+    STR_CONST   shift e prosecuzione allo stato 26
+    BOOL_CONST  shift e prosecuzione allo stato 27
+    NOT         shift e prosecuzione allo stato 28
+    PROJECT     shift e prosecuzione allo stato 29
+    SELECT      shift e prosecuzione allo stato 30
+    EXISTS      shift e prosecuzione allo stato 31
+    ALL         shift e prosecuzione allo stato 32
+    UPDATE      shift e prosecuzione allo stato 33
+    EXTEND      shift e prosecuzione allo stato 34
+    RENAME      shift e prosecuzione allo stato 35
+    '('         shift e prosecuzione allo stato 36
+    '-'         shift e prosecuzione allo stato 37
+    '{'         shift e prosecuzione allo stato 38
+
+    expr          prosecuzione allo stato 39
+    bool_term     prosecuzione allo stato 40
+    comp_term     prosecuzione allo stato 41
+    low_term      prosecuzione allo stato 42
+    factor        prosecuzione allo stato 43
+    unary_op      prosecuzione allo stato 44
+    project_op    prosecuzione allo stato 45
+    select_op     prosecuzione allo stato 46
+    exists_op     prosecuzione allo stato 47
+    all_op        prosecuzione allo stato 48
+    extend_op     prosecuzione allo stato 49
+    update_op     prosecuzione allo stato 50
+    rename_op     prosecuzione allo stato 51
+    constant      prosecuzione allo stato 52
+    atomic_const  prosecuzione allo stato 53
+    table_const   prosecuzione allo stato 54
+
+
+stato 4
+
+   83 while_stat: WHILE . expr DO stat_list END
+
+    ID          shift e prosecuzione allo stato 24
+    INT_CONST   shift e prosecuzione allo stato 25
+    STR_CONST   shift e prosecuzione allo stato 26
+    BOOL_CONST  shift e prosecuzione allo stato 27
+    NOT         shift e prosecuzione allo stato 28
+    PROJECT     shift e prosecuzione allo stato 29
+    SELECT      shift e prosecuzione allo stato 30
+    EXISTS      shift e prosecuzione allo stato 31
+    ALL         shift e prosecuzione allo stato 32
+    UPDATE      shift e prosecuzione allo stato 33
+    EXTEND      shift e prosecuzione allo stato 34
+    RENAME      shift e prosecuzione allo stato 35
+    '('         shift e prosecuzione allo stato 36
+    '-'         shift e prosecuzione allo stato 37
+    '{'         shift e prosecuzione allo stato 38
+
+    expr          prosecuzione allo stato 55
+    bool_term     prosecuzione allo stato 40
+    comp_term     prosecuzione allo stato 41
+    low_term      prosecuzione allo stato 42
+    factor        prosecuzione allo stato 43
+    unary_op      prosecuzione allo stato 44
+    project_op    prosecuzione allo stato 45
+    select_op     prosecuzione allo stato 46
+    exists_op     prosecuzione allo stato 47
+    all_op        prosecuzione allo stato 48
+    extend_op     prosecuzione allo stato 49
+    update_op     prosecuzione allo stato 50
+    rename_op     prosecuzione allo stato 51
+    constant      prosecuzione allo stato 52
+    atomic_const  prosecuzione allo stato 53
+    table_const   prosecuzione allo stato 54
+
+
+stato 5
+
+   15 atomic_type: INTEGER .
+
+    $default  riduzione con la regola 15 (atomic_type)
+
+
+stato 6
+
+   16 atomic_type: STRING .
+
+    $default  riduzione con la regola 16 (atomic_type)
+
+
+stato 7
+
+   17 atomic_type: BOOLEAN .
+
+    $default  riduzione con la regola 17 (atomic_type)
+
+
+stato 8
+
+   18 table_type: TABLE . '(' attr_list ')'
+
+    '('  shift e prosecuzione allo stato 56
+
+
+stato 9
+
+   84 read_stat: READ . specifier ID
+
+    '['  shift e prosecuzione allo stato 57
+
+    $default  riduzione con la regola 86 (specifier)
+
+    specifier  prosecuzione allo stato 58
+
+
+stato 10
+
+   87 write_stat: WRITE . specifier expr
+
+    '['  shift e prosecuzione allo stato 57
+
+    $default  riduzione con la regola 86 (specifier)
+
+    specifier  prosecuzione allo stato 59
+
+
+stato 11
+
+   22 assign_stat: ID . '=' expr
+
+    '='  shift e prosecuzione allo stato 60
+
+
+stato 12
+
+    1 program: PROGRAM stat_list . END
+
+    END  shift e prosecuzione allo stato 61
+
+
+stato 13
+
+    2 stat_list: stat . ';' stat_list
+    3          | stat .
+
+    ';'  shift e prosecuzione allo stato 62
+
+    $default  riduzione con la regola 3 (stat_list)
+
+
+stato 14
+
+    4 stat: def_stat .
+
+    $default  riduzione con la regola 4 (stat)
+
+
+stato 15
+
+   10 def_stat: type . id_list
+
+    ID  shift e prosecuzione allo stato 63
+
+    id_list  prosecuzione allo stato 64
+
+
+stato 16
+
+   13 type: atomic_type .
+
+    $default  riduzione con la regola 13 (type)
+
+
+stato 17
+
+   14 type: table_type .
+
+    $default  riduzione con la regola 14 (type)
+
+
+stato 18
+
+    5 stat: assign_stat .
+
+    $default  riduzione con la regola 5 (stat)
+
+
+stato 19
+
+    6 stat: if_stat .
+
+    $default  riduzione con la regola 6 (stat)
+
+
+stato 20
+
+    7 stat: while_stat .
+
+    $default  riduzione con la regola 7 (stat)
+
+
+stato 21
+
+    8 stat: read_stat .
+
+    $default  riduzione con la regola 8 (stat)
+
+
+stato 22
+
+    9 stat: write_stat .
+
+    $default  riduzione con la regola 9 (stat)
+
+
+stato 23
+
+    0 $accept: program $end .
+
+    $default  accetta
+
+
+stato 24
+
+   46 factor: ID .
+
+    $default  riduzione con la regola 46 (factor)
+
+
+stato 25
+
+   67 atomic_const: INT_CONST .
+
+    $default  riduzione con la regola 67 (atomic_const)
+
+
+stato 26
+
+   68 atomic_const: STR_CONST .
+
+    $default  riduzione con la regola 68 (atomic_const)
+
+
+stato 27
+
+   69 atomic_const: BOOL_CONST .
+
+    $default  riduzione con la regola 69 (atomic_const)
+
+
+stato 28
+
+   49 unary_op: NOT .
+
+    $default  riduzione con la regola 49 (unary_op)
+
+
+stato 29
+
+   58 project_op: PROJECT . '[' id_list ']'
+
+    '['  shift e prosecuzione allo stato 65
+
+
+stato 30
+
+   59 select_op: SELECT . '[' expr ']'
+
+    '['  shift e prosecuzione allo stato 66
+
+
+stato 31
+
+   60 exists_op: EXISTS . '[' expr ']'
+
+    '['  shift e prosecuzione allo stato 67
+
+
+stato 32
+
+   61 all_op: ALL . '[' expr ']'
+
+    '['  shift e prosecuzione allo stato 68
+
+
+stato 33
+
+   63 update_op: UPDATE . '[' ID '=' expr ']'
+
+    '['  shift e prosecuzione allo stato 69
+
+
+stato 34
+
+   62 extend_op: EXTEND . '[' atomic_type ID '=' expr ']'
+
+    '['  shift e prosecuzione allo stato 70
+
+
+stato 35
+
+   64 rename_op: RENAME . '[' id_list ']'
+
+    '['  shift e prosecuzione allo stato 71
+
+
+stato 36
+
+   45 factor: '(' . expr ')'
+
+    ID          shift e prosecuzione allo stato 24
+    INT_CONST   shift e prosecuzione allo stato 25
+    STR_CONST   shift e prosecuzione allo stato 26
+    BOOL_CONST  shift e prosecuzione allo stato 27
+    NOT         shift e prosecuzione allo stato 28
+    PROJECT     shift e prosecuzione allo stato 29
+    SELECT      shift e prosecuzione allo stato 30
+    EXISTS      shift e prosecuzione allo stato 31
+    ALL         shift e prosecuzione allo stato 32
+    UPDATE      shift e prosecuzione allo stato 33
+    EXTEND      shift e prosecuzione allo stato 34
+    RENAME      shift e prosecuzione allo stato 35
+    '('         shift e prosecuzione allo stato 36
+    '-'         shift e prosecuzione allo stato 37
+    '{'         shift e prosecuzione allo stato 38
+
+    expr          prosecuzione allo stato 72
+    bool_term     prosecuzione allo stato 40
+    comp_term     prosecuzione allo stato 41
+    low_term      prosecuzione allo stato 42
+    factor        prosecuzione allo stato 43
+    unary_op      prosecuzione allo stato 44
+    project_op    prosecuzione allo stato 45
+    select_op     prosecuzione allo stato 46
+    exists_op     prosecuzione allo stato 47
+    all_op        prosecuzione allo stato 48
+    extend_op     prosecuzione allo stato 49
+    update_op     prosecuzione allo stato 50
+    rename_op     prosecuzione allo stato 51
+    constant      prosecuzione allo stato 52
+    atomic_const  prosecuzione allo stato 53
+    table_const   prosecuzione allo stato 54
+
+
+stato 37
+
+   48 unary_op: '-' .
+
+    $default  riduzione con la regola 48 (unary_op)
+
+
+stato 38
+
+   70 table_const: '{' . table_instance '}'
+
+    INTEGER  shift e prosecuzione allo stato 5
+    STRING   shift e prosecuzione allo stato 6
+    BOOLEAN  shift e prosecuzione allo stato 7
+    '('      shift e prosecuzione allo stato 73
+
+    atomic_type     prosecuzione allo stato 74
+    table_instance  prosecuzione allo stato 75
+    tuple_list      prosecuzione allo stato 76
+    tuple_const     prosecuzione allo stato 77
+    atomic_type_l   prosecuzione allo stato 78
+
+
+stato 39
+
+   23 expr: expr . bool_op bool_term
+   80 if_stat: IF expr . THEN stat_list else_part END
+
+    THEN  shift e prosecuzione allo stato 79
+    AND   shift e prosecuzione allo stato 80
+    OR    shift e prosecuzione allo stato 81
+
+    bool_op  prosecuzione allo stato 82
+
+
+stato 40
+
+   24 expr: bool_term .
+
+    $default  riduzione con la regola 24 (expr)
+
+
+stato 41
+
+   27 bool_term: comp_term . comp_op comp_term
+   28          | comp_term .
+   35 comp_term: comp_term . low_bin_op low_term
+
+    EQ      shift e prosecuzione allo stato 83
+    NOT_EQ  shift e prosecuzione allo stato 84
+    GET     shift e prosecuzione allo stato 85
+    LET     shift e prosecuzione allo stato 86
+    '>'     shift e prosecuzione allo stato 87
+    '<'     shift e prosecuzione allo stato 88
+    '+'     shift e prosecuzione allo stato 89
+    '-'     shift e prosecuzione allo stato 90
+
+    $default  riduzione con la regola 28 (bool_term)
+
+    comp_op     prosecuzione allo stato 91
+    low_bin_op  prosecuzione allo stato 92
+
+
+stato 42
+
+   36 comp_term: low_term .
+   39 low_term: low_term . high_bin_op factor
+
+    JOIN  shift e prosecuzione allo stato 93
+    '*'   shift e prosecuzione allo stato 94
+    '/'   shift e prosecuzione allo stato 95
+
+    $default  riduzione con la regola 36 (comp_term)
+
+    high_bin_op  prosecuzione allo stato 96
+    join_op      prosecuzione allo stato 97
+
+
+stato 43
+
+   40 low_term: factor .
+
+    $default  riduzione con la regola 40 (low_term)
+
+
+stato 44
+
+   44 factor: unary_op . factor
+
+    ID          shift e prosecuzione allo stato 24
+    INT_CONST   shift e prosecuzione allo stato 25
+    STR_CONST   shift e prosecuzione allo stato 26
+    BOOL_CONST  shift e prosecuzione allo stato 27
+    NOT         shift e prosecuzione allo stato 28
+    PROJECT     shift e prosecuzione allo stato 29
+    SELECT      shift e prosecuzione allo stato 30
+    EXISTS      shift e prosecuzione allo stato 31
+    ALL         shift e prosecuzione allo stato 32
+    UPDATE      shift e prosecuzione allo stato 33
+    EXTEND      shift e prosecuzione allo stato 34
+    RENAME      shift e prosecuzione allo stato 35
+    '('         shift e prosecuzione allo stato 36
+    '-'         shift e prosecuzione allo stato 37
+    '{'         shift e prosecuzione allo stato 38
+
+    factor        prosecuzione allo stato 98
+    unary_op      prosecuzione allo stato 44
+    project_op    prosecuzione allo stato 45
+    select_op     prosecuzione allo stato 46
+    exists_op     prosecuzione allo stato 47
+    all_op        prosecuzione allo stato 48
+    extend_op     prosecuzione allo stato 49
+    update_op     prosecuzione allo stato 50
+    rename_op     prosecuzione allo stato 51
+    constant      prosecuzione allo stato 52
+    atomic_const  prosecuzione allo stato 53
+    table_const   prosecuzione allo stato 54
+
+
+stato 45
+
+   50 unary_op: project_op .
+
+    $default  riduzione con la regola 50 (unary_op)
+
+
+stato 46
+
+   51 unary_op: select_op .
+
+    $default  riduzione con la regola 51 (unary_op)
+
+
+stato 47
+
+   52 unary_op: exists_op .
+
+    $default  riduzione con la regola 52 (unary_op)
+
+
+stato 48
+
+   53 unary_op: all_op .
+
+    $default  riduzione con la regola 53 (unary_op)
+
+
+stato 49
+
+   55 unary_op: extend_op .
+
+    $default  riduzione con la regola 55 (unary_op)
+
+
+stato 50
+
+   54 unary_op: update_op .
+
+    $default  riduzione con la regola 54 (unary_op)
+
+
+stato 51
+
+   56 unary_op: rename_op .
+
+    $default  riduzione con la regola 56 (unary_op)
+
+
+stato 52
+
+   47 factor: constant .
+
+    $default  riduzione con la regola 47 (factor)
+
+
+stato 53
+
+   65 constant: atomic_const .
+
+    $default  riduzione con la regola 65 (constant)
+
+
+stato 54
+
+   66 constant: table_const .
+
+    $default  riduzione con la regola 66 (constant)
+
+
+stato 55
+
+   23 expr: expr . bool_op bool_term
+   83 while_stat: WHILE expr . DO stat_list END
+
+    DO   shift e prosecuzione allo stato 99
+    AND  shift e prosecuzione allo stato 80
+    OR   shift e prosecuzione allo stato 81
+
+    bool_op  prosecuzione allo stato 82
+
+
+stato 56
+
+   18 table_type: TABLE '(' . attr_list ')'
+
+    INTEGER  shift e prosecuzione allo stato 5
+    STRING   shift e prosecuzione allo stato 6
+    BOOLEAN  shift e prosecuzione allo stato 7
+
+    atomic_type  prosecuzione allo stato 100
+    attr_list    prosecuzione allo stato 101
+    attr_decl    prosecuzione allo stato 102
+
+
+stato 57
+
+   85 specifier: '[' . expr ']'
+
+    ID          shift e prosecuzione allo stato 24
+    INT_CONST   shift e prosecuzione allo stato 25
+    STR_CONST   shift e prosecuzione allo stato 26
+    BOOL_CONST  shift e prosecuzione allo stato 27
+    NOT         shift e prosecuzione allo stato 28
+    PROJECT     shift e prosecuzione allo stato 29
+    SELECT      shift e prosecuzione allo stato 30
+    EXISTS      shift e prosecuzione allo stato 31
+    ALL         shift e prosecuzione allo stato 32
+    UPDATE      shift e prosecuzione allo stato 33
+    EXTEND      shift e prosecuzione allo stato 34
+    RENAME      shift e prosecuzione allo stato 35
+    '('         shift e prosecuzione allo stato 36
+    '-'         shift e prosecuzione allo stato 37
+    '{'         shift e prosecuzione allo stato 38
+
+    expr          prosecuzione allo stato 103
+    bool_term     prosecuzione allo stato 40
+    comp_term     prosecuzione allo stato 41
+    low_term      prosecuzione allo stato 42
+    factor        prosecuzione allo stato 43
+    unary_op      prosecuzione allo stato 44
+    project_op    prosecuzione allo stato 45
+    select_op     prosecuzione allo stato 46
+    exists_op     prosecuzione allo stato 47
+    all_op        prosecuzione allo stato 48
+    extend_op     prosecuzione allo stato 49
+    update_op     prosecuzione allo stato 50
+    rename_op     prosecuzione allo stato 51
+    constant      prosecuzione allo stato 52
+    atomic_const  prosecuzione allo stato 53
+    table_const   prosecuzione allo stato 54
+
+
+stato 58
+
+   84 read_stat: READ specifier . ID
+
+    ID  shift e prosecuzione allo stato 104
+
+
+stato 59
+
+   87 write_stat: WRITE specifier . expr
+
+    ID          shift e prosecuzione allo stato 24
+    INT_CONST   shift e prosecuzione allo stato 25
+    STR_CONST   shift e prosecuzione allo stato 26
+    BOOL_CONST  shift e prosecuzione allo stato 27
+    NOT         shift e prosecuzione allo stato 28
+    PROJECT     shift e prosecuzione allo stato 29
+    SELECT      shift e prosecuzione allo stato 30
+    EXISTS      shift e prosecuzione allo stato 31
+    ALL         shift e prosecuzione allo stato 32
+    UPDATE      shift e prosecuzione allo stato 33
+    EXTEND      shift e prosecuzione allo stato 34
+    RENAME      shift e prosecuzione allo stato 35
+    '('         shift e prosecuzione allo stato 36
+    '-'         shift e prosecuzione allo stato 37
+    '{'         shift e prosecuzione allo stato 38
+
+    expr          prosecuzione allo stato 105
+    bool_term     prosecuzione allo stato 40
+    comp_term     prosecuzione allo stato 41
+    low_term      prosecuzione allo stato 42
+    factor        prosecuzione allo stato 43
+    unary_op      prosecuzione allo stato 44
+    project_op    prosecuzione allo stato 45
+    select_op     prosecuzione allo stato 46
+    exists_op     prosecuzione allo stato 47
+    all_op        prosecuzione allo stato 48
+    extend_op     prosecuzione allo stato 49
+    update_op     prosecuzione allo stato 50
+    rename_op     prosecuzione allo stato 51
+    constant      prosecuzione allo stato 52
+    atomic_const  prosecuzione allo stato 53
+    table_const   prosecuzione allo stato 54
+
+
+stato 60
+
+   22 assign_stat: ID '=' . expr
+
+    ID          shift e prosecuzione allo stato 24
+    INT_CONST   shift e prosecuzione allo stato 25
+    STR_CONST   shift e prosecuzione allo stato 26
+    BOOL_CONST  shift e prosecuzione allo stato 27
+    NOT         shift e prosecuzione allo stato 28
+    PROJECT     shift e prosecuzione allo stato 29
+    SELECT      shift e prosecuzione allo stato 30
+    EXISTS      shift e prosecuzione allo stato 31
+    ALL         shift e prosecuzione allo stato 32
+    UPDATE      shift e prosecuzione allo stato 33
+    EXTEND      shift e prosecuzione allo stato 34
+    RENAME      shift e prosecuzione allo stato 35
+    '('         shift e prosecuzione allo stato 36
+    '-'         shift e prosecuzione allo stato 37
+    '{'         shift e prosecuzione allo stato 38
+
+    expr          prosecuzione allo stato 106
+    bool_term     prosecuzione allo stato 40
+    comp_term     prosecuzione allo stato 41
+    low_term      prosecuzione allo stato 42
+    factor        prosecuzione allo stato 43
+    unary_op      prosecuzione allo stato 44
+    project_op    prosecuzione allo stato 45
+    select_op     prosecuzione allo stato 46
+    exists_op     prosecuzione allo stato 47
+    all_op        prosecuzione allo stato 48
+    extend_op     prosecuzione allo stato 49
+    update_op     prosecuzione allo stato 50
+    rename_op     prosecuzione allo stato 51
+    constant      prosecuzione allo stato 52
+    atomic_const  prosecuzione allo stato 53
+    table_const   prosecuzione allo stato 54
+
+
+stato 61
+
+    1 program: PROGRAM stat_list END .
+
+    $default  riduzione con la regola 1 (program)
+
+
+stato 62
+
+    2 stat_list: stat ';' . stat_list
+
+    IF       shift e prosecuzione allo stato 3
+    WHILE    shift e prosecuzione allo stato 4
+    INTEGER  shift e prosecuzione allo stato 5
+    STRING   shift e prosecuzione allo stato 6
+    BOOLEAN  shift e prosecuzione allo stato 7
+    TABLE    shift e prosecuzione allo stato 8
+    READ     shift e prosecuzione allo stato 9
+    WRITE    shift e prosecuzione allo stato 10
+    ID       shift e prosecuzione allo stato 11
+
+    stat_list    prosecuzione allo stato 107
+    stat         prosecuzione allo stato 13
+    def_stat     prosecuzione allo stato 14
+    type         prosecuzione allo stato 15
+    atomic_type  prosecuzione allo stato 16
+    table_type   prosecuzione allo stato 17
+    assign_stat  prosecuzione allo stato 18
+    if_stat      prosecuzione allo stato 19
+    while_stat   prosecuzione allo stato 20
+    read_stat    prosecuzione allo stato 21
+    write_stat   prosecuzione allo stato 22
+
+
+stato 63
+
+   11 id_list: ID . ',' id_list
+   12        | ID .
+
+    ','  shift e prosecuzione allo stato 108
+
+    $default  riduzione con la regola 12 (id_list)
+
+
+stato 64
+
+   10 def_stat: type id_list .
+
+    $default  riduzione con la regola 10 (def_stat)
+
+
+stato 65
+
+   58 project_op: PROJECT '[' . id_list ']'
+
+    ID  shift e prosecuzione allo stato 63
+
+    id_list  prosecuzione allo stato 109
+
+
+stato 66
+
+   59 select_op: SELECT '[' . expr ']'
+
+    ID          shift e prosecuzione allo stato 24
+    INT_CONST   shift e prosecuzione allo stato 25
+    STR_CONST   shift e prosecuzione allo stato 26
+    BOOL_CONST  shift e prosecuzione allo stato 27
+    NOT         shift e prosecuzione allo stato 28
+    PROJECT     shift e prosecuzione allo stato 29
+    SELECT      shift e prosecuzione allo stato 30
+    EXISTS      shift e prosecuzione allo stato 31
+    ALL         shift e prosecuzione allo stato 32
+    UPDATE      shift e prosecuzione allo stato 33
+    EXTEND      shift e prosecuzione allo stato 34
+    RENAME      shift e prosecuzione allo stato 35
+    '('         shift e prosecuzione allo stato 36
+    '-'         shift e prosecuzione allo stato 37
+    '{'         shift e prosecuzione allo stato 38
+
+    expr          prosecuzione allo stato 110
+    bool_term     prosecuzione allo stato 40
+    comp_term     prosecuzione allo stato 41
+    low_term      prosecuzione allo stato 42
+    factor        prosecuzione allo stato 43
+    unary_op      prosecuzione allo stato 44
+    project_op    prosecuzione allo stato 45
+    select_op     prosecuzione allo stato 46
+    exists_op     prosecuzione allo stato 47
+    all_op        prosecuzione allo stato 48
+    extend_op     prosecuzione allo stato 49
+    update_op     prosecuzione allo stato 50
+    rename_op     prosecuzione allo stato 51
+    constant      prosecuzione allo stato 52
+    atomic_const  prosecuzione allo stato 53
+    table_const   prosecuzione allo stato 54
+
+
+stato 67
+
+   60 exists_op: EXISTS '[' . expr ']'
+
+    ID          shift e prosecuzione allo stato 24
+    INT_CONST   shift e prosecuzione allo stato 25
+    STR_CONST   shift e prosecuzione allo stato 26
+    BOOL_CONST  shift e prosecuzione allo stato 27
+    NOT         shift e prosecuzione allo stato 28
+    PROJECT     shift e prosecuzione allo stato 29
+    SELECT      shift e prosecuzione allo stato 30
+    EXISTS      shift e prosecuzione allo stato 31
+    ALL         shift e prosecuzione allo stato 32
+    UPDATE      shift e prosecuzione allo stato 33
+    EXTEND      shift e prosecuzione allo stato 34
+    RENAME      shift e prosecuzione allo stato 35
+    '('         shift e prosecuzione allo stato 36
+    '-'         shift e prosecuzione allo stato 37
+    '{'         shift e prosecuzione allo stato 38
+
+    expr          prosecuzione allo stato 111
+    bool_term     prosecuzione allo stato 40
+    comp_term     prosecuzione allo stato 41
+    low_term      prosecuzione allo stato 42
+    factor        prosecuzione allo stato 43
+    unary_op      prosecuzione allo stato 44
+    project_op    prosecuzione allo stato 45
+    select_op     prosecuzione allo stato 46
+    exists_op     prosecuzione allo stato 47
+    all_op        prosecuzione allo stato 48
+    extend_op     prosecuzione allo stato 49
+    update_op     prosecuzione allo stato 50
+    rename_op     prosecuzione allo stato 51
+    constant      prosecuzione allo stato 52
+    atomic_const  prosecuzione allo stato 53
+    table_const   prosecuzione allo stato 54
+
+
+stato 68
+
+   61 all_op: ALL '[' . expr ']'
+
+    ID          shift e prosecuzione allo stato 24
+    INT_CONST   shift e prosecuzione allo stato 25
+    STR_CONST   shift e prosecuzione allo stato 26
+    BOOL_CONST  shift e prosecuzione allo stato 27
+    NOT         shift e prosecuzione allo stato 28
+    PROJECT     shift e prosecuzione allo stato 29
+    SELECT      shift e prosecuzione allo stato 30
+    EXISTS      shift e prosecuzione allo stato 31
+    ALL         shift e prosecuzione allo stato 32
+    UPDATE      shift e prosecuzione allo stato 33
+    EXTEND      shift e prosecuzione allo stato 34
+    RENAME      shift e prosecuzione allo stato 35
+    '('         shift e prosecuzione allo stato 36
+    '-'         shift e prosecuzione allo stato 37
+    '{'         shift e prosecuzione allo stato 38
+
+    expr          prosecuzione allo stato 112
+    bool_term     prosecuzione allo stato 40
+    comp_term     prosecuzione allo stato 41
+    low_term      prosecuzione allo stato 42
+    factor        prosecuzione allo stato 43
+    unary_op      prosecuzione allo stato 44
+    project_op    prosecuzione allo stato 45
+    select_op     prosecuzione allo stato 46
+    exists_op     prosecuzione allo stato 47
+    all_op        prosecuzione allo stato 48
+    extend_op     prosecuzione allo stato 49
+    update_op     prosecuzione allo stato 50
+    rename_op     prosecuzione allo stato 51
+    constant      prosecuzione allo stato 52
+    atomic_const  prosecuzione allo stato 53
+    table_const   prosecuzione allo stato 54
+
+
+stato 69
+
+   63 update_op: UPDATE '[' . ID '=' expr ']'
+
+    ID  shift e prosecuzione allo stato 113
+
+
+stato 70
+
+   62 extend_op: EXTEND '[' . atomic_type ID '=' expr ']'
+
+    INTEGER  shift e prosecuzione allo stato 5
+    STRING   shift e prosecuzione allo stato 6
+    BOOLEAN  shift e prosecuzione allo stato 7
+
+    atomic_type  prosecuzione allo stato 114
+
+
+stato 71
+
+   64 rename_op: RENAME '[' . id_list ']'
+
+    ID  shift e prosecuzione allo stato 63
+
+    id_list  prosecuzione allo stato 115
+
+
+stato 72
+
+   23 expr: expr . bool_op bool_term
+   45 factor: '(' expr . ')'
+
+    AND  shift e prosecuzione allo stato 80
+    OR   shift e prosecuzione allo stato 81
+    ')'  shift e prosecuzione allo stato 116
+
+    bool_op  prosecuzione allo stato 82
+
+
+stato 73
+
+   75 tuple_const: '(' . atomic_const_l ')'
+
+    INT_CONST   shift e prosecuzione allo stato 25
+    STR_CONST   shift e prosecuzione allo stato 26
+    BOOL_CONST  shift e prosecuzione allo stato 27
+
+    atomic_const    prosecuzione allo stato 117
+    atomic_const_l  prosecuzione allo stato 118
+
+
+stato 74
+
+   78 atomic_type_l: atomic_type . ',' atomic_type_l
+   79              | atomic_type .
+
+    ','  shift e prosecuzione allo stato 119
+
+    $default  riduzione con la regola 79 (atomic_type_l)
+
+
+stato 75
+
+   70 table_const: '{' table_instance . '}'
+
+    '}'  shift e prosecuzione allo stato 120
+
+
+stato 76
+
+   71 table_instance: tuple_list .
+
+    $default  riduzione con la regola 71 (table_instance)
+
+
+stato 77
+
+   73 tuple_list: tuple_const . ',' tuple_list
+   74           | tuple_const .
+
+    ','  shift e prosecuzione allo stato 121
+
+    $default  riduzione con la regola 74 (tuple_list)
+
+
+stato 78
+
+   72 table_instance: atomic_type_l .
+
+    $default  riduzione con la regola 72 (table_instance)
+
+
+stato 79
+
+   80 if_stat: IF expr THEN . stat_list else_part END
+
+    IF       shift e prosecuzione allo stato 3
+    WHILE    shift e prosecuzione allo stato 4
+    INTEGER  shift e prosecuzione allo stato 5
+    STRING   shift e prosecuzione allo stato 6
+    BOOLEAN  shift e prosecuzione allo stato 7
+    TABLE    shift e prosecuzione allo stato 8
+    READ     shift e prosecuzione allo stato 9
+    WRITE    shift e prosecuzione allo stato 10
+    ID       shift e prosecuzione allo stato 11
+
+    stat_list    prosecuzione allo stato 122
+    stat         prosecuzione allo stato 13
+    def_stat     prosecuzione allo stato 14
+    type         prosecuzione allo stato 15
+    atomic_type  prosecuzione allo stato 16
+    table_type   prosecuzione allo stato 17
+    assign_stat  prosecuzione allo stato 18
+    if_stat      prosecuzione allo stato 19
+    while_stat   prosecuzione allo stato 20
+    read_stat    prosecuzione allo stato 21
+    write_stat   prosecuzione allo stato 22
+
+
+stato 80
+
+   25 bool_op: AND .
+
+    $default  riduzione con la regola 25 (bool_op)
+
+
+stato 81
+
+   26 bool_op: OR .
+
+    $default  riduzione con la regola 26 (bool_op)
+
+
+stato 82
+
+   23 expr: expr bool_op . bool_term
+
+    ID          shift e prosecuzione allo stato 24
+    INT_CONST   shift e prosecuzione allo stato 25
+    STR_CONST   shift e prosecuzione allo stato 26
+    BOOL_CONST  shift e prosecuzione allo stato 27
+    NOT         shift e prosecuzione allo stato 28
+    PROJECT     shift e prosecuzione allo stato 29
+    SELECT      shift e prosecuzione allo stato 30
+    EXISTS      shift e prosecuzione allo stato 31
+    ALL         shift e prosecuzione allo stato 32
+    UPDATE      shift e prosecuzione allo stato 33
+    EXTEND      shift e prosecuzione allo stato 34
+    RENAME      shift e prosecuzione allo stato 35
+    '('         shift e prosecuzione allo stato 36
+    '-'         shift e prosecuzione allo stato 37
+    '{'         shift e prosecuzione allo stato 38
+
+    bool_term     prosecuzione allo stato 123
+    comp_term     prosecuzione allo stato 41
+    low_term      prosecuzione allo stato 42
+    factor        prosecuzione allo stato 43
+    unary_op      prosecuzione allo stato 44
+    project_op    prosecuzione allo stato 45
+    select_op     prosecuzione allo stato 46
+    exists_op     prosecuzione allo stato 47
+    all_op        prosecuzione allo stato 48
+    extend_op     prosecuzione allo stato 49
+    update_op     prosecuzione allo stato 50
+    rename_op     prosecuzione allo stato 51
+    constant      prosecuzione allo stato 52
+    atomic_const  prosecuzione allo stato 53
+    table_const   prosecuzione allo stato 54
+
+
+stato 83
+
+   29 comp_op: EQ .
+
+    $default  riduzione con la regola 29 (comp_op)
+
+
+stato 84
+
+   30 comp_op: NOT_EQ .
+
+    $default  riduzione con la regola 30 (comp_op)
+
+
+stato 85
+
+   32 comp_op: GET .
+
+    $default  riduzione con la regola 32 (comp_op)
+
+
+stato 86
+
+   34 comp_op: LET .
+
+    $default  riduzione con la regola 34 (comp_op)
+
+
+stato 87
+
+   31 comp_op: '>' .
+
+    $default  riduzione con la regola 31 (comp_op)
+
+
+stato 88
+
+   33 comp_op: '<' .
+
+    $default  riduzione con la regola 33 (comp_op)
+
+
+stato 89
+
+   37 low_bin_op: '+' .
+
+    $default  riduzione con la regola 37 (low_bin_op)
+
+
+stato 90
+
+   38 low_bin_op: '-' .
+
+    $default  riduzione con la regola 38 (low_bin_op)
+
+
+stato 91
+
+   27 bool_term: comp_term comp_op . comp_term
+
+    ID          shift e prosecuzione allo stato 24
+    INT_CONST   shift e prosecuzione allo stato 25
+    STR_CONST   shift e prosecuzione allo stato 26
+    BOOL_CONST  shift e prosecuzione allo stato 27
+    NOT         shift e prosecuzione allo stato 28
+    PROJECT     shift e prosecuzione allo stato 29
+    SELECT      shift e prosecuzione allo stato 30
+    EXISTS      shift e prosecuzione allo stato 31
+    ALL         shift e prosecuzione allo stato 32
+    UPDATE      shift e prosecuzione allo stato 33
+    EXTEND      shift e prosecuzione allo stato 34
+    RENAME      shift e prosecuzione allo stato 35
+    '('         shift e prosecuzione allo stato 36
+    '-'         shift e prosecuzione allo stato 37
+    '{'         shift e prosecuzione allo stato 38
+
+    comp_term     prosecuzione allo stato 124
+    low_term      prosecuzione allo stato 42
+    factor        prosecuzione allo stato 43
+    unary_op      prosecuzione allo stato 44
+    project_op    prosecuzione allo stato 45
+    select_op     prosecuzione allo stato 46
+    exists_op     prosecuzione allo stato 47
+    all_op        prosecuzione allo stato 48
+    extend_op     prosecuzione allo stato 49
+    update_op     prosecuzione allo stato 50
+    rename_op     prosecuzione allo stato 51
+    constant      prosecuzione allo stato 52
+    atomic_const  prosecuzione allo stato 53
+    table_const   prosecuzione allo stato 54
+
+
+stato 92
+
+   35 comp_term: comp_term low_bin_op . low_term
+
+    ID          shift e prosecuzione allo stato 24
+    INT_CONST   shift e prosecuzione allo stato 25
+    STR_CONST   shift e prosecuzione allo stato 26
+    BOOL_CONST  shift e prosecuzione allo stato 27
+    NOT         shift e prosecuzione allo stato 28
+    PROJECT     shift e prosecuzione allo stato 29
+    SELECT      shift e prosecuzione allo stato 30
+    EXISTS      shift e prosecuzione allo stato 31
+    ALL         shift e prosecuzione allo stato 32
+    UPDATE      shift e prosecuzione allo stato 33
+    EXTEND      shift e prosecuzione allo stato 34
+    RENAME      shift e prosecuzione allo stato 35
+    '('         shift e prosecuzione allo stato 36
+    '-'         shift e prosecuzione allo stato 37
+    '{'         shift e prosecuzione allo stato 38
+
+    low_term      prosecuzione allo stato 125
+    factor        prosecuzione allo stato 43
+    unary_op      prosecuzione allo stato 44
+    project_op    prosecuzione allo stato 45
+    select_op     prosecuzione allo stato 46
+    exists_op     prosecuzione allo stato 47
+    all_op        prosecuzione allo stato 48
+    extend_op     prosecuzione allo stato 49
+    update_op     prosecuzione allo stato 50
+    rename_op     prosecuzione allo stato 51
+    constant      prosecuzione allo stato 52
+    atomic_const  prosecuzione allo stato 53
+    table_const   prosecuzione allo stato 54
+
+
+stato 93
+
+   57 join_op: JOIN . '[' expr ']'
+
+    '['  shift e prosecuzione allo stato 126
+
+
+stato 94
+
+   41 high_bin_op: '*' .
+
+    $default  riduzione con la regola 41 (high_bin_op)
+
+
+stato 95
+
+   42 high_bin_op: '/' .
+
+    $default  riduzione con la regola 42 (high_bin_op)
+
+
+stato 96
+
+   39 low_term: low_term high_bin_op . factor
+
+    ID          shift e prosecuzione allo stato 24
+    INT_CONST   shift e prosecuzione allo stato 25
+    STR_CONST   shift e prosecuzione allo stato 26
+    BOOL_CONST  shift e prosecuzione allo stato 27
+    NOT         shift e prosecuzione allo stato 28
+    PROJECT     shift e prosecuzione allo stato 29
+    SELECT      shift e prosecuzione allo stato 30
+    EXISTS      shift e prosecuzione allo stato 31
+    ALL         shift e prosecuzione allo stato 32
+    UPDATE      shift e prosecuzione allo stato 33
+    EXTEND      shift e prosecuzione allo stato 34
+    RENAME      shift e prosecuzione allo stato 35
+    '('         shift e prosecuzione allo stato 36
+    '-'         shift e prosecuzione allo stato 37
+    '{'         shift e prosecuzione allo stato 38
+
+    factor        prosecuzione allo stato 127
+    unary_op      prosecuzione allo stato 44
+    project_op    prosecuzione allo stato 45
+    select_op     prosecuzione allo stato 46
+    exists_op     prosecuzione allo stato 47
+    all_op        prosecuzione allo stato 48
+    extend_op     prosecuzione allo stato 49
+    update_op     prosecuzione allo stato 50
+    rename_op     prosecuzione allo stato 51
+    constant      prosecuzione allo stato 52
+    atomic_const  prosecuzione allo stato 53
+    table_const   prosecuzione allo stato 54
+
+
+stato 97
+
+   43 high_bin_op: join_op .
+
+    $default  riduzione con la regola 43 (high_bin_op)
+
+
+stato 98
+
+   44 factor: unary_op factor .
+
+    $default  riduzione con la regola 44 (factor)
+
+
+stato 99
+
+   83 while_stat: WHILE expr DO . stat_list END
+
+    IF       shift e prosecuzione allo stato 3
+    WHILE    shift e prosecuzione allo stato 4
+    INTEGER  shift e prosecuzione allo stato 5
+    STRING   shift e prosecuzione allo stato 6
+    BOOLEAN  shift e prosecuzione allo stato 7
+    TABLE    shift e prosecuzione allo stato 8
+    READ     shift e prosecuzione allo stato 9
+    WRITE    shift e prosecuzione allo stato 10
+    ID       shift e prosecuzione allo stato 11
+
+    stat_list    prosecuzione allo stato 128
+    stat         prosecuzione allo stato 13
+    def_stat     prosecuzione allo stato 14
+    type         prosecuzione allo stato 15
+    atomic_type  prosecuzione allo stato 16
+    table_type   prosecuzione allo stato 17
+    assign_stat  prosecuzione allo stato 18
+    if_stat      prosecuzione allo stato 19
+    while_stat   prosecuzione allo stato 20
+    read_stat    prosecuzione allo stato 21
+    write_stat   prosecuzione allo stato 22
+
+
+stato 100
+
+   21 attr_decl: atomic_type . ID
+
+    ID  shift e prosecuzione allo stato 129
+
+
+stato 101
+
+   18 table_type: TABLE '(' attr_list . ')'
+
+    ')'  shift e prosecuzione allo stato 130
+
+
+stato 102
+
+   19 attr_list: attr_decl . ',' attr_list
+   20          | attr_decl .
+
+    ','  shift e prosecuzione allo stato 131
+
+    $default  riduzione con la regola 20 (attr_list)
+
+
+stato 103
+
+   23 expr: expr . bool_op bool_term
+   85 specifier: '[' expr . ']'
+
+    AND  shift e prosecuzione allo stato 80
+    OR   shift e prosecuzione allo stato 81
+    ']'  shift e prosecuzione allo stato 132
+
+    bool_op  prosecuzione allo stato 82
+
+
+stato 104
+
+   84 read_stat: READ specifier ID .
+
+    $default  riduzione con la regola 84 (read_stat)
+
+
+stato 105
+
+   23 expr: expr . bool_op bool_term
+   87 write_stat: WRITE specifier expr .
+
+    AND  shift e prosecuzione allo stato 80
+    OR   shift e prosecuzione allo stato 81
+
+    $default  riduzione con la regola 87 (write_stat)
+
+    bool_op  prosecuzione allo stato 82
+
+
+stato 106
+
+   22 assign_stat: ID '=' expr .
+   23 expr: expr . bool_op bool_term
+
+    AND  shift e prosecuzione allo stato 80
+    OR   shift e prosecuzione allo stato 81
+
+    $default  riduzione con la regola 22 (assign_stat)
+
+    bool_op  prosecuzione allo stato 82
+
+
+stato 107
+
+    2 stat_list: stat ';' stat_list .
+
+    $default  riduzione con la regola 2 (stat_list)
+
+
+stato 108
+
+   11 id_list: ID ',' . id_list
+
+    ID  shift e prosecuzione allo stato 63
+
+    id_list  prosecuzione allo stato 133
+
+
+stato 109
+
+   58 project_op: PROJECT '[' id_list . ']'
+
+    ']'  shift e prosecuzione allo stato 134
+
+
+stato 110
+
+   23 expr: expr . bool_op bool_term
+   59 select_op: SELECT '[' expr . ']'
+
+    AND  shift e prosecuzione allo stato 80
+    OR   shift e prosecuzione allo stato 81
+    ']'  shift e prosecuzione allo stato 135
+
+    bool_op  prosecuzione allo stato 82
+
+
+stato 111
+
+   23 expr: expr . bool_op bool_term
+   60 exists_op: EXISTS '[' expr . ']'
+
+    AND  shift e prosecuzione allo stato 80
+    OR   shift e prosecuzione allo stato 81
+    ']'  shift e prosecuzione allo stato 136
+
+    bool_op  prosecuzione allo stato 82
+
+
+stato 112
+
+   23 expr: expr . bool_op bool_term
+   61 all_op: ALL '[' expr . ']'
+
+    AND  shift e prosecuzione allo stato 80
+    OR   shift e prosecuzione allo stato 81
+    ']'  shift e prosecuzione allo stato 137
+
+    bool_op  prosecuzione allo stato 82
+
+
+stato 113
+
+   63 update_op: UPDATE '[' ID . '=' expr ']'
+
+    '='  shift e prosecuzione allo stato 138
+
+
+stato 114
+
+   62 extend_op: EXTEND '[' atomic_type . ID '=' expr ']'
+
+    ID  shift e prosecuzione allo stato 139
+
+
+stato 115
+
+   64 rename_op: RENAME '[' id_list . ']'
+
+    ']'  shift e prosecuzione allo stato 140
+
+
+stato 116
+
+   45 factor: '(' expr ')' .
+
+    $default  riduzione con la regola 45 (factor)
+
+
+stato 117
+
+   76 atomic_const_l: atomic_const . ',' atomic_const_l
+   77               | atomic_const .
+
+    ','  shift e prosecuzione allo stato 141
+
+    $default  riduzione con la regola 77 (atomic_const_l)
+
+
+stato 118
+
+   75 tuple_const: '(' atomic_const_l . ')'
+
+    ')'  shift e prosecuzione allo stato 142
+
+
+stato 119
+
+   78 atomic_type_l: atomic_type ',' . atomic_type_l
+
+    INTEGER  shift e prosecuzione allo stato 5
+    STRING   shift e prosecuzione allo stato 6
+    BOOLEAN  shift e prosecuzione allo stato 7
+
+    atomic_type    prosecuzione allo stato 74
+    atomic_type_l  prosecuzione allo stato 143
+
+
+stato 120
+
+   70 table_const: '{' table_instance '}' .
+
+    $default  riduzione con la regola 70 (table_const)
+
+
+stato 121
+
+   73 tuple_list: tuple_const ',' . tuple_list
+
+    '('  shift e prosecuzione allo stato 73
+
+    tuple_list   prosecuzione allo stato 144
+    tuple_const  prosecuzione allo stato 77
+
+
+stato 122
+
+   80 if_stat: IF expr THEN stat_list . else_part END
+
+    ELSE  shift e prosecuzione allo stato 145
+
+    $default  riduzione con la regola 82 (else_part)
+
+    else_part  prosecuzione allo stato 146
+
+
+stato 123
+
+   23 expr: expr bool_op bool_term .
+
+    $default  riduzione con la regola 23 (expr)
+
+
+stato 124
+
+   27 bool_term: comp_term comp_op comp_term .
+   35 comp_term: comp_term . low_bin_op low_term
+
+    '+'  shift e prosecuzione allo stato 89
+    '-'  shift e prosecuzione allo stato 90
+
+    $default  riduzione con la regola 27 (bool_term)
+
+    low_bin_op  prosecuzione allo stato 92
+
+
+stato 125
+
+   35 comp_term: comp_term low_bin_op low_term .
+   39 low_term: low_term . high_bin_op factor
+
+    JOIN  shift e prosecuzione allo stato 93
+    '*'   shift e prosecuzione allo stato 94
+    '/'   shift e prosecuzione allo stato 95
+
+    $default  riduzione con la regola 35 (comp_term)
+
+    high_bin_op  prosecuzione allo stato 96
+    join_op      prosecuzione allo stato 97
+
+
+stato 126
+
+   57 join_op: JOIN '[' . expr ']'
+
+    ID          shift e prosecuzione allo stato 24
+    INT_CONST   shift e prosecuzione allo stato 25
+    STR_CONST   shift e prosecuzione allo stato 26
+    BOOL_CONST  shift e prosecuzione allo stato 27
+    NOT         shift e prosecuzione allo stato 28
+    PROJECT     shift e prosecuzione allo stato 29
+    SELECT      shift e prosecuzione allo stato 30
+    EXISTS      shift e prosecuzione allo stato 31
+    ALL         shift e prosecuzione allo stato 32
+    UPDATE      shift e prosecuzione allo stato 33
+    EXTEND      shift e prosecuzione allo stato 34
+    RENAME      shift e prosecuzione allo stato 35
+    '('         shift e prosecuzione allo stato 36
+    '-'         shift e prosecuzione allo stato 37
+    '{'         shift e prosecuzione allo stato 38
+
+    expr          prosecuzione allo stato 147
+    bool_term     prosecuzione allo stato 40
+    comp_term     prosecuzione allo stato 41
+    low_term      prosecuzione allo stato 42
+    factor        prosecuzione allo stato 43
+    unary_op      prosecuzione allo stato 44
+    project_op    prosecuzione allo stato 45
+    select_op     prosecuzione allo stato 46
+    exists_op     prosecuzione allo stato 47
+    all_op        prosecuzione allo stato 48
+    extend_op     prosecuzione allo stato 49
+    update_op     prosecuzione allo stato 50
+    rename_op     prosecuzione allo stato 51
+    constant      prosecuzione allo stato 52
+    atomic_const  prosecuzione allo stato 53
+    table_const   prosecuzione allo stato 54
+
+
+stato 127
+
+   39 low_term: low_term high_bin_op factor .
+
+    $default  riduzione con la regola 39 (low_term)
+
+
+stato 128
+
+   83 while_stat: WHILE expr DO stat_list . END
+
+    END  shift e prosecuzione allo stato 148
+
+
+stato 129
+
+   21 attr_decl: atomic_type ID .
+
+    $default  riduzione con la regola 21 (attr_decl)
+
+
+stato 130
+
+   18 table_type: TABLE '(' attr_list ')' .
+
+    $default  riduzione con la regola 18 (table_type)
+
+
+stato 131
+
+   19 attr_list: attr_decl ',' . attr_list
+
+    INTEGER  shift e prosecuzione allo stato 5
+    STRING   shift e prosecuzione allo stato 6
+    BOOLEAN  shift e prosecuzione allo stato 7
+
+    atomic_type  prosecuzione allo stato 100
+    attr_list    prosecuzione allo stato 149
+    attr_decl    prosecuzione allo stato 102
+
+
+stato 132
+
+   85 specifier: '[' expr ']' .
+
+    $default  riduzione con la regola 85 (specifier)
+
+
+stato 133
+
+   11 id_list: ID ',' id_list .
+
+    $default  riduzione con la regola 11 (id_list)
+
+
+stato 134
+
+   58 project_op: PROJECT '[' id_list ']' .
+
+    $default  riduzione con la regola 58 (project_op)
+
+
+stato 135
+
+   59 select_op: SELECT '[' expr ']' .
+
+    $default  riduzione con la regola 59 (select_op)
+
+
+stato 136
+
+   60 exists_op: EXISTS '[' expr ']' .
+
+    $default  riduzione con la regola 60 (exists_op)
+
+
+stato 137
+
+   61 all_op: ALL '[' expr ']' .
+
+    $default  riduzione con la regola 61 (all_op)
+
+
+stato 138
+
+   63 update_op: UPDATE '[' ID '=' . expr ']'
+
+    ID          shift e prosecuzione allo stato 24
+    INT_CONST   shift e prosecuzione allo stato 25
+    STR_CONST   shift e prosecuzione allo stato 26
+    BOOL_CONST  shift e prosecuzione allo stato 27
+    NOT         shift e prosecuzione allo stato 28
+    PROJECT     shift e prosecuzione allo stato 29
+    SELECT      shift e prosecuzione allo stato 30
+    EXISTS      shift e prosecuzione allo stato 31
+    ALL         shift e prosecuzione allo stato 32
+    UPDATE      shift e prosecuzione allo stato 33
+    EXTEND      shift e prosecuzione allo stato 34
+    RENAME      shift e prosecuzione allo stato 35
+    '('         shift e prosecuzione allo stato 36
+    '-'         shift e prosecuzione allo stato 37
+    '{'         shift e prosecuzione allo stato 38
+
+    expr          prosecuzione allo stato 150
+    bool_term     prosecuzione allo stato 40
+    comp_term     prosecuzione allo stato 41
+    low_term      prosecuzione allo stato 42
+    factor        prosecuzione allo stato 43
+    unary_op      prosecuzione allo stato 44
+    project_op    prosecuzione allo stato 45
+    select_op     prosecuzione allo stato 46
+    exists_op     prosecuzione allo stato 47
+    all_op        prosecuzione allo stato 48
+    extend_op     prosecuzione allo stato 49
+    update_op     prosecuzione allo stato 50
+    rename_op     prosecuzione allo stato 51
+    constant      prosecuzione allo stato 52
+    atomic_const  prosecuzione allo stato 53
+    table_const   prosecuzione allo stato 54
+
+
+stato 139
+
+   62 extend_op: EXTEND '[' atomic_type ID . '=' expr ']'
+
+    '='  shift e prosecuzione allo stato 151
+
+
+stato 140
+
+   64 rename_op: RENAME '[' id_list ']' .
+
+    $default  riduzione con la regola 64 (rename_op)
+
+
+stato 141
+
+   76 atomic_const_l: atomic_const ',' . atomic_const_l
+
+    INT_CONST   shift e prosecuzione allo stato 25
+    STR_CONST   shift e prosecuzione allo stato 26
+    BOOL_CONST  shift e prosecuzione allo stato 27
+
+    atomic_const    prosecuzione allo stato 117
+    atomic_const_l  prosecuzione allo stato 152
+
+
+stato 142
+
+   75 tuple_const: '(' atomic_const_l ')' .
+
+    $default  riduzione con la regola 75 (tuple_const)
+
+
+stato 143
+
+   78 atomic_type_l: atomic_type ',' atomic_type_l .
+
+    $default  riduzione con la regola 78 (atomic_type_l)
+
+
+stato 144
+
+   73 tuple_list: tuple_const ',' tuple_list .
+
+    $default  riduzione con la regola 73 (tuple_list)
+
+
+stato 145
+
+   81 else_part: ELSE . stat_list
+
+    IF       shift e prosecuzione allo stato 3
+    WHILE    shift e prosecuzione allo stato 4
+    INTEGER  shift e prosecuzione allo stato 5
+    STRING   shift e prosecuzione allo stato 6
+    BOOLEAN  shift e prosecuzione allo stato 7
+    TABLE    shift e prosecuzione allo stato 8
+    READ     shift e prosecuzione allo stato 9
+    WRITE    shift e prosecuzione allo stato 10
+    ID       shift e prosecuzione allo stato 11
+
+    stat_list    prosecuzione allo stato 153
+    stat         prosecuzione allo stato 13
+    def_stat     prosecuzione allo stato 14
+    type         prosecuzione allo stato 15
+    atomic_type  prosecuzione allo stato 16
+    table_type   prosecuzione allo stato 17
+    assign_stat  prosecuzione allo stato 18
+    if_stat      prosecuzione allo stato 19
+    while_stat   prosecuzione allo stato 20
+    read_stat    prosecuzione allo stato 21
+    write_stat   prosecuzione allo stato 22
+
+
+stato 146
+
+   80 if_stat: IF expr THEN stat_list else_part . END
+
+    END  shift e prosecuzione allo stato 154
+
+
+stato 147
+
+   23 expr: expr . bool_op bool_term
+   57 join_op: JOIN '[' expr . ']'
+
+    AND  shift e prosecuzione allo stato 80
+    OR   shift e prosecuzione allo stato 81
+    ']'  shift e prosecuzione allo stato 155
+
+    bool_op  prosecuzione allo stato 82
+
+
+stato 148
+
+   83 while_stat: WHILE expr DO stat_list END .
+
+    $default  riduzione con la regola 83 (while_stat)
+
+
+stato 149
+
+   19 attr_list: attr_decl ',' attr_list .
+
+    $default  riduzione con la regola 19 (attr_list)
+
+
+stato 150
+
+   23 expr: expr . bool_op bool_term
+   63 update_op: UPDATE '[' ID '=' expr . ']'
+
+    AND  shift e prosecuzione allo stato 80
+    OR   shift e prosecuzione allo stato 81
+    ']'  shift e prosecuzione allo stato 156
+
+    bool_op  prosecuzione allo stato 82
+
+
+stato 151
+
+   62 extend_op: EXTEND '[' atomic_type ID '=' . expr ']'
+
+    ID          shift e prosecuzione allo stato 24
+    INT_CONST   shift e prosecuzione allo stato 25
+    STR_CONST   shift e prosecuzione allo stato 26
+    BOOL_CONST  shift e prosecuzione allo stato 27
+    NOT         shift e prosecuzione allo stato 28
+    PROJECT     shift e prosecuzione allo stato 29
+    SELECT      shift e prosecuzione allo stato 30
+    EXISTS      shift e prosecuzione allo stato 31
+    ALL         shift e prosecuzione allo stato 32
+    UPDATE      shift e prosecuzione allo stato 33
+    EXTEND      shift e prosecuzione allo stato 34
+    RENAME      shift e prosecuzione allo stato 35
+    '('         shift e prosecuzione allo stato 36
+    '-'         shift e prosecuzione allo stato 37
+    '{'         shift e prosecuzione allo stato 38
+
+    expr          prosecuzione allo stato 157
+    bool_term     prosecuzione allo stato 40
+    comp_term     prosecuzione allo stato 41
+    low_term      prosecuzione allo stato 42
+    factor        prosecuzione allo stato 43
+    unary_op      prosecuzione allo stato 44
+    project_op    prosecuzione allo stato 45
+    select_op     prosecuzione allo stato 46
+    exists_op     prosecuzione allo stato 47
+    all_op        prosecuzione allo stato 48
+    extend_op     prosecuzione allo stato 49
+    update_op     prosecuzione allo stato 50
+    rename_op     prosecuzione allo stato 51
+    constant      prosecuzione allo stato 52
+    atomic_const  prosecuzione allo stato 53
+    table_const   prosecuzione allo stato 54
+
+
+stato 152
+
+   76 atomic_const_l: atomic_const ',' atomic_const_l .
+
+    $default  riduzione con la regola 76 (atomic_const_l)
+
+
+stato 153
+
+   81 else_part: ELSE stat_list .
+
+    $default  riduzione con la regola 81 (else_part)
+
+
+stato 154
+
+   80 if_stat: IF expr THEN stat_list else_part END .
+
+    $default  riduzione con la regola 80 (if_stat)
+
+
+stato 155
+
+   57 join_op: JOIN '[' expr ']' .
+
+    $default  riduzione con la regola 57 (join_op)
+
+
+stato 156
+
+   63 update_op: UPDATE '[' ID '=' expr ']' .
+
+    $default  riduzione con la regola 63 (update_op)
+
+
+stato 157
+
+   23 expr: expr . bool_op bool_term
+   62 extend_op: EXTEND '[' atomic_type ID '=' expr . ']'
+
+    AND  shift e prosecuzione allo stato 80
+    OR   shift e prosecuzione allo stato 81
+    ']'  shift e prosecuzione allo stato 158
+
+    bool_op  prosecuzione allo stato 82
+
+
+stato 158
+
+   62 extend_op: EXTEND '[' atomic_type ID '=' expr ']' .
+
+    $default  riduzione con la regola 62 (extend_op)
