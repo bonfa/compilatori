@@ -236,3 +236,74 @@ write_stat 	: WRITE specifier expr  {	$$ = non_term_node(N_WRITE_STAT);
 
 %%
 
+int main(){
+	int result;
+	
+	yyin = stdin;
+	if ((result = yyparse())==0)
+		tree_print(root,0);
+	return(result);		
+}
+
+
+yyerror() {
+  fprintf(stderr, "Line %d: syntax error on symbol \"%s\"\n",line, yytext);
+  exit(­-1);
+}
+
+
+
+/*Crea un nodo di tipo non_terminale.
+  Chiama la funzione new_node e assegna al campo value.ival il tipo di terminale*/	
+pNode non_term_node(Nonterminal nonterm){
+	pNode p = new_node(T_NONTERMINAL);
+	p->value.ival = nonterm;
+	return p;
+}
+
+
+/*Crea un nodo di tipo id.
+  Chiama la funzione new_node e assegna al campo value.sval il nome dell'id*/
+pNode id_node(){
+	pNode p = new_node(T_ID);
+	p->value.sval = lexval.sval;
+	return p;
+}
+
+/*Crea un nodo di tipo str_const.
+  Chiama la funzione new_node e assegna al campo value.sval la stringa*/
+pNode str_const_node(){
+	pNode p = new_node(T_STRCONST);
+	p->value.sval = lexval.sval;
+	return p;
+}
+
+
+/*Crea un nodo di tipo int_const.
+  Chiama la funzione new_node e assegna al campo value.ival il valore*/
+pNode int_const_node(){
+	pNode p = new_node(T_INTCONST);
+	p->value.ival = lexval.ival;
+	return p;
+}
+
+
+/*Crea un nodo di tipo bool_const.
+  Chiama la funzione new_node e assegna al campo value.ival il valore*/
+pNode bool_const_node(){
+	pNode p = new_node(T_BOOLCONST);
+	p->value.ival = lexval.ival;
+	return p;
+}
+
+
+/*Crea un nodo di tipo keyword
+  Questi nodi rappresentano anche gli operatori (tutti i binari e il '-' e il 'not' unari.
+  Gli altri operatori unari non hanno bisogno di essere definiti con un tipo in quanto hanno un non_terminale associato.*/
+pNode key_node(Typenode keyword){
+	pNode p = new_node(keyword);
+	return p;
+}
+
+
+
