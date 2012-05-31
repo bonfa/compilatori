@@ -1,29 +1,21 @@
 %{
-#include <def.h>
+#include "def.h"
 #define YYSTYPE pNode
-extern *char yytext;
+extern char *yytext;
 extern Value lexval;
 extern int line;
 extern FILE *yyin;
 pNode root = NULL;
 %}
-%token IF THEN ELSE WHILE DO END 
-%token INTEGER STRING BOOLEAN TABLE	
-%token READ WRITE
-%token ID
-%token BOOL_OP UNARY_OP HIGH_BIN_OP LOW_BIN_OP COMP_OP
-%token INT_CONST STR_CONST BOOL_CONST
-%token AND OR NOT
-%token PROJECT SELECT EXISTS ALL UPDATE EXTEND RENAME JOIN
-%token PROGRAM
-%token EQ NOT_EQ GET LET
-%token ASSIGN END_OF_FILE
+
+%token IF THEN ELSE WHILE DO END INTEGER STRING BOOLEAN TABLE READ WRITE ID BOOL_OP UNARY_OP HIGH_BIN_OP LOW_BIN_OP COMP_OP INT_CONST STR_CONST BOOL_CONST AND OR NOT PROJECT SELECT EXISTS ALL UPDATE EXTEND RENAME JOIN PROGRAM EQ NOT_EQ GET LET ASSIGN END_OF_FILE
 %token ERROR
 
 %%
-program 	: PROGRAM stat_list END {	root = non_term_node((N_PROGRAM); 
+
+program 	: PROGRAM stat_list END {	root = non_term_node(N_PROGRAM); 
 						root->child = non_term_node(N_STAT_LIST); 
-						root->child->child = $2);
+						root->child->child = $2;
 					}
 		;
 stat_list	: stat ';' stat_list {$$ = $1; $1->brother = $3;}
@@ -178,12 +170,12 @@ atomic_const 	: INT_CONST {$$ = non_term_node(N_ATOMIC_CONST); $$->child = int_c
 		| STR_CONST {$$ = non_term_node(N_ATOMIC_CONST); $$->child = str_const_node();}
 		| BOOL_CONST {$$ = non_term_node(N_ATOMIC_CONST); $$->child = bool_const_node();}
 		;
-table_const 	: '{' table_instance '}' { $$ = non_terminal_node(N_TABLE_CONST); $$->child = $1; }
+table_const 	: '{' table_instance '}' { $$ = non_term_node(N_TABLE_CONST); $$->child = $1; }
 		;
-table_instance	: tuple_list  {$$ = non_terminal_node(N_TUPLE_LIST); $$->child = $1; }
-		| atomic_type_l { $$ = non_terminal_node(N_ATOMIC_TYPE_LIST); $$->child = $1; }
+table_instance	: tuple_list  {$$ = non_term_node(N_TUPLE_LIST); $$->child = $1; }
+		| atomic_type_l { $$ = non_term_node(N_ATOMIC_TYPE_LIST); $$->child = $1; }
 		;
-tuple_list 	: tuple_const ',' tuple_list {$$ = non_terminal_node(N_TUPLE_CONST); $$->brother = $3; }
+tuple_list 	: tuple_const ',' tuple_list {$$ = non_term_node(N_TUPLE_CONST); $$->brother = $3; }
 		| tuple_const {$$ = $1;}
 		;
 tuple_const	: '(' atomic_const_l ')'  {$$ = non_term_node(N_TUPLE_CONST); $$->child = $2;}
@@ -202,9 +194,9 @@ if_stat 	: IF expr THEN stat_list else_part END {$$ = non_term_node(N_IF_STAT);
 							$$->child->brother->brother = $5;
 						       }
 		;
-else_part 	: ELSE stat_list {	$$ = non_term_node(N_ELSE_PART); 
-					$$->child = non_term_node(N_STAT_LIST); 
-					$$->child->child = $2;
+else_part 	: ELSE stat_list {	 
+					$$ = non_term_node(N_STAT_LIST); 
+					$$->child = $2;
 				 } 
 		| {$$ = NULL; }
 		;
@@ -228,7 +220,7 @@ specifier 	: '[' expr ']' {	$$ = non_term_node(N_SPECIFIER);
 		| {$$ = NULL; }
 		; 
 write_stat 	: WRITE specifier expr  {	$$ = non_term_node(N_WRITE_STAT); 
-						$$->child = $1
+						$$->child = $1;
 						$1->brother = non_term_node(N_EXPR);				
 						$1->brother->child = $3;			
 					}
@@ -236,22 +228,18 @@ write_stat 	: WRITE specifier expr  {	$$ = non_term_node(N_WRITE_STAT);
 
 %%
 
-int main(){
-	int result;
-	
-	yyin = stdin;
-	if ((result = yyparse())==0)
-		tree_print(root,0);
-	return(result);		
+/*Funzione per la creazione di un nodo generico.
+  Crea il nodo e annulla i puntatori al figlio e al fratello
+*/
+pNode new_node(Typenode type_node){
+	pNode p;
+
+	p = (pNode) malloc(sizeof(Node));
+	p->type = type_node;
+	p->child = NULL;
+	p->brother = NULL;
+	return p;
 }
-
-
-yyerror() {
-  fprintf(stderr, "Line %d: syntax error on symbol \"%s\"\n",line, yytext);
-  exit(­-1);
-}
-
-
 
 /*Crea un nodo di tipo non_terminale.
   Chiama la funzione new_node e assegna al campo value.ival il tipo di terminale*/	
@@ -306,4 +294,19 @@ pNode key_node(Typenode keyword){
 }
 
 
+
+int main(){
+	int result;
+	
+	yyin = stdin;
+	if ((result = yyparse())==0)
+		tree_print(root,0);
+	return(result);		
+}
+
+
+yyerror() {
+  fprintf(stderr, "Line %d: syntax error on symbol \"%s\"\n",line, yytext);
+  exit(-1);
+}
 
