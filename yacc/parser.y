@@ -21,9 +21,12 @@ pNode root = NULL;
 %token ERROR
 
 %%
-program 	: PROGRAM stat_list END {root = non_term_node((N_PROGRAM); root->child = $2);}
+program 	: PROGRAM stat_list END {	root = non_term_node((N_PROGRAM); 
+						root->child = non_term_node(N_STAT_LIST); 
+						root->child->child = $2);
+					}
 		;
-stat_list	: stat ';' stat_list {$$ = $1; $1->brother = $2;}
+stat_list	: stat ';' stat_list {$$ = $1; $1->brother = $3;}
 	 	| stat {$$ = $1;}
 		;
 stat 		: def_stat {$$ = non_term_node(N_STAT); $$->child = $1; }
@@ -35,7 +38,7 @@ stat 		: def_stat {$$ = non_term_node(N_STAT); $$->child = $1; }
 		;
 def_stat 	: type id_list  {$$ = non_term_node(N_DEF_STAT); $$->child = $1; $1->brother = $2; }
 		;
-id_list		: ID {$$ = id_node();} ',' id_list {$$ = non_term_node(N_ID_LIST); $$->child = $1; $1->brother = $3; }
+id_list		: ID {$$ = id_node();} ',' id_list {$$ = non_term_node(N_ID_LIST); $$->child = $2; $2->brother = $4; }
 		| ID {$$ = id_node();}
 		;
 type		: atomic_type { $$ = non_term_node(N_TYPE); $$->child = $1; }
@@ -45,33 +48,49 @@ atomic_type	: INTEGER {$$ = non_term_node(N_ATOMIC_TYPE); $$->child = key_node(T
 		| STRING {$$ = non_term_node(N_ATOMIC_TYPE); $$->child = key_node(T_STRING);}
 		| BOOLEAN {$$ = non_term_node(N_ATOMIC_TYPE); $$->child = key_node(T_BOOLEAN);}
 		;
-table_type	: TABLE '(' attr_list ')' { $$ = non_term_node(N_TABLE_TYPE); $$->child = $1; }
+table_type	: TABLE '(' attr_list ')' { 	$$ = non_term_node(N_TABLE_TYPE); 
+						$$->child = non_term_node(N_ATTR_LIST); 
+						$$->child->child = $3;
+					  }
 		;
-attr_list	: attr_decl ',' attr_list { $$ = $1; $1->brother =  }
+attr_list	: attr_decl ',' attr_list { $$ = $1; $1->brother = $3;  }
 		| attr_decl { $$ = $1; }
 		;
-attr_decl	: atomic_type ID
+attr_decl	: atomic_type ID {$$ = non_term_node(N_ATTR_DECL); $$->child = $1; $1->brother = id_node(); }
 		;
-assign_stat	: ID '=' expr
+assign_stat	: ID {$$ = id_node();} '=' expr {	$$ = non_term_node(N_ASSIGN_STAT); 
+							$$->child = $2; 						
+							$2->brother = non_term_node(N_EXPR);
+							$2->brother->child =  $4;
+						}
 		;
-expr		: expr bool_op bool_term
-		| bool_term
+expr		: expr bool_op bool_term {$$ = $1; $1->brother = $2; $2->brother = $3; }
+		| bool_term {$$ = $1; }
 		;
-bool_op		: AND
-		| OR
+bool_op		: AND { $$ = key_node(T_AND);}
+		| OR { $$ = key_node(T_OR);}
 		;
-bool_term	: comp_term comp_op comp_term
-		| comp_term
+bool_term	: comp_term comp_op comp_term {	$$ = non_term_node(N_BOOL_TERM); 
+						$$->child = non_term_node(N_COMP_TERM);
+						$$->child->child = $1;
+						$$->child->brother = $2;
+						$2->brother = non_term_node(N_COMP_TERM);
+						$2->brother->child = $3;
+						}
+		| comp_term { 	$$ = non_term_node(N_BOOL_TERM);  
+				$$->child = non_term_node(N_COMP_TERM);
+				$$->child->child = $1;
+			    }
 		;
-comp_op		: EQ 
-		| NOT_EQ 
-		| '>'
-		| GET
-		| '<' 
-		| LET
+comp_op		: EQ {$$ = key_node(T_EQ);}
+		| NOT_EQ {$$ = key_node(T_NOT_EQ);}
+		| '>' {$$ = key_node(T_GT);}
+		| GET {$$ = key_node(T_GET);}
+		| '<' {$$ = key_node(T_LT);}
+		| LET {$$ = key_node(T_LET);}
 		;
-comp_term	: comp_term low_bin_op low_term
-		| low_term
+comp_term	: comp_term low_bin_op low_term { }
+		| low_term  {}
 		;
 low_bin_op	: '+'
 		| '-'
