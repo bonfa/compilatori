@@ -5,7 +5,6 @@ Terminals unused in grammar
    HIGH_BIN_OP
    LOW_BIN_OP
    COMP_OP
-   ASSIGN
    END_OF_FILE
    ERROR
 
@@ -49,7 +48,7 @@ Grammatica
 
    23 @2: /* vuoto */
 
-   24 assign_stat: ID @2 '=' expr
+   24 assign_stat: ID @2 ASSIGN expr
 
    25 expr: expr bool_op bool_term
    26     | bool_term
@@ -111,7 +110,7 @@ Grammatica
 
    66 @4: /* vuoto */
 
-   67 update_op: UPDATE '[' ID @4 '=' expr ']'
+   67 update_op: UPDATE '[' ID @4 ASSIGN expr ']'
 
    68 rename_op: RENAME '[' id_list ']'
 
@@ -145,12 +144,14 @@ Grammatica
 
    87 while_stat: WHILE expr DO stat_list END
 
-   88 read_stat: READ specifier ID
+   88 @5: /* vuoto */
 
-   89 specifier: '[' expr ']'
-   90          | /* vuoto */
+   89 read_stat: READ specifier ID @5
 
-   91 write_stat: WRITE specifier expr
+   90 specifier: '[' expr ']'
+   91          | /* vuoto */
+
+   92 write_stat: WRITE specifier expr
 
 
 Simboli terminali e regole in cui appaiono
@@ -165,10 +166,10 @@ $end (0) 0
 '/' (47) 44
 ';' (59) 2
 '<' (60) 35
-'=' (61) 24 65 67
+'=' (61) 65
 '>' (62) 33
-'[' (91) 59 60 61 62 63 65 67 68 89
-']' (93) 59 60 61 62 63 65 67 68 89
+'[' (91) 59 60 61 62 63 65 67 68 90
+']' (93) 59 60 61 62 63 65 67 68 90
 '{' (123) 74
 '}' (125) 74
 error (256)
@@ -182,9 +183,9 @@ INTEGER (264) 16
 STRING (265) 17
 BOOLEAN (266) 18
 TABLE (267) 19
-READ (268) 88
-WRITE (269) 91
-ID (270) 12 13 22 24 48 65 67 88
+READ (268) 89
+WRITE (269) 92
+ID (270) 12 13 22 24 48 65 67 89
 BOOL_OP (271)
 UNARY_OP (272)
 HIGH_BIN_OP (273)
@@ -209,7 +210,7 @@ EQ (291) 31
 NOT_EQ (292) 32
 GET (293) 34
 LET (294) 36
-ASSIGN (295)
+ASSIGN (295) 24 67
 END_OF_FILE (296)
 ERROR (297)
 
@@ -246,7 +247,7 @@ assign_stat (70)
     nel primo membro: 23, nel secondo membro: 24
 expr (72)
     nel primo membro: 25 26, nel secondo membro: 24 25 47 59 61 62
-    63 65 67 84 87 89 91
+    63 65 67 84 87 90 92
 bool_op (73)
     nel primo membro: 27 28, nel secondo membro: 25
 bool_term (74)
@@ -309,11 +310,13 @@ else_part (101)
 while_stat (102)
     nel primo membro: 87, nel secondo membro: 7
 read_stat (103)
-    nel primo membro: 88, nel secondo membro: 8
-specifier (104)
-    nel primo membro: 89 90, nel secondo membro: 88 91
-write_stat (105)
-    nel primo membro: 91, nel secondo membro: 9
+    nel primo membro: 89, nel secondo membro: 8
+@5 (104)
+    nel primo membro: 88, nel secondo membro: 89
+specifier (105)
+    nel primo membro: 90 91, nel secondo membro: 89 92
+write_stat (106)
+    nel primo membro: 92, nel secondo membro: 9
 
 
 stato 0
@@ -465,29 +468,29 @@ stato 8
 
 stato 9
 
-   88 read_stat: READ . specifier ID
+   89 read_stat: READ . specifier ID @5
 
     '['  shift e prosecuzione allo stato 57
 
-    $default  riduzione con la regola 90 (specifier)
+    $default  riduzione con la regola 91 (specifier)
 
     specifier  prosecuzione allo stato 58
 
 
 stato 10
 
-   91 write_stat: WRITE . specifier expr
+   92 write_stat: WRITE . specifier expr
 
     '['  shift e prosecuzione allo stato 57
 
-    $default  riduzione con la regola 90 (specifier)
+    $default  riduzione con la regola 91 (specifier)
 
     specifier  prosecuzione allo stato 59
 
 
 stato 11
 
-   24 assign_stat: ID . @2 '=' expr
+   24 assign_stat: ID . @2 ASSIGN expr
 
     $default  riduzione con la regola 23 (@2)
 
@@ -648,7 +651,7 @@ stato 32
 
 stato 33
 
-   67 update_op: UPDATE . '[' ID @4 '=' expr ']'
+   67 update_op: UPDATE . '[' ID @4 ASSIGN expr ']'
 
     '['  shift e prosecuzione allo stato 69
 
@@ -921,7 +924,7 @@ stato 56
 
 stato 57
 
-   89 specifier: '[' . expr ']'
+   90 specifier: '[' . expr ']'
 
     ID          shift e prosecuzione allo stato 24
     INT_CONST   shift e prosecuzione allo stato 25
@@ -959,14 +962,14 @@ stato 57
 
 stato 58
 
-   88 read_stat: READ specifier . ID
+   89 read_stat: READ specifier . ID @5
 
     ID  shift e prosecuzione allo stato 104
 
 
 stato 59
 
-   91 write_stat: WRITE specifier . expr
+   92 write_stat: WRITE specifier . expr
 
     ID          shift e prosecuzione allo stato 24
     INT_CONST   shift e prosecuzione allo stato 25
@@ -1004,9 +1007,9 @@ stato 59
 
 stato 60
 
-   24 assign_stat: ID @2 . '=' expr
+   24 assign_stat: ID @2 . ASSIGN expr
 
-    '='  shift e prosecuzione allo stato 106
+    ASSIGN  shift e prosecuzione allo stato 106
 
 
 stato 61
@@ -1186,7 +1189,7 @@ stato 68
 
 stato 69
 
-   67 update_op: UPDATE '[' . ID @4 '=' expr ']'
+   67 update_op: UPDATE '[' . ID @4 ASSIGN expr ']'
 
     ID  shift e prosecuzione allo stato 113
 
@@ -1604,7 +1607,7 @@ stato 102
 stato 103
 
    25 expr: expr . bool_op bool_term
-   89 specifier: '[' expr . ']'
+   90 specifier: '[' expr . ']'
 
     AND  shift e prosecuzione allo stato 80
     OR   shift e prosecuzione allo stato 81
@@ -1615,27 +1618,29 @@ stato 103
 
 stato 104
 
-   88 read_stat: READ specifier ID .
+   89 read_stat: READ specifier ID . @5
 
-    $default  riduzione con la regola 88 (read_stat)
+    $default  riduzione con la regola 88 (@5)
+
+    @5  prosecuzione allo stato 133
 
 
 stato 105
 
    25 expr: expr . bool_op bool_term
-   91 write_stat: WRITE specifier expr .
+   92 write_stat: WRITE specifier expr .
 
     AND  shift e prosecuzione allo stato 80
     OR   shift e prosecuzione allo stato 81
 
-    $default  riduzione con la regola 91 (write_stat)
+    $default  riduzione con la regola 92 (write_stat)
 
     bool_op  prosecuzione allo stato 82
 
 
 stato 106
 
-   24 assign_stat: ID @2 '=' . expr
+   24 assign_stat: ID @2 ASSIGN . expr
 
     ID          shift e prosecuzione allo stato 24
     INT_CONST   shift e prosecuzione allo stato 25
@@ -1653,7 +1658,7 @@ stato 106
     '-'         shift e prosecuzione allo stato 37
     '{'         shift e prosecuzione allo stato 38
 
-    expr          prosecuzione allo stato 133
+    expr          prosecuzione allo stato 134
     bool_term     prosecuzione allo stato 40
     comp_term     prosecuzione allo stato 41
     low_term      prosecuzione allo stato 42
@@ -1682,14 +1687,14 @@ stato 108
 
    12 id_list: ID @1 . ',' id_list
 
-    ','  shift e prosecuzione allo stato 134
+    ','  shift e prosecuzione allo stato 135
 
 
 stato 109
 
    60 project_op: PROJECT '[' id_list . ']'
 
-    ']'  shift e prosecuzione allo stato 135
+    ']'  shift e prosecuzione allo stato 136
 
 
 stato 110
@@ -1699,7 +1704,7 @@ stato 110
 
     AND  shift e prosecuzione allo stato 80
     OR   shift e prosecuzione allo stato 81
-    ']'  shift e prosecuzione allo stato 136
+    ']'  shift e prosecuzione allo stato 137
 
     bool_op  prosecuzione allo stato 82
 
@@ -1711,7 +1716,7 @@ stato 111
 
     AND  shift e prosecuzione allo stato 80
     OR   shift e prosecuzione allo stato 81
-    ']'  shift e prosecuzione allo stato 137
+    ']'  shift e prosecuzione allo stato 138
 
     bool_op  prosecuzione allo stato 82
 
@@ -1723,32 +1728,32 @@ stato 112
 
     AND  shift e prosecuzione allo stato 80
     OR   shift e prosecuzione allo stato 81
-    ']'  shift e prosecuzione allo stato 138
+    ']'  shift e prosecuzione allo stato 139
 
     bool_op  prosecuzione allo stato 82
 
 
 stato 113
 
-   67 update_op: UPDATE '[' ID . @4 '=' expr ']'
+   67 update_op: UPDATE '[' ID . @4 ASSIGN expr ']'
 
     $default  riduzione con la regola 66 (@4)
 
-    @4  prosecuzione allo stato 139
+    @4  prosecuzione allo stato 140
 
 
 stato 114
 
    65 extend_op: EXTEND '[' atomic_type . ID @3 '=' expr ']'
 
-    ID  shift e prosecuzione allo stato 140
+    ID  shift e prosecuzione allo stato 141
 
 
 stato 115
 
    68 rename_op: RENAME '[' id_list . ']'
 
-    ']'  shift e prosecuzione allo stato 141
+    ']'  shift e prosecuzione allo stato 142
 
 
 stato 116
@@ -1763,7 +1768,7 @@ stato 117
    80 atomic_const_l: atomic_const . ',' atomic_const_l
    81               | atomic_const .
 
-    ','  shift e prosecuzione allo stato 142
+    ','  shift e prosecuzione allo stato 143
 
     $default  riduzione con la regola 81 (atomic_const_l)
 
@@ -1772,7 +1777,7 @@ stato 118
 
    79 tuple_const: '(' atomic_const_l . ')'
 
-    ')'  shift e prosecuzione allo stato 143
+    ')'  shift e prosecuzione allo stato 144
 
 
 stato 119
@@ -1784,7 +1789,7 @@ stato 119
     BOOLEAN  shift e prosecuzione allo stato 7
 
     atomic_type    prosecuzione allo stato 74
-    atomic_type_l  prosecuzione allo stato 144
+    atomic_type_l  prosecuzione allo stato 145
 
 
 stato 120
@@ -1800,7 +1805,7 @@ stato 121
 
     '('  shift e prosecuzione allo stato 73
 
-    tuple_list   prosecuzione allo stato 145
+    tuple_list   prosecuzione allo stato 146
     tuple_const  prosecuzione allo stato 77
 
 
@@ -1808,11 +1813,11 @@ stato 122
 
    84 if_stat: IF expr THEN stat_list . else_part END
 
-    ELSE  shift e prosecuzione allo stato 146
+    ELSE  shift e prosecuzione allo stato 147
 
     $default  riduzione con la regola 86 (else_part)
 
-    else_part  prosecuzione allo stato 147
+    else_part  prosecuzione allo stato 148
 
 
 stato 123
@@ -1870,7 +1875,7 @@ stato 126
     '-'         shift e prosecuzione allo stato 37
     '{'         shift e prosecuzione allo stato 38
 
-    expr          prosecuzione allo stato 148
+    expr          prosecuzione allo stato 149
     bool_term     prosecuzione allo stato 40
     comp_term     prosecuzione allo stato 41
     low_term      prosecuzione allo stato 42
@@ -1899,7 +1904,7 @@ stato 128
 
    87 while_stat: WHILE expr DO stat_list . END
 
-    END  shift e prosecuzione allo stato 149
+    END  shift e prosecuzione allo stato 150
 
 
 stato 129
@@ -1925,20 +1930,27 @@ stato 131
     BOOLEAN  shift e prosecuzione allo stato 7
 
     atomic_type  prosecuzione allo stato 100
-    attr_list    prosecuzione allo stato 150
+    attr_list    prosecuzione allo stato 151
     attr_decl    prosecuzione allo stato 102
 
 
 stato 132
 
-   89 specifier: '[' expr ']' .
+   90 specifier: '[' expr ']' .
 
-    $default  riduzione con la regola 89 (specifier)
+    $default  riduzione con la regola 90 (specifier)
 
 
 stato 133
 
-   24 assign_stat: ID @2 '=' expr .
+   89 read_stat: READ specifier ID @5 .
+
+    $default  riduzione con la regola 89 (read_stat)
+
+
+stato 134
+
+   24 assign_stat: ID @2 ASSIGN expr .
    25 expr: expr . bool_op bool_term
 
     AND  shift e prosecuzione allo stato 80
@@ -1949,67 +1961,67 @@ stato 133
     bool_op  prosecuzione allo stato 82
 
 
-stato 134
+stato 135
 
    12 id_list: ID @1 ',' . id_list
 
     ID  shift e prosecuzione allo stato 63
 
-    id_list  prosecuzione allo stato 151
+    id_list  prosecuzione allo stato 152
 
 
-stato 135
+stato 136
 
    60 project_op: PROJECT '[' id_list ']' .
 
     $default  riduzione con la regola 60 (project_op)
 
 
-stato 136
+stato 137
 
    61 select_op: SELECT '[' expr ']' .
 
     $default  riduzione con la regola 61 (select_op)
 
 
-stato 137
+stato 138
 
    62 exists_op: EXISTS '[' expr ']' .
 
     $default  riduzione con la regola 62 (exists_op)
 
 
-stato 138
+stato 139
 
    63 all_op: ALL '[' expr ']' .
 
     $default  riduzione con la regola 63 (all_op)
 
 
-stato 139
-
-   67 update_op: UPDATE '[' ID @4 . '=' expr ']'
-
-    '='  shift e prosecuzione allo stato 152
-
-
 stato 140
+
+   67 update_op: UPDATE '[' ID @4 . ASSIGN expr ']'
+
+    ASSIGN  shift e prosecuzione allo stato 153
+
+
+stato 141
 
    65 extend_op: EXTEND '[' atomic_type ID . @3 '=' expr ']'
 
     $default  riduzione con la regola 64 (@3)
 
-    @3  prosecuzione allo stato 153
+    @3  prosecuzione allo stato 154
 
 
-stato 141
+stato 142
 
    68 rename_op: RENAME '[' id_list ']' .
 
     $default  riduzione con la regola 68 (rename_op)
 
 
-stato 142
+stato 143
 
    80 atomic_const_l: atomic_const ',' . atomic_const_l
 
@@ -2018,31 +2030,31 @@ stato 142
     BOOL_CONST  shift e prosecuzione allo stato 27
 
     atomic_const    prosecuzione allo stato 117
-    atomic_const_l  prosecuzione allo stato 154
+    atomic_const_l  prosecuzione allo stato 155
 
 
-stato 143
+stato 144
 
    79 tuple_const: '(' atomic_const_l ')' .
 
     $default  riduzione con la regola 79 (tuple_const)
 
 
-stato 144
+stato 145
 
    82 atomic_type_l: atomic_type ',' atomic_type_l .
 
     $default  riduzione con la regola 82 (atomic_type_l)
 
 
-stato 145
+stato 146
 
    77 tuple_list: tuple_const ',' tuple_list .
 
     $default  riduzione con la regola 77 (tuple_list)
 
 
-stato 146
+stato 147
 
    85 else_part: ELSE . stat_list
 
@@ -2056,7 +2068,7 @@ stato 146
     WRITE    shift e prosecuzione allo stato 10
     ID       shift e prosecuzione allo stato 11
 
-    stat_list    prosecuzione allo stato 155
+    stat_list    prosecuzione allo stato 156
     stat         prosecuzione allo stato 13
     def_stat     prosecuzione allo stato 14
     type         prosecuzione allo stato 15
@@ -2069,49 +2081,49 @@ stato 146
     write_stat   prosecuzione allo stato 22
 
 
-stato 147
+stato 148
 
    84 if_stat: IF expr THEN stat_list else_part . END
 
-    END  shift e prosecuzione allo stato 156
+    END  shift e prosecuzione allo stato 157
 
 
-stato 148
+stato 149
 
    25 expr: expr . bool_op bool_term
    59 join_op: JOIN '[' expr . ']'
 
     AND  shift e prosecuzione allo stato 80
     OR   shift e prosecuzione allo stato 81
-    ']'  shift e prosecuzione allo stato 157
+    ']'  shift e prosecuzione allo stato 158
 
     bool_op  prosecuzione allo stato 82
 
 
-stato 149
+stato 150
 
    87 while_stat: WHILE expr DO stat_list END .
 
     $default  riduzione con la regola 87 (while_stat)
 
 
-stato 150
+stato 151
 
    20 attr_list: attr_decl ',' attr_list .
 
     $default  riduzione con la regola 20 (attr_list)
 
 
-stato 151
+stato 152
 
    12 id_list: ID @1 ',' id_list .
 
     $default  riduzione con la regola 12 (id_list)
 
 
-stato 152
+stato 153
 
-   67 update_op: UPDATE '[' ID @4 '=' . expr ']'
+   67 update_op: UPDATE '[' ID @4 ASSIGN . expr ']'
 
     ID          shift e prosecuzione allo stato 24
     INT_CONST   shift e prosecuzione allo stato 25
@@ -2129,7 +2141,7 @@ stato 152
     '-'         shift e prosecuzione allo stato 37
     '{'         shift e prosecuzione allo stato 38
 
-    expr          prosecuzione allo stato 158
+    expr          prosecuzione allo stato 159
     bool_term     prosecuzione allo stato 40
     comp_term     prosecuzione allo stato 41
     low_term      prosecuzione allo stato 42
@@ -2147,54 +2159,54 @@ stato 152
     table_const   prosecuzione allo stato 54
 
 
-stato 153
+stato 154
 
    65 extend_op: EXTEND '[' atomic_type ID @3 . '=' expr ']'
 
-    '='  shift e prosecuzione allo stato 159
+    '='  shift e prosecuzione allo stato 160
 
 
-stato 154
+stato 155
 
    80 atomic_const_l: atomic_const ',' atomic_const_l .
 
     $default  riduzione con la regola 80 (atomic_const_l)
 
 
-stato 155
+stato 156
 
    85 else_part: ELSE stat_list .
 
     $default  riduzione con la regola 85 (else_part)
 
 
-stato 156
+stato 157
 
    84 if_stat: IF expr THEN stat_list else_part END .
 
     $default  riduzione con la regola 84 (if_stat)
 
 
-stato 157
+stato 158
 
    59 join_op: JOIN '[' expr ']' .
 
     $default  riduzione con la regola 59 (join_op)
 
 
-stato 158
+stato 159
 
    25 expr: expr . bool_op bool_term
-   67 update_op: UPDATE '[' ID @4 '=' expr . ']'
+   67 update_op: UPDATE '[' ID @4 ASSIGN expr . ']'
 
     AND  shift e prosecuzione allo stato 80
     OR   shift e prosecuzione allo stato 81
-    ']'  shift e prosecuzione allo stato 160
+    ']'  shift e prosecuzione allo stato 161
 
     bool_op  prosecuzione allo stato 82
 
 
-stato 159
+stato 160
 
    65 extend_op: EXTEND '[' atomic_type ID @3 '=' . expr ']'
 
@@ -2214,7 +2226,7 @@ stato 159
     '-'         shift e prosecuzione allo stato 37
     '{'         shift e prosecuzione allo stato 38
 
-    expr          prosecuzione allo stato 161
+    expr          prosecuzione allo stato 162
     bool_term     prosecuzione allo stato 40
     comp_term     prosecuzione allo stato 41
     low_term      prosecuzione allo stato 42
@@ -2232,26 +2244,26 @@ stato 159
     table_const   prosecuzione allo stato 54
 
 
-stato 160
+stato 161
 
-   67 update_op: UPDATE '[' ID @4 '=' expr ']' .
+   67 update_op: UPDATE '[' ID @4 ASSIGN expr ']' .
 
     $default  riduzione con la regola 67 (update_op)
 
 
-stato 161
+stato 162
 
    25 expr: expr . bool_op bool_term
    65 extend_op: EXTEND '[' atomic_type ID @3 '=' expr . ']'
 
     AND  shift e prosecuzione allo stato 80
     OR   shift e prosecuzione allo stato 81
-    ']'  shift e prosecuzione allo stato 162
+    ']'  shift e prosecuzione allo stato 163
 
     bool_op  prosecuzione allo stato 82
 
 
-stato 162
+stato 163
 
    65 extend_op: EXTEND '[' atomic_type ID @3 '=' expr ']' .
 

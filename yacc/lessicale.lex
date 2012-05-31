@@ -55,17 +55,17 @@ while		{return(WHILE);}
 do		{return(DO);}
 read		{return(READ);}
 write 		{return(WRITE);}
-and 		{lexval.ival = AND;	return(BOOL_OP);}
-or 		{lexval.ival = OR;	return(BOOL_OP);}
-not 		{lexval.ival = NOT;	return(UNARY_OP);}
-project 	{lexval.ival = PROJECT;	return(UNARY_OP);}
-select 		{lexval.ival = SELECT;  return(UNARY_OP);}
-exists 		{lexval.ival = EXISTS;  return(UNARY_OP);}
-all 		{lexval.ival = ALL;	return(UNARY_OP);}
-update 		{lexval.ival = UPDATE;	return(UNARY_OP);}
-extend 		{lexval.ival = EXTEND;	return(UNARY_OP);}
-rename 		{lexval.ival = RENAME;	return(UNARY_OP);}
-join 		{lexval.ival = JOIN;	return(HIGH_BIN_OP);}
+and 		{return AND;}
+or 		{return OR;}
+not 		{return NOT;}
+project 	{return PROJECT;}
+select 		{return SELECT;}
+exists 		{return EXISTS;}
+all 		{return ALL;}
+update 		{return UPDATE;}
+extend 		{return EXTEND;}
+rename 		{return RENAME;}
+join 		{return JOIN;}
 
    /*costanti*/
 {boolconst}	{if (yytext[0]=='t') lexval.ival=1; else lexval.ival=0; return(BOOL_CONST);}	
@@ -77,13 +77,13 @@ join 		{lexval.ival = JOIN;	return(HIGH_BIN_OP);}
 
    /*operatori*/
 \=		{return(ASSIGN);}		
-\=\=		{lexval.ival = EQ; 		return(COMP_OP);}
-\!\=		{lexval.ival = NOT_EQ;		return(COMP_OP);}
-\>\=		{lexval.ival = GET;		return(COMP_OP);}
-\<\=		{lexval.ival = LET;		return(COMP_OP);}
-[\>\<]		{lexval.ival = yytext[0];	return(COMP_OP);}
-[\+\-]		{lexval.ival = yytext[0];	return(LOW_BIN_OP);}
-[\*\/]		{lexval.ival = yytext[0];	return(HIGH_BIN_OP);}
+\=\=		{return EQ;}
+\!\=		{return NOT_EQ;}
+\>\=		{return GET;}
+\<\=		{return LET;}
+[\>\<]		{return yytext[0];}
+[\+\-]		{return yytext[0];}
+[\*\/]		{return yytext[0];}
 
    /*resto*/
 {zeroconst}	{return(ERROR);}
