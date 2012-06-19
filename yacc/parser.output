@@ -106,7 +106,7 @@ Grammatica
 
    64 @3: /* vuoto */
 
-   65 extend_op: EXTEND '[' atomic_type ID @3 '=' expr ']'
+   65 extend_op: EXTEND '[' atomic_type ID @3 ASSIGN expr ']'
 
    66 @4: /* vuoto */
 
@@ -166,7 +166,6 @@ $end (0) 0
 '/' (47) 44
 ';' (59) 2
 '<' (60) 35
-'=' (61) 65
 '>' (62) 33
 '[' (91) 59 60 61 62 63 65 67 68 90
 ']' (93) 59 60 61 62 63 65 67 68 90
@@ -210,112 +209,112 @@ EQ (291) 31
 NOT_EQ (292) 32
 GET (293) 34
 LET (294) 36
-ASSIGN (295) 24 67
+ASSIGN (295) 24 65 67
 END_OF_FILE (296)
 ERROR (297)
 
 
 Simboli nonterminali e regole in cui appaiono
 
-$accept (58)
+$accept (57)
     nel primo membro: 0
-program (59)
+program (58)
     nel primo membro: 1, nel secondo membro: 0
-stat_list (60)
+stat_list (59)
     nel primo membro: 2 3, nel secondo membro: 1 2 84 85 87
-stat (61)
+stat (60)
     nel primo membro: 4 5 6 7 8 9, nel secondo membro: 2 3
-def_stat (62)
+def_stat (61)
     nel primo membro: 10, nel secondo membro: 4
-id_list (63)
+id_list (62)
     nel primo membro: 12 13, nel secondo membro: 10 12 60 68
-@1 (64)
+@1 (63)
     nel primo membro: 11, nel secondo membro: 12
-type (65)
+type (64)
     nel primo membro: 14 15, nel secondo membro: 10
-atomic_type (66)
+atomic_type (65)
     nel primo membro: 16 17 18, nel secondo membro: 14 22 65 82 83
-table_type (67)
+table_type (66)
     nel primo membro: 19, nel secondo membro: 15
-attr_list (68)
+attr_list (67)
     nel primo membro: 20 21, nel secondo membro: 19 20
-attr_decl (69)
+attr_decl (68)
     nel primo membro: 22, nel secondo membro: 20 21
-assign_stat (70)
+assign_stat (69)
     nel primo membro: 24, nel secondo membro: 5
-@2 (71)
+@2 (70)
     nel primo membro: 23, nel secondo membro: 24
-expr (72)
+expr (71)
     nel primo membro: 25 26, nel secondo membro: 24 25 47 59 61 62
     63 65 67 84 87 90 92
-bool_op (73)
+bool_op (72)
     nel primo membro: 27 28, nel secondo membro: 25
-bool_term (74)
+bool_term (73)
     nel primo membro: 29 30, nel secondo membro: 25 26
-comp_op (75)
+comp_op (74)
     nel primo membro: 31 32 33 34 35 36, nel secondo membro: 29
-comp_term (76)
+comp_term (75)
     nel primo membro: 37 38, nel secondo membro: 29 30 37
-low_bin_op (77)
+low_bin_op (76)
     nel primo membro: 39 40, nel secondo membro: 37
-low_term (78)
+low_term (77)
     nel primo membro: 41 42, nel secondo membro: 37 38 41
-high_bin_op (79)
+high_bin_op (78)
     nel primo membro: 43 44 45, nel secondo membro: 41
-factor (80)
+factor (79)
     nel primo membro: 46 47 48 49, nel secondo membro: 41 42 46
-unary_op (81)
+unary_op (80)
     nel primo membro: 50 51 52 53 54 55 56 57 58, nel secondo membro:
     46
-join_op (82)
+join_op (81)
     nel primo membro: 59, nel secondo membro: 45
-project_op (83)
+project_op (82)
     nel primo membro: 60, nel secondo membro: 52
-select_op (84)
+select_op (83)
     nel primo membro: 61, nel secondo membro: 53
-exists_op (85)
+exists_op (84)
     nel primo membro: 62, nel secondo membro: 54
-all_op (86)
+all_op (85)
     nel primo membro: 63, nel secondo membro: 55
-extend_op (87)
+extend_op (86)
     nel primo membro: 65, nel secondo membro: 57
-@3 (88)
+@3 (87)
     nel primo membro: 64, nel secondo membro: 65
-update_op (89)
+update_op (88)
     nel primo membro: 67, nel secondo membro: 56
-@4 (90)
+@4 (89)
     nel primo membro: 66, nel secondo membro: 67
-rename_op (91)
+rename_op (90)
     nel primo membro: 68, nel secondo membro: 58
-constant (92)
+constant (91)
     nel primo membro: 69 70, nel secondo membro: 49
-atomic_const (93)
+atomic_const (92)
     nel primo membro: 71 72 73, nel secondo membro: 69 80 81
-table_const (94)
+table_const (93)
     nel primo membro: 74, nel secondo membro: 70
-table_instance (95)
+table_instance (94)
     nel primo membro: 75 76, nel secondo membro: 74
-tuple_list (96)
+tuple_list (95)
     nel primo membro: 77 78, nel secondo membro: 75 77
-tuple_const (97)
+tuple_const (96)
     nel primo membro: 79, nel secondo membro: 77 78
-atomic_const_l (98)
+atomic_const_l (97)
     nel primo membro: 80 81, nel secondo membro: 79 80
-atomic_type_l (99)
+atomic_type_l (98)
     nel primo membro: 82 83, nel secondo membro: 76 82
-if_stat (100)
+if_stat (99)
     nel primo membro: 84, nel secondo membro: 6
-else_part (101)
+else_part (100)
     nel primo membro: 85 86, nel secondo membro: 84
-while_stat (102)
+while_stat (101)
     nel primo membro: 87, nel secondo membro: 7
-read_stat (103)
+read_stat (102)
     nel primo membro: 89, nel secondo membro: 8
-@5 (104)
+@5 (103)
     nel primo membro: 88, nel secondo membro: 89
-specifier (105)
+specifier (104)
     nel primo membro: 90 91, nel secondo membro: 89 92
-write_stat (106)
+write_stat (105)
     nel primo membro: 92, nel secondo membro: 9
 
 
@@ -658,7 +657,7 @@ stato 33
 
 stato 34
 
-   65 extend_op: EXTEND . '[' atomic_type ID @3 '=' expr ']'
+   65 extend_op: EXTEND . '[' atomic_type ID @3 ASSIGN expr ']'
 
     '['  shift e prosecuzione allo stato 70
 
@@ -1196,7 +1195,7 @@ stato 69
 
 stato 70
 
-   65 extend_op: EXTEND '[' . atomic_type ID @3 '=' expr ']'
+   65 extend_op: EXTEND '[' . atomic_type ID @3 ASSIGN expr ']'
 
     INTEGER  shift e prosecuzione allo stato 5
     STRING   shift e prosecuzione allo stato 6
@@ -1744,7 +1743,7 @@ stato 113
 
 stato 114
 
-   65 extend_op: EXTEND '[' atomic_type . ID @3 '=' expr ']'
+   65 extend_op: EXTEND '[' atomic_type . ID @3 ASSIGN expr ']'
 
     ID  shift e prosecuzione allo stato 141
 
@@ -2007,7 +2006,7 @@ stato 140
 
 stato 141
 
-   65 extend_op: EXTEND '[' atomic_type ID . @3 '=' expr ']'
+   65 extend_op: EXTEND '[' atomic_type ID . @3 ASSIGN expr ']'
 
     $default  riduzione con la regola 64 (@3)
 
@@ -2161,9 +2160,9 @@ stato 153
 
 stato 154
 
-   65 extend_op: EXTEND '[' atomic_type ID @3 . '=' expr ']'
+   65 extend_op: EXTEND '[' atomic_type ID @3 . ASSIGN expr ']'
 
-    '='  shift e prosecuzione allo stato 160
+    ASSIGN  shift e prosecuzione allo stato 160
 
 
 stato 155
@@ -2208,7 +2207,7 @@ stato 159
 
 stato 160
 
-   65 extend_op: EXTEND '[' atomic_type ID @3 '=' . expr ']'
+   65 extend_op: EXTEND '[' atomic_type ID @3 ASSIGN . expr ']'
 
     ID          shift e prosecuzione allo stato 24
     INT_CONST   shift e prosecuzione allo stato 25
@@ -2254,7 +2253,7 @@ stato 161
 stato 162
 
    25 expr: expr . bool_op bool_term
-   65 extend_op: EXTEND '[' atomic_type ID @3 '=' expr . ']'
+   65 extend_op: EXTEND '[' atomic_type ID @3 ASSIGN expr . ']'
 
     AND  shift e prosecuzione allo stato 80
     OR   shift e prosecuzione allo stato 81
@@ -2265,6 +2264,6 @@ stato 162
 
 stato 163
 
-   65 extend_op: EXTEND '[' atomic_type ID @3 '=' expr ']' .
+   65 extend_op: EXTEND '[' atomic_type ID @3 ASSIGN expr ']' .
 
     $default  riduzione con la regola 65 (extend_op)

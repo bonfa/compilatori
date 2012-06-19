@@ -145,11 +145,11 @@ all_op 		: ALL '[' expr ']' { 	$$ = non_term_node(N_ALL_OP);
 					$$->child->child = $3;
 				   }
 		;
-extend_op 	: EXTEND '[' atomic_type ID {$$ = id_node();} '=' expr ']' {	$$ = non_term_node(N_EXTEND_OP); 
+extend_op 	: EXTEND '[' atomic_type ID {$$ = id_node();} ASSIGN expr ']' {	$$ = non_term_node(N_EXTEND_OP); 
 										$$->child = $3;
 										$3->brother = $5;
 										$5->brother = non_term_node(N_EXPR); 
-										$5->brother->child = $6;
+										$5->brother->child = $7;
 							 		   }
 		;
 update_op 	: UPDATE '[' ID {$$ = id_node();} ASSIGN expr ']' {$$ = non_term_node(N_UPDATE_OP);
@@ -175,7 +175,7 @@ table_const 	: '{' table_instance '}' { $$ = non_term_node(N_TABLE_CONST); $$->c
 table_instance	: tuple_list  {$$ = non_term_node(N_TUPLE_LIST); $$->child = $1; }
 		| atomic_type_l { $$ = non_term_node(N_ATOMIC_TYPE_LIST); $$->child = $1; }
 		;
-tuple_list 	: tuple_const ',' tuple_list {$$ = non_term_node(N_TUPLE_CONST); $$->brother = $3; }
+tuple_list 	: tuple_const ',' tuple_list {$$ = $1; $$->brother = $3; }
 		| tuple_const {$$ = $1;}
 		;
 tuple_const	: '(' atomic_const_l ')'  {$$ = non_term_node(N_TUPLE_CONST); $$->child = $2;}
@@ -186,7 +186,7 @@ atomic_const_l  : atomic_const ',' atomic_const_l {$$ = $1; $1->brother = $3;}
 atomic_type_l 	: atomic_type ',' atomic_type_l {$$ = $1; $$->brother = $3;}
 		| atomic_type {$$ = $1;}
 		;
-if_stat 	: IF expr THEN stat_list else_part END {$$ = non_term_node(N_IF_STAT); 
+if_stat 	: IF expr THEN stat_list else_part END {$$ = non_term_node(N_IF_STAT);
 							$$->child = non_term_node(N_EXPR);
 							$$->child->child = $2;
 							$$->child->brother = non_term_node(N_STAT_LIST);
@@ -194,8 +194,7 @@ if_stat 	: IF expr THEN stat_list else_part END {$$ = non_term_node(N_IF_STAT);
 							$$->child->brother->brother = $5;
 						       }
 		;
-else_part 	: ELSE stat_list {	 
-					$$ = non_term_node(N_STAT_LIST); 
+else_part 	: ELSE stat_list { 	$$ = non_term_node(N_STAT_LIST); 
 					$$->child = $2;
 				 } 
 		| {$$ = NULL; }
@@ -217,12 +216,12 @@ specifier 	: '[' expr ']' {	$$ = non_term_node(N_SPECIFIER);
 					$$->child = non_term_node(N_EXPR);
 					$$->child->child = $2;
 			       }
-		| {$$ = non_term_node(N_SPECIFIER); $$->child = NULL; }
+		| {$$ = non_term_node(N_SPECIFIER);}
 		; 
 write_stat 	: WRITE specifier expr  {	$$ = non_term_node(N_WRITE_STAT); 
-						$$->child = $1;
-						$1->brother = non_term_node(N_EXPR);				
-						$1->brother->child = $3;			
+						$$->child = $2;
+						$2->brother = non_term_node(N_EXPR);			
+						$2->brother->child = $3;			
 					}
 		;
 

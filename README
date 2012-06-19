@@ -40,3 +40,19 @@ cat ./file_table/keywords.table | ./sintattico
 
 -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
+La cartella /yacc contiene un analizzatore sintattico del linguaggio che genera un albero sintattico ralizzata tramite yacc. La cartella contiene:
+albero.c: stampa l'albero
+def.h: file di intestazione
+lessicale.lex: analizzatore lessicale
+parser.y: analizzatore sintattico realizzato tramite yacc
+parser_solo_sintassi.y: verifica solamente che la sintassi sia corretta, senza creare l'albero sintattico
+makefile: con le direttive per la compilazione
+test_parser.py: verifica che l'albero generato dal parser a discesa ricorsiva sia uguale a quello generato dal parser ralizzato tramite yacc
+
+L'analizzatore sintattico si basa su YACC e restituisce un albero sintattico astratto della frase del linguaggio. In particolare, l'albero generato è uguale a quello generato dal parser a discesa ricorsiva.
+Se viene trovato un errore, viene stampata una stringa che mostra il numero della riga che lo contiene.
+Esempio di utilizzo:
+
+cat ./file_table/es_0.table | ./solo_sintassi	(controlla la correttezza della frase)
+cat ./file_table/es_0.table | ./parser	 (genera l'albero sintattico)
+-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
