@@ -38,12 +38,18 @@ typedef enum
     N_WRITE_STAT
 } Typenode;
 
+
+
+/*value dell'analizzatore lessicale*/
 typedef union
 {
     int ival;
     char *sval;
 } Value;
 
+
+
+/*nodo di una lista di nomi*/
 typedef struct s_name
 {
     char *name;
@@ -52,6 +58,9 @@ typedef struct s_name
 
 typedef Name *Pname;
 
+
+
+/*nodo dell'albero astratto generato dall'analizzatore lessicale*/
 typedef struct snode
 {
     int type;
@@ -62,6 +71,13 @@ typedef struct snode
 
 typedef Node *Pnode;
 
+
+
+/*rappresenta una variabile nella symble table.
+name è il nome della variabile.
+type è il tipo della variabile.
+se la variabile è di tipo semplice, il campo next è nullo.
+se la variabile è di tipo table, il campo next punta al primo dei parametri della tabella, che a sua volta sarà uno schema. */
 typedef struct s_schema
 {
     char *name;
@@ -71,6 +87,9 @@ typedef struct s_schema
 
 typedef Schema *Pschema;
 
+
+/*Rappresenta un simbolo della symble-table.
+Contiene il proprio numero, la dimensione e il puntatore al prossimo simbolo nella stessa posizione.*/
 typedef struct s_symbol
 {
     int oid;
@@ -81,6 +100,10 @@ typedef struct s_symbol
 
 typedef Symbol *Psymbol;
 
+
+
+/*Rappresenta un elemento del contesto.
+Il contesto è l'insieme delle variabili dell'ambiente sql*/
 typedef struct s_context
 {
     int level;
@@ -90,6 +113,10 @@ typedef struct s_context
 
 typedef Context *Pcontext;
 
+
+
+/*Rappresenta un elemento dello stack dell'ambiente.
+L'ambiente è l'insieme delle variabili di una parte di codice */
 typedef struct s_environment
 {
     int level;
@@ -160,7 +187,7 @@ typedef enum
     T_HALT
 } Operator;
 
-
+/*Per le strutture necessarie alla generazione di codice, vedere lucido 61 della specifica table*/
 typedef struct t_stat
 {
     int address;

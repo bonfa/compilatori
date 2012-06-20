@@ -59,3 +59,11 @@ Pschema append_schemas(Pschema psch1, Pschema psch2)
 }
 
 
+/*crea un nodo schema*/
+Pnode newschema(char* name, int type){
+	Pschema p = malloc(sizeof(Schema));
+	p->type = name;
+	p->line = type;
+	p->next = NULL;
+	return(p);
+}

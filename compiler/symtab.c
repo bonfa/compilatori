@@ -10,17 +10,23 @@ static Pname lextab[TOT_BUCKETS];
 
 Psymbol symtab[TOT_BUCKETS];
 
+
+
 void syserror(char *message)
 {
   printf("System error: %s\n", message);
   exit(-1);
 }
 
+
+
 void noderror(Pnode p)
 {
     printf("Inconsistent node (%d) in parse tree\n", p->type);
     exit(-1);
 }
+
+
 
 void *newmem(int size)
 {
@@ -33,6 +39,9 @@ void *newmem(int size)
   return(p);
 }
 
+
+
+
 void freemem(void *p, int size)
 {
   static long size_deallocated = 0;
@@ -40,6 +49,9 @@ void freemem(void *p, int size)
   free(p);
   size_deallocated += size;
 }
+
+
+
 
 int hash_function(char *s)
 {
@@ -50,6 +62,9 @@ int hash_function(char *s)
   return(h);
 }
 
+
+
+
 void init_lextab()
 {
     int i;
@@ -58,6 +73,9 @@ void init_lextab()
 	lextab[i] = NULL;
 }
 
+
+
+
 void init_symtab()
 {
   int i;
@@ -65,6 +83,9 @@ void init_symtab()
   for(i = 0; i < TOT_BUCKETS; i++)
     symtab[i] = NULL;
 }
+
+
+
 
 char *update_lextab(char *s)
 {
@@ -85,6 +106,9 @@ char *update_lextab(char *s)
     return(lextab[index]->name);
 }
 
+
+
+
 Psymbol lookup(char *name)
 {
   int index;
@@ -96,6 +120,9 @@ Psymbol lookup(char *name)
     return(psymbol);
   return(NULL);
 }
+
+
+
 
 Psymbol insert(Schema schema)
 {
@@ -111,6 +138,9 @@ Psymbol insert(Schema schema)
   symtab[index]->next = psymbol;
   return(symtab[index]);
 }
+
+
+
 
 int get_size(Pschema pschema)
 {
@@ -138,6 +168,9 @@ int get_size(Pschema pschema)
   }
 }
 
+
+
+
 int get_attribute_offset(Pschema pschema, char *attrname)
 {
   int attroffset;
@@ -148,6 +181,9 @@ int get_attribute_offset(Pschema pschema, char *attrname)
     return(attroffset);
   syserror("get_attribute_offset()");
 }
+
+
+
 
 char *get_format(Schema schema)
 {
@@ -189,6 +225,9 @@ char *get_format(Schema schema)
   }
   return(format);
 }
+
+
+
 
 void eliminate(char *name)
 {
