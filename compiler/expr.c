@@ -1,6 +1,7 @@
 #include "def.h"
 #include "parser.h"
 
+/* Appende due schemi tra loro */
 Boolean type_equal(Schema schema1, Schema schema2)
 {
   Pschema p1, p2;
@@ -18,11 +19,16 @@ Boolean type_equal(Schema schema1, Schema schema2)
     return(TRUE);
 }
 
+
+/* Dice se due nomi sono compatibili 
+  (Due tabelle con stesso numero di attributi, una con nomi, l'altra senza nomi)  */
 Boolean compatible(char *name1, char *name2)
 {
   return(name1 == NULL || name2 == NULL || name1 == name2);
 }
 
+
+/* Copia lo schema passato come argomento */
 Pschema clone_schema(Pschema pschema)
 {
   Pschema clone, psch;
@@ -39,6 +45,9 @@ Pschema clone_schema(Pschema pschema)
   return (clone);
 }
 
+
+
+/* Appende schemi tra loro */
 Pschema append_schemas(Pschema psch1, Pschema psch2)
 {
   Pschema head = psch1;

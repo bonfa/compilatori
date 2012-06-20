@@ -1,16 +1,22 @@
 #include "def.h"
 #include "parser.h"
 
+/*Ci sono due stack, uno per l'ambiente di funzioni, l'altro per gli schemi sql */
 static Penvironment envstack = NULL;
 static Pcontext constack = NULL;
 
 int oid_counter = 0;
 
+
+/*ritorna il numero di oggetti presenti nell'ambiente*/
 int numobj_in_current_env()
 {
   return (envstack->numobj);
 }
 
+
+
+/*Crea un nuovo ambiente*/
 void push_environment()
 {
     Penvironment temp = envstack;
@@ -23,6 +29,9 @@ void push_environment()
     envstack->next = temp;
 }
 
+
+
+/*Inserisce il nome della variabile nel nuovo ambiente*/
 void insert_name_into_environment(char *name)
 {
   Pname tempname = envstack->pname;
@@ -33,11 +42,17 @@ void insert_name_into_environment(char *name)
   envstack->pname->next = tempname;
 }
 
+
+
+/*Ritorna true se il nome è presente nell'ambiente*/
 Boolean name_in_environment(char *name)
 {
   return(name_in_list(name, envstack->pname));
 }
 
+
+
+/*Ritorna true se il nome è presente nella lista di nomi*/
 Boolean name_in_list(char *name, Pname pname)
 {
   while(pname)
@@ -49,6 +64,9 @@ Boolean name_in_list(char *name, Pname pname)
   return(FALSE);
 }
 
+
+
+/*Elimina il primo ambiente (all'uscita di blocchi di codice - tipo if o while)*/
 void pop_environment()
 {
     Penvironment penv = envstack;
@@ -68,6 +86,9 @@ void pop_environment()
     freemem((void*)penv, sizeof(Environment));
 }
 
+
+
+/*Crea un nuovo contesto*/
 void push_context(Pschema pschema)
 {
     Pcontext temp = constack;
@@ -79,6 +100,9 @@ void push_context(Pschema pschema)
     constack->next = temp;
 }
 
+
+
+/*Elimina il primo contesto (per operazioni tipo select)*/
 void pop_context()
 {
     Pcontext tempcontext;
@@ -89,6 +113,10 @@ void pop_context()
     freemem((void*) tempcontext, sizeof(Context));
 }
 
+
+
+/* Cerca il nome nello stack dei contesti: prima cosa da fare quando si trova un id. 
+   Restituisce lo schema, se esiste, + la distanza del contesto + la posizione nel contesto (offset)*/
 Pschema name_in_constack(char *name, int *pcontext_offset, int *pattribute_context)
 {
   Pcontext pcontext = constack;
@@ -103,6 +131,9 @@ Pschema name_in_constack(char *name, int *pcontext_offset, int *pattribute_conte
     return(NULL);
 }
 
+
+
+/* Cerca il nome nello schema */
 Pschema name_in_schema(char *name, Pschema pschema)
 {
   while(pschema != NULL)
