@@ -73,7 +73,7 @@ typedef Node *Pnode;
 
 
 
-/*rappresenta una variabile nella symble table.
+/*rappresenta una variabile nella symbol table.
 name è il nome della variabile.
 type è il tipo della variabile.
 se la variabile è di tipo semplice, il campo next è nullo.

@@ -10,6 +10,7 @@ int main(int argc, char *argv[])
     if(argc > 1) yydebug = 1;
     init_compiler();
     yyparse();
+    semantic(root);
     code = program(root);
     codeprint(code, 0);
 }

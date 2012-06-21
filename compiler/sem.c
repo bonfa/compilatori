@@ -8,7 +8,7 @@ static Pcontext constack = NULL;
 int oid_counter = 0;
 
 
-/*ritorna il numero di oggetti presenti nell'ambiente*/
+/*Ritorna il numero di oggetti presenti nell'ambiente*/
 int numobj_in_current_env()
 {
   return (envstack->numobj);
@@ -86,7 +86,7 @@ void pop_environment()
     freemem((void*)penv, sizeof(Environment));
 }
 
-
+//^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-
 
 /*Crea un nuovo contesto*/
 void push_context(Pschema pschema)
@@ -145,4 +145,15 @@ Pschema name_in_schema(char *name, Pschema pschema)
   return(NULL);
 }
 
+
+//^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^
+
+/*crea un nodo schema*/
+Pschema newschema(char* name, int type){
+	Pschema p = (Pschema) newmem(sizeof(Schema));
+	p->type = name;
+	p->line = type;
+	p->next = NULL;
+	return(p);
+}
 

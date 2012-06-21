@@ -59,11 +59,37 @@ Pschema append_schemas(Pschema psch1, Pschema psch2)
 }
 
 
-/*crea un nodo schema*/
-Pnode newschema(char* name, int type){
-	Pschema p = malloc(sizeof(Schema));
-	p->type = name;
-	p->line = type;
-	p->next = NULL;
-	return(p);
-}
+
+
+//^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^
+
+/**/
+Code rename_expr(){}
+
+/**/
+Code select_expr(){}
+
+/**/
+Code update_expr(){}
+
+/**/
+Code join_expr(){}
+
+/**/
+Code logic_expr(){}
+
+/**/
+Code math_expr(){}
+
+/**/
+Code neg_expr(){}
+
+/**/
+Code extend_expr(){}
+
+/**/
+Code comp_expr(){}
+
+/**/
+Code project_expr(){}
+
