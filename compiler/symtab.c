@@ -4,6 +4,9 @@
 #define SHIFT	5
 #define MAXFORMAT 1000
 
+/*Ci sono due symbol table, una per l'analizzatore lessicale, l'altra per l'analizzatore sintattico.
+Io dovrei usare solo quella dell'analizzatore sintattico.*/
+
 extern int oid_counter;
 
 static Pname lextab[TOT_BUCKETS];

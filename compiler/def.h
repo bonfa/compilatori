@@ -215,10 +215,10 @@ typedef struct
 /*non è detto che tutte le funzioni siano implementate*/
 
 
-Boolean compatible(char*, char*),	/*dice se due nomi sono compatibili (ad esempio due tabelle con stesso numero di attriuti, una con nomi, l'altra senza nomi) 
+Boolean compatible(char*, char*),	/*dice se due nomi sono compatibili (ad esempio due tabelle con stesso numero di attributi, una con nomi, l'altra senza nomi (ad esempio è una costante)) 
 i due tipi sono compatibili se attributo per attributo hanno stesso nome e stesso tipo, oppure se uno dei due (o entrambi) non hanno nome ma hanno tipi compatibili*/
         duplicated(char*, Pschema),	/*dice se ci sono già variabili con il nome puntato nello schema*/
-        homonyms(Pschema, Pschema),	/*dice se ci sono omonimie negli attributi (comodo in caso di join)*/
+        homonyms(Pschema, Pschema),	/*dice se ci sono omonimie negli attributi (in caso di join)-da implementare*/
         name_in_environment(char*),	/*dice se il nome c'è in quell'ambiente (comodo per la definizione di variabili)*/
         name_in_list(char*, Pname),	/*dice se il nome c'è nella lista (comodo per proiezione)*/
         repeated_names(Pname),		/*dice se ci sono nomi ripetuti nella lista di nomi*/
@@ -230,26 +230,28 @@ char *clear_string(char *s),
      *operator(int),
      *strcat( char*, const char*),
      *strcpy (char*, const char*),
-     *update_lextab(char*),	/*fa l'aggiornamento della tabella dei simboli dell'analizzatore lessicale*/
+     *update_lextab(char*),	/*fa l'aggiornamento della tabella dei simboli dell'analizzatore lessicale (non serve)*/
      *valname(Pnode);		/*tira fuori dal nodo il campo sval (per il nome dell'id)*/
      
 Code appcode(Code, Code),	/*appende al primo codice, il secondo e libera la memoria del secondo*/
-     assign_stat(Pnode),
+     assign_stat(Pnode),	/* fa sia analisi semantica che generazione di codice*/
      attr_code(Pnode),
      def_stat(Pnode),
      concode(Code, Code, ...),	/*usata per accodare tra loro più di due stringhe di codice. DEVE CHIAMARE ENDCODE*/
      endcode(),			/*genera un descrittore che indica alla concode di smettere di concatenare*/
-     expr(Pnode, Pschema),	/*riceve il nodo dell'albero e il puntatore allo schema e genera il codice corrispondente all'espressione e restituisce in un attributo sintetizzato lo schema risultante. Ogni ramo del case deve fare in modo di resituire il descrittore dello schema che computa.*/
+     expr(Pnode, Pschema),	/*riceve il nodo dell'albero e il puntatore allo schema e genera il codice corrispondente all'espressione e restituisce in un attributo sintetizzato lo schema risultante dell'espressione. Ogni ramo del case deve fare in modo di resituire il descrittore dello schema che computa. 
+Deve garantire due cose: il risultato dello schema, + il codice computato*/
      if_stat(Pnode),
      makecode(Operator),				/*costruisce codice di uno statement che non ha argomenti*/
      makecode1(Operator, int),
      makecode2(Operator, int, int),
      makecode3(Operator, int, int, int),
-     make_get_fget(Operator, int, char*),		/*serve per la lettura*/
+     make_get_fget(Operator, int, char*),		/*serve per la lettura (read)*/
      make_ldint(int),					/*carica costante intera*/
      make_ldstr(char *s),				/*carica costante stringa*/
      make_print_fprint(Operator, char*),		/*serve per la write*/
      make_sattr(char*),					/*serve per generare gli schemi*/
+     /*Questi qui non hanno schema perchè non sono espressioni e non devono ritornare degli schemi*/
      program(Pnode),
      read_stat(Pnode),
      specifier(Pnode),
