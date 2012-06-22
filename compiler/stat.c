@@ -288,18 +288,17 @@ Code specifier(Pnode specifier_node, Pschema schema){
 
 
 /**/
-Code table_const(){}
+Code table_const(){
+	//No vincoli semantici ??
+}
 
 /**/
-Code tuple_const(){}
+Code tuple_const(){
+	//No vincoli semantici
+}
 
 /**/
 Code table_type(){}
-
-/**/
-Code tuple_type(){}
-
-
 
 
 

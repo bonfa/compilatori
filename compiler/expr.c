@@ -64,7 +64,9 @@ Pschema append_schemas(Pschema psch1, Pschema psch2)
 //^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^
 
 /**/
-Code rename_expr(){}
+Code rename_expr(){
+	
+}
 
 /**/
 Code select_expr(){}
@@ -91,5 +93,22 @@ Code extend_expr(){}
 Code comp_expr(){}
 
 /**/
-Code project_expr(){}
+Code project_expr(Pnode project_expr, Pschema proj_schema){
+	Code project_code = NULL;
+	Pschema schema_expr = (Pschema) newmem(sizeof(Schema));
+	
+	//Prendo il nodo figlio
+	Pnode expr_node = project_expr->child;
+	
+	//Calcolo il codice di expr
+	Code expr_code = expr(expr_node,schema_expr);
+	
+	//Controllo i vincoli semantici
+	if (schema_expr->type != NULL){ 
+		semerror(expr_node,"Boolean result expected");
+	}
+	
+	//Calcolo i nomi nell'id list
+	
+}
 

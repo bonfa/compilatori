@@ -212,41 +212,44 @@ typedef struct
 } Opdescr;
 
 /* ------------- Prototypes ------------- */
+/*non è detto che tutte le funzioni siano implementate*/
 
-Boolean compatible(char*, char*),
-        duplicated(char*, Pschema),
-        homonyms(Pschema, Pschema),
-        name_in_environment(char*),
-        name_in_list(char*, Pname),
-        repeated_names(Pname),
-        type_equal(Schema, Schema);
+
+Boolean compatible(char*, char*),	/*dice se due nomi sono compatibili (ad esempio due tabelle con stesso numero di attriuti, una con nomi, l'altra senza nomi) 
+i due tipi sono compatibili se attributo per attributo hanno stesso nome e stesso tipo, oppure se uno dei due (o entrambi) non hanno nome ma hanno tipi compatibili*/
+        duplicated(char*, Pschema),	/*dice se ci sono già variabili con il nome puntato nello schema*/
+        homonyms(Pschema, Pschema),	/*dice se ci sono omonimie negli attributi (comodo in caso di join)*/
+        name_in_environment(char*),	/*dice se il nome c'è in quell'ambiente (comodo per la definizione di variabili)*/
+        name_in_list(char*, Pname),	/*dice se il nome c'è nella lista (comodo per proiezione)*/
+        repeated_names(Pname),		/*dice se ci sono nomi ripetuti nella lista di nomi*/
+        type_equal(Schema, Schema);	/*dice se i due schemi sono compatibili (atomici--> tipo; tabelle-->schema)*/
 
 char *clear_string(char *s),
-     *get_format(Schema),
+     *get_format(Schema),	/*dallo schema tira fuori il suo formato (utile per le funzioni di read e write)*/
      *nameop(Operator),
      *operator(int),
      *strcat( char*, const char*),
      *strcpy (char*, const char*),
-     *update_lextab(char*),
-     *valname(Pnode);
+     *update_lextab(char*),	/*fa l'aggiornamento della tabella dei simboli dell'analizzatore lessicale*/
+     *valname(Pnode);		/*tira fuori dal nodo il campo sval (per il nome dell'id)*/
      
-Code appcode(Code, Code),
+Code appcode(Code, Code),	/*appende al primo codice, il secondo e libera la memoria del secondo*/
      assign_stat(Pnode),
      attr_code(Pnode),
      def_stat(Pnode),
-     concode(Code, Code, ...),
-     endcode(),
-     expr(Pnode, Pschema),
+     concode(Code, Code, ...),	/*usata per accodare tra loro più di due stringhe di codice. DEVE CHIAMARE ENDCODE*/
+     endcode(),			/*genera un descrittore che indica alla concode di smettere di concatenare*/
+     expr(Pnode, Pschema),	/*riceve il nodo dell'albero e il puntatore allo schema e genera il codice corrispondente all'espressione e restituisce in un attributo sintetizzato lo schema risultante. Ogni ramo del case deve fare in modo di resituire il descrittore dello schema che computa.*/
      if_stat(Pnode),
-     makecode(Operator),
+     makecode(Operator),				/*costruisce codice di uno statement che non ha argomenti*/
      makecode1(Operator, int),
      makecode2(Operator, int, int),
      makecode3(Operator, int, int, int),
-     make_get_fget(Operator, int, char*),
-     make_ldint(int),
-     make_ldstr(char *s),
-     make_print_fprint(Operator, char*),
-     make_sattr(char*),
+     make_get_fget(Operator, int, char*),		/*serve per la lettura*/
+     make_ldint(int),					/*carica costante intera*/
+     make_ldstr(char *s),				/*carica costante stringa*/
+     make_print_fprint(Operator, char*),		/*serve per la write*/
+     make_sattr(char*),					/*serve per generare gli schemi*/
      program(Pnode),
      read_stat(Pnode),
      specifier(Pnode),
@@ -269,17 +272,17 @@ Pnode boolconstnode(int),
       qualnode(Typenode, int),
       strconstnode(char*);
      
-Pschema append_schemas(Pschema, Pschema),
+Pschema append_schemas(Pschema, Pschema),	/*appende schemi tra loro*/	
         atomic_type(Pnode),
-        clone_schema(Pschema),
-        name_in_constack(char*, int*, int*),
+        clone_schema(Pschema),			/*copia lo schema passato come argomento*/
+        name_in_constack(char*, int*, int*), /*cerca il nome nello stack dei contesti: prima cosa da fare quando si trova un id. restituisce lo schema, se esiste + la distanza del contesto + la posizione nel contesto (offset)*/
         name_in_context(char*),
-        name_in_schema(char*, Pschema),
-        schemanode(char*, int),
-        table_type(Pnode);
+        name_in_schema(char*, Pschema),		/*cerca il nome nello schema*/
+        schemanode(char*, int),			/*genera un nome dello schema*/
+        table_type(Pnode);			/*genera la table type*/
 	
-Psymbol insert(Schema),
-        lookup(char*);
+Psymbol insert(Schema),				/*insert nella tabella dei simboli-inserisci lo schema (Nome->attributi)*/
+        lookup(char*);				/*cerca in base al nome*/
 	
 Schema type(Pnode);
 
@@ -296,8 +299,8 @@ void codeprint(Code, int),
      insert_name_into_environment(char*),
      *newmem(int),
      noderror(Pnode),
-     pop_context(),
-     pop_environmet(),
+     pop_context(),			/*elimina il contesto alla fine di un'operazione tipo select*/
+     pop_environmet(),  		/*elimina l'ambiente nel momento dell'uscita da un blocco di codice*/
      push_context(Pschema),
      push_environment(),
      eliminate(char*),
