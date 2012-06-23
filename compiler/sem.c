@@ -8,7 +8,7 @@ static Pcontext constack = NULL;
 int oid_counter = 0;
 
 
-/*Ritorna il numero di oggetti presenti nell'ambiente*/
+/*Ritorna il numero di oggetti presenti nell'ambiente corrente*/
 int numobj_in_current_env()
 {
   return (envstack->numobj);
@@ -31,7 +31,7 @@ void push_environment()
 
 
 
-/*Inserisce il nome della variabile nel nuovo ambiente*/
+/*Inserisce il nome della variabile nell'ambiente*/
 void insert_name_into_environment(char *name)
 {
   Pname tempname = envstack->pname;

@@ -3,6 +3,8 @@
 #include "def.h"
 int line = 1;                                                       
 Value lexval;
+/*Si usa la tabella dei simboli lessicali per allocare più volte la stessa variabile. 
+In questo modo, una variabile è identificata dal suo puntatore.*/
 %}   
                                                                     
 %option noyywrap

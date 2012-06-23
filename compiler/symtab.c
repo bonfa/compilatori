@@ -7,10 +7,13 @@
 /*Ci sono due symbol table, una per l'analizzatore lessicale, l'altra per l'analizzatore sintattico.
 Io dovrei usare solo quella dell'analizzatore sintattico.*/
 
+/*Mantiene il conteggio degli oggetti che sono stati allocati fino a quel momento.*/
 extern int oid_counter;
 
+/*Tabella dei simboli lessicali*/
 static Pname lextab[TOT_BUCKETS];
 
+/*Tabella dei simboli veri e propri*/
 Psymbol symtab[TOT_BUCKETS];
 
 
@@ -55,7 +58,7 @@ void freemem(void *p, int size)
 
 
 
-
+/*Calcola l'indice dell'elemento nell'hash-table*/
 int hash_function(char *s)
 {
   int i, h=0;
@@ -144,7 +147,8 @@ Psymbol insert(Schema schema)
 
 
 
-
+/*Ritorna la dimensione dello schema. 
+Se lo schema è un tipo semplice, torna il sizeof, altrimenti la dimensione della tupla*/
 int get_size(Pschema pschema)
 {
   Pschema psch;
@@ -173,7 +177,7 @@ int get_size(Pschema pschema)
 
 
 
-
+/*Genera l'offset dell'attributo all'interno dello schema*/
 int get_attribute_offset(Pschema pschema, char *attrname)
 {
   int attroffset;

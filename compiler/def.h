@@ -248,10 +248,11 @@ Deve garantire due cose: il risultato dello schema, + il codice computato*/
      makecode3(Operator, int, int, int),
      make_get_fget(Operator, int, char*),		/*serve per la lettura (read)*/
      make_ldint(int),					/*carica costante intera*/
-     make_ldstr(char *s),				/*carica costante stringa*/
+     make_ldstrmake_ldstr(char *s),				/*carica costante stringa*/
      make_print_fprint(Operator, char*),		/*serve per la write*/
      make_sattr(char*),					/*serve per generare gli schemi*/
-     /*Questi qui non hanno schema perchè non sono espressioni e non devono ritornare degli schemi*/
+     /*Questi qui non hanno schema perchè non sono espressioni e non devono ritornare degli schemi
+       Gli stat non devono generare schemi*/
      program(Pnode),
      read_stat(Pnode),
      specifier(Pnode),
@@ -274,17 +275,18 @@ Pnode boolconstnode(int),
       qualnode(Typenode, int),
       strconstnode(char*);
      
-Pschema append_schemas(Pschema, Pschema),	/*appende schemi tra loro*/	
-        atomic_type(Pnode),
-        clone_schema(Pschema),			/*copia lo schema passato come argomento*/
+Pschema append_schemas(Pschema, Pschema),	/*appende due schemi tra loro*/	
+        atomic_type(Pnode),			/*Genera come risultato il puntatore a schema del tipo atomico*/
+        clone_schema(Pschema),			/*clona lo schema passato come argomento*/
         name_in_constack(char*, int*, int*), /*cerca il nome nello stack dei contesti: prima cosa da fare quando si trova un id. restituisce lo schema, se esiste + la distanza del contesto + la posizione nel contesto (offset)*/
-        name_in_context(char*),
+        name_in_context(char*),			/*cerca il nome nel contesto*/
         name_in_schema(char*, Pschema),		/*cerca il nome nello schema*/
-        schemanode(char*, int),			/*genera un nome dello schema*/
+        schemanode(char*, int),			/*genera un nodo dello schema (non serve)*/
         table_type(Pnode);			/*genera la table type*/
 	
+/*Funzioni per la tabella dei simboli*/
 Psymbol insert(Schema),				/*insert nella tabella dei simboli-inserisci lo schema (Nome->attributi)*/
-        lookup(char*);				/*cerca in base al nome*/
+        lookup(char*);				/*cerca in base al nome: (nome del primo elemento sia se atomico che tabella)*/
 	
 Schema type(Pnode);
 
@@ -294,23 +296,23 @@ Tstat *newstat(Operator);
 
 void codeprint(Code, int),
      freemem(void*, int),
-     idlprint(Pname),
+     idlprint(Pname),			/*stampa l'id_list*/
      init_compiler(),
      init_lextab(),
      init_symtab(),
      insert_name_into_environment(char*),
-     *newmem(int),
+     *newmem(int),			/*alloca memoria*/
      noderror(Pnode),
      pop_context(),			/*elimina il contesto alla fine di un'operazione tipo select*/
      pop_environmet(),  		/*elimina l'ambiente nel momento dell'uscita da un blocco di codice*/
      push_context(Pschema),
      push_environment(),
-     eliminate(char*),
+     eliminate(char*),			/*Elimina un elemento dalla tabella dei simboli - quando esco da un ambiente*/
      relocate_address(Code, int),
-     schprint(Schema),
+     schprint(Schema),			/*Stampa in modo leggibile lo schema*/
      semerror(Pnode, char*),
-     symprint(),
-     syserror(char*),
+     symprint(),		/*Stampa in modo leggibile la tabella dei simboli, solo per i banchi che sono non-nuli*/
+     syserror(char*),		/**/
      treeprint(Pnode, int);
 
 
