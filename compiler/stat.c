@@ -348,12 +348,12 @@ Code stat_list(Pnode stat_list_node){
 		//Creo il codice dello stat_node
 		Code stat_code ;
 		switch (stat_node->type){
-			case(N_DEF_STAT): 	stat_code = def_stat(stat_node);
-			case(N_ASSIGN_STAT): 	stat_code = assign_stat(stat_node);
-			case(N_IF_STAT): 	stat_code = if_stat(stat_node);
-			case(N_WHILE_STAT): 	stat_code = while_stat(stat_node);
-			case(N_READ_STAT): 	stat_code = read_stat(stat_node);
-			case(N_WRITE_STAT): 	stat_code = write_stat(stat_node);
+			case(N_DEF_STAT): 	stat_code = def_stat(stat_node);break;
+			case(N_ASSIGN_STAT): 	stat_code = assign_stat(stat_node);break;
+			case(N_IF_STAT): 	stat_code = if_stat(stat_node);break;
+			case(N_WHILE_STAT): 	stat_code = while_stat(stat_node);break;
+			case(N_READ_STAT): 	stat_code = read_stat(stat_node);break;
+			case(N_WRITE_STAT): 	stat_code = write_stat(stat_node);break;
 		}
 		/*Appendo il codice a stat_list_code*/
 		stat_list_code = appcode(stat_list_code,stat_code);
