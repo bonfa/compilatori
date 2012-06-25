@@ -35,42 +35,10 @@ Code program(Pnode root){
 
 //-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^
 
-/*Ritorno il codice dello schema e il puntatore */
-Code attr_list(Pnode attr_list_node, Pschema next){
-	Code attr_list_code = NULL;
-	//Sintetizzo il tipo della variabile
-	int tipo = atomic_type(attr_list_node->child);
-	
-	//Inserisco nel contesto i tipi delle variabili
-	Pnode first_id = attr_list_node->child->brother;
-	while (Pnode id=first_id;id!=NULL;id=id->brother){
-		//se la variabile è presente già nel contesto, genero l'errore, altrimenti la aggiungo al contesto
-		if (name_in_constack(name(id))!=NULL)
-			semerror(id,"Variabile già presente");
-		else {
-			//Genero il Pschema
-			Pschema id_schema = newschema(name(id),tipo);
-			//Aggiungo il Pschema al contesto
-			push_context(id_schema);
-			//Genero il codice
-		}
-	}
-	return "";
-}
 
 
-/**/
-Code specifier(Pnode specifier_node, Pschema schema){
-	Code specifier_code = NULL;
-	Pnode expr_node = specifier_node->child;
-	if (expr_node==NULL){
-		schema->type = NULL;
-	}
-	else {
-		Code expr_code = expr(expr_node,schema);
-	}
-	return specifier_code;
-}
+
+
 
 
 
@@ -478,7 +446,7 @@ Code tuple_const(Pnode tuple_const_node,Pschema schema){
 
 
 
-/*Genera */
+/*Genera il codice per la creazione della tabella e ritorna lo schema della tabella*/
 Code table_const(Pnode table_const_node, Pschema schema_tabella){
 	//Il codice per la costante tupla dipende dal fatto che la tabella sia vuota o meno
 
@@ -513,8 +481,8 @@ Code table_const(Pnode table_const_node, Pschema schema_tabella){
 		Pnode first_tuple = table_const_node->child;
 
 		//Calcolo il codice della prima tupla
-		Pschema first_tupla_schema = (Pschema) newmem(sizeof(Schema));
-		Code tuple_list_code = tuple_const(first_tupla_schema);
+		//Pschema first_tupla_schema = (Pschema) newmem(sizeof(Schema));
+		Code tuple_list_code = tuple_const(schema_tabella);
 		
 		int tuple_number = 1;
 		
@@ -544,4 +512,47 @@ Code table_const(Pnode table_const_node, Pschema schema_tabella){
 	}
 
 	return table_const_code;
+}
+
+
+
+
+/*Genera il codice dello specifier e ne ritorna lo schema.
+Lo schema dello specifier può essere una costante stringa o NULL*/
+Code specifier(Pnode specifier_node, Pschema schema){
+	Code specifier_code = NULL;
+	Pnode expr_node = specifier_node->child;
+	if (expr_node==NULL){
+		schema->type = NULL;
+	}
+	else {
+		Code expr_code = expr(expr_node,schema);
+	}
+	return specifier_code;
+}
+
+
+
+
+/*Ritorno il codice dello schema e il puntatore */
+Code attr_list(Pnode attr_list_node, Pschema next){
+	Code attr_list_code = NULL;
+	//Sintetizzo il tipo della variabile
+	int tipo = atomic_type(attr_list_node->child);
+	
+	//Inserisco nel contesto i tipi delle variabili
+	Pnode first_id = attr_list_node->child->brother;
+	while (Pnode id=first_id;id!=NULL;id=id->brother){
+		//se la variabile è presente già nel contesto, genero l'errore, altrimenti la aggiungo al contesto
+		if (name_in_constack(name(id))!=NULL)
+			semerror(id,"Variabile già presente");
+		else {
+			//Genero il Pschema
+			Pschema id_schema = newschema(name(id),tipo);
+			//Aggiungo il Pschema al contesto
+			push_context(id_schema);
+			//Genero il codice
+		}
+	}
+	return "";
 }
