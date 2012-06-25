@@ -33,23 +33,7 @@ Code program(Pnode root){
 }
 
 
-//-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^
-
-
-
-
-
-
-
-
-
-
-
-
-
 //^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-
-
-
 
 
 /*Controlla la semantica della read e ritorna il codice della read*/
@@ -270,14 +254,14 @@ Ritorna lo schema del table_type.
 Pschema table_type(Pnode type_node){
 	//Creo lo schema
 	Pschema schema = (Pschema) newmem(sizeof(Schema));
-	//Imposto tutti i campi a null
 	schema->name = NULL;
-	schema->next = NULL;
+
 	//Imposto il type (che sarà TABLE)
 	schema->type = qualifier(type_node);
 	
-	//Imposto i tipi semplici
-	"//TODO: analizzare gli attributi del table type (eventualmente creare un nuovo contesto - prob no)"
+	//Genero la lista di attributi
+	schema->next = attr_list(type_node->child);
+	
 	return schema;
 }
 
@@ -533,26 +517,50 @@ Code specifier(Pnode specifier_node, Pschema schema){
 
 
 
-
-/*Ritorno il codice dello schema e il puntatore */
-Code attr_list(Pnode attr_list_node, Pschema next){
-	Code attr_list_code = NULL;
-	//Sintetizzo il tipo della variabile
-	int tipo = atomic_type(attr_list_node->child);
+/*Ritorno lo schema dell'attr_decl*/
+Pschema attr_decl(Pnode attr_decl_node){
+	//Prendo i due figli del nodo
+	Pnode type_node = attr_decl_node->child;
+	Pnode id_node = attr_decl_node->child->brother;
 	
-	//Inserisco nel contesto i tipi delle variabili
-	Pnode first_id = attr_list_node->child->brother;
-	while (Pnode id=first_id;id!=NULL;id=id->brother){
-		//se la variabile è presente già nel contesto, genero l'errore, altrimenti la aggiungo al contesto
-		if (name_in_constack(name(id))!=NULL)
-			semerror(id,"Variabile già presente");
-		else {
-			//Genero il Pschema
-			Pschema id_schema = newschema(name(id),tipo);
-			//Aggiungo il Pschema al contesto
-			push_context(id_schema);
-			//Genero il codice
-		}
-	}
-	return "";
+	//Analizzo il tipo 
+	Pschema schema = atomic_type(type_node);
+
+	//Dall'id_node prendo il nome e lo aggiungo a schema
+	schema->name = valname(id_node);
+
+	return schema;	
 }
+
+
+
+/*Ritorno lo schema dell'attr_list*/
+Pschema attr_list(Pnode attr_list_node){
+	//Punto al primo figlio
+	Pnode first_attr_decl_node = attr_list_node->child;
+
+	//Estraggo lo schema del primo figlio
+	Pschema schema = attr_decl(first_attr_decl_node);
+	
+	//Punto al secondo figlio
+	Pnode attr_decl_node = first_attr_decl_node->brother;
+	//Punto al secondo schema
+	Pschema prev_schema=schema->next;
+	//Prendo gli schemi degli attributi successivi
+	while (attr_decl_node != NULL){
+		//Prendo lo schema del nodo
+		Pschema attr_schema = attr_decl(attr_decl_node);
+		//Controllo che nell'elenco dei nomi non ci sia già un id con quel nome
+		if(name_in_schema(attr_schema->name,schema)!=NULL)
+			semerror(attr_decl_node,"Variabile già presente nella tabella");
+		//Aggiungo lo schema allo schema della attr_list
+		prev_schema->next = attr->schema;
+		prev_schema = prec_schema->next;
+	}
+	return schema;
+}
+
+
+
+
+
