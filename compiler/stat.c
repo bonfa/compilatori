@@ -39,15 +39,15 @@ Code program(Pnode root){
 /*Controlla la semantica della read e ritorna il codice della read*/
 Code read_stat(Pnode read_stat_node){
 	//Imposto le due parti del nodo
-	specifier_node = read_stat_node->child;
-	id_node = read_stat_node->child->brother;
+	Pnode specifier_node = read_stat_node->child;
+	Pnode id_node = read_stat_node->child->brother;
 	
 	//Definisco il codice del nodo
-	Code read_stat_code = NULL;
+	Code read_stat_code;
 
 	//Calcolo il codice di specifier
 	Pschema schema_specifier = (Pschema) newmem(sizeof(Schema));
-	specifier_code = specifier(specifier_node,schema_specifier);
+	Code specifier_code = specifier(specifier_node,schema_specifier);
 
 	//Controllo che non ci siano errori semantici
 	//Controllo che il tipo di specifier sia corretto
@@ -61,9 +61,9 @@ Code read_stat(Pnode read_stat_node){
 	//La sintassi della read dipende dalla presenza dello specifier
 	Psymbol symbol = lookup(name(id_node));
 	if (specifier_node->child == NULL)		
-		read_stat_code = make_get_fget(T_GET,symbol->oid,get_format(name(symbol->type)))
+		read_stat_code = make_get_fget(T_GET,symbol->oid,get_format((symbol->schema)));
 	else
-		read_stat_Code = appcode(specifier_code,make_get_fget(T_FGET,symbol->oid,get_format(name(symbol->type)));
+		read_stat_code = appcode(specifier_code,make_get_fget(T_FGET,symbol->oid,get_format((symbol->schema))));
 
 	return read_stat_code;
 }
@@ -73,31 +73,31 @@ Code read_stat(Pnode read_stat_node){
 /*Controlla la semantica della write e ne ritorna il codice*/
 Code write_stat(Pnode write_stat_node){
 	//Imposto le due parti del nodo
-	specifier_node = write_stat_node->child;
-	expr_node = write_stat_node->child->brother;
+	Pnode specifier_node = write_stat_node->child;
+	Pnode expr_node = write_stat_node->child->brother;
 
 	//Definisco la variabile che contiene il codice da ritornare
-	Code write_stat_code = NULL;
+	Code write_stat_code;
 	
 	//Calcolo il codice di specifier
 	Pschema schema_specifier = (Pschema) newmem(sizeof(Schema));
-	specifier_code = specifier(specifier_node,schema_specifier);
+	Code specifier_code = specifier(specifier_node,schema_specifier);
 
 	//Controllo che non ci siano errori semantici
 	//Controllo che il tipo di specifier sia corretto
 	if (schema_specifier->type != STRING && schema_specifier->type != NULL)
-		semerror(read_stat_node,"Expected string type");
+		semerror(write_stat_node,"Expected string type");
 
 	//Genero il codice di write_stat
 	//Genero il codice di expr
 	Pschema schema_expr = (Pschema) newmem(sizeof(Schema));
-	expr_code = expr(expr_node,schema_expr);
+	Code expr_code = expr(expr_node,schema_expr);
 
 	//La sintassi della write dipende dalla presenza dello specifier
 	if (specifier_node->child == NULL)
-		write_stat_code = appcode(expr_code,make_print_fprint(T_PRINT,get_format(schema_expr)));
+		write_stat_code = appcode(expr_code,make_print_fprint(T_PRINT,get_format(*schema_expr)));
 	else
-		write_stat_code = concode(expr_code,specifier_code,make_print_fprint(T_FPRINT,get_format(schema_expr)),endcode());
+		write_stat_code = concode(expr_code,specifier_code,make_print_fprint(T_FPRINT,get_format(*schema_expr)),endcode());
 
 	return write_stat_code;
 }
@@ -106,11 +106,11 @@ Code write_stat(Pnode write_stat_node){
 /*Controlla la semantica del nodo while e ne restituisce il codice*/
 Code while_stat(Pnode while_stat_node){
 	//Imposto le due parti del nodo	
-	expr_node = while_stat_node->child;
-	stat_list_code = while_stat_node->child->brother;
+	Pnode expr_node = while_stat_node->child;
+	Pnode stat_list_node = while_stat_node->child->brother;
 
 	//Definisco la variabile che contiene il codice da ritornare
-	Code while_stat_node = NULL;
+	Code while_stat_code;
 
 	//La generazione dell'ambiente viene fatta all'interno della funzione stat_list
 
@@ -123,15 +123,15 @@ Code while_stat(Pnode while_stat_node){
 		semerror(expr_node,"il risultato dell'espressione dev'essere booleano");
 	
 	//Genero il codice di stat_list
-	Code stat_list_code = stat_list(stat_list_code);
+	Code stat_list_code = stat_list(stat_list_node);
 	//Calcolo gli offset
-	int exit = stat_list_code->size + 2;
-	int up = schema_expr->size + stat_list_code->size + 1;
+	int exit = stat_list_code.size + 2;
+	int up = expr_code.size + stat_list_code.size + 1;
 	
 	//Genero il codice di while_stat
-	while_stat_node = concode(expr_code,makecode1(T_SKIPF,exit),stat_list_code,makecode1(T_SKIP,up),endcode());
+	while_stat_code = concode(expr_code,makecode1(T_SKIPF,exit),stat_list_code,makecode1(T_SKIP,up),endcode());
 
-	return while_stat_node;
+	return while_stat_code;
 }
 
 
@@ -139,12 +139,12 @@ Code while_stat(Pnode while_stat_node){
 /*Controlla la semantica del nodo if e ne ritorna il codice*/
 Code if_stat(Pnode if_stat_node){
 	//Imposto le tre parti del nodo	
-	expr_node = if_stat_node->child;
-	then_node = if_stat_node->child->brother;
-	else_node = if_stat_node->child->brother->brother;
+	Pnode expr_node = if_stat_node->child;
+	Pnode then_node = if_stat_node->child->brother;
+	Pnode else_node = if_stat_node->child->brother->brother;
 	
 	//Definisco la variabile che contiene il codice da ritornare
-	Code if_stat_code = NULL;
+	Code if_stat_code ;
 
 	//La generazione dell'ambiente viene fatta all'interno della funzione stat_list
 	
@@ -157,20 +157,20 @@ Code if_stat(Pnode if_stat_node){
 		semerror(expr_node,"il risultato dell'espressione dev'essere booleano");
 
 	//Genero il codice di then_node
-	then_code = stat_list(then_node);
+	Code then_code = stat_list(then_node);
 	
 	if (else_node==NULL){//if then endif
 		//Calcolo l'offset
-		int offset = then_code->size + 1;
+		int offset = then_code.size + 1;
 		//Genero il codice di if_stat
 		if_stat_code = concode(expr_code,makecode1(T_SKIPF,offset),then_code,endcode());
 	}
 	else {//if then else
 		//Genero il codice di else_node
-		else_code = stat_list(else_node);
+		Code else_code = stat_list(else_node);
 		//Calcolo gli offset
-		int offset_then = then_code->size + 2;
-		int offset_else = else_code->size + 1;
+		int offset_then = then_code.size + 2;
+		int offset_else = else_code.size + 1;
 		//Genero il codice di if_stat
 		if_stat_code = concode(expr_code,makecode1(T_SKIPF,offset_then),then_code,makecode1(T_SKIP,offset_else),else_code,endcode());
 
@@ -188,7 +188,7 @@ Code def_stat(Pnode def_stat_node){
 	Pnode id_list_head_node = def_stat_node->child->brother;
  
 	//Definisco la variabile che contiene il codice da ritornare	
-	Code def_stat_code = NULL;
+	Code def_stat_code ;
 
 	//Sintetizzo il type
 	Pschema schema_type = type(type_node);
@@ -199,17 +199,18 @@ Code def_stat(Pnode def_stat_node){
 	//Controllo gli errori semantici
 	//id ripetuti	
 	if (repeated_names(id_list_name))
-		semerror("id ripetuti");
+		semerror(def_stat_node,"id ripetuti");
 	//variabili già assegnate
-	for (Pnode id_node = id_list_head_node; id_node!=NULL; id_node=id_node->brother)
+	Pnode id_node;
+	for (id_node = id_list_head_node; id_node!=NULL; id_node=id_node->brother)
 		if (name_in_environment(valname(id_node)))
 			semerror(id_node,"variabile già definita");
 
 		
 	//Genero il codice per la definizione delle variabili
-	for (Pnode id_node = id_list_head_node; id_node!=NULL; id_node=id_node->brother){
+	for (id_node = id_list_head_node; id_node!=NULL; id_node=id_node->brother){
 		//Genero il codice dell'id
-		Code id_code = NULL;
+		Code id_code ;
 		int spazio_da_allocare = get_size(schema_type);
 		if (schema_type->type == TABLE)
 			id_code = makecode1(T_NEWTAB,spazio_da_allocare);
@@ -273,7 +274,7 @@ Pname id_list(Pnode id_list_head, int *length){
 	
 	//Creo head_name e ne imposto i campi
 	head_name = (Pname) newmem(sizeof(Name)); 
-	head_name->name = valname(id);
+	head_name->name = valname(id_list_head);
 	head_name->next = NULL;
 
 	//Imposto il numero di id a 1
@@ -309,7 +310,7 @@ Pname id_list(Pnode id_list_head, int *length){
 
 /*Genera il codice per il caricamento di una variabile booleana*/
 Code bool_const(Pnode bool_const_node){
-	if (bool_const_node->ival == TRUE)
+	if (bool_const_node->value.ival == TRUE)
 		return make_ldint(1);
 	else 
 		return make_ldint(0);
@@ -326,7 +327,7 @@ Code str_const(Pnode str_const_node){
 
 /*Genera il codice per il caricamento di una variabile intera*/
 Code int_const(Pnode int_const_node){
-	return make_ldint(bool_const_node->ival);
+	return make_ldint(int_const_node->value.ival);
 }
 
 
@@ -334,18 +335,18 @@ Code int_const(Pnode int_const_node){
 /*Genera il codice per il nodo stat_list e crea lo scope del programma*/
 Code stat_list(Pnode stat_list_node){
 	//Definisco la variabile che contiene il codice da ritornare
-	Code stat_list_code = NULL;
+	Code stat_list_code ;
 
 	//Creo l'ambiente del programma
 	push_environment();
 	
 	//Punto al primo stat
-	stat_node = stat_list_node->child;
+	Pnode stat_node = stat_list_node->child;
 	//Ciclo lungo tutti gli stat_node
 	while (stat_node!=NULL){
 		//Creo il codice dello stat_node
-		Code stat_code = NULL;
-		switch (p->type){
+		Code stat_code ;
+		switch (stat_node->type){
 			case(N_DEF_STAT): 	stat_code = def_stat(stat_node);
 			case(N_ASSIGN_STAT): 	stat_code = assign_stat(stat_node);
 			case(N_IF_STAT): 	stat_code = if_stat(stat_node);
@@ -374,7 +375,7 @@ Code assign_stat(Pnode assign_stat_node){
 	Pnode expr_node = assign_stat_node->child->brother;
 
 	//Definisco la variabile che contiene il codice da ritornare
-	Code assign_stat_code = NULL;
+	Code assign_stat_code ;
 	
 	//Controllo i vincoli semantici
 	//Visibilità del nome
@@ -385,7 +386,7 @@ Code assign_stat(Pnode assign_stat_node){
 	Code expr_code = expr(expr_node,schema_expr);
 
 	Psymbol symbol = lookup(name(id_node)); 
-	if (!type_equal(symbol->schema,schema_expr))
+	if (!type_equal((symbol->schema),*(schema_expr)))
 		semerror(assign_stat_node,"id e expr non hanno lo stesso tipo");
 
 	//Genero il codice
@@ -401,21 +402,21 @@ Code tuple_const(Pnode tuple_const_node,Pschema schema){
 	//Non ci sono vincoli semantici
 
 	//Preparo il codice della tupla
-	Code tuple_const_code = NULL;
+	Code tuple_const_code ;
 
 	//Punto al primo elemento della tupla
-	atomic_const_node = tuple_const_node->child;
+	Pnode atomic_const_node = tuple_const_node->child;
 
 	//Preparo la variabile che contiene il codice dell'id
-	Code atomic_const_code = NULL;
+	Code atomic_const_code ;
 	
 	do{
 		//Calcolo il codice della prima costante
 		switch(atomic_const_node->type){
 		case (N_INTCONST): 
-		case (N_BOOLCONST):	atomic_const_code = makeCode1(T_IATTR,atomic_const_node->ival);
+		case (N_BOOLCONST):	atomic_const_code = makeCode1(T_IATTR,(atomic_const_node->value.ival));
 					break;	
-		case (N_STRCONST):	atomic_const_code = makeCode1(T_SATTR,atomic_const_node->sval);
+		case (N_STRCONST):	atomic_const_code = make_sattr(T_SATTR,(atomic_const_node->value.sval));
 					break;
 		}	
 		//Appendo il codice della costante al codice della tupla
@@ -435,13 +436,14 @@ Code table_const(Pnode table_const_node, Pschema schema_tabella){
 	//Il codice per la costante tupla dipende dal fatto che la tabella sia vuota o meno
 
 	//Preparo il codice della tabella
-	Code table_const_code = NULL;
+	Code table_const_code ;
 
 	//Preparo il codice della tuple_list
-	Code tuple_list_code = NULL;
+	Code tuple_list_code ;
 
 	//Testo se la tabella è vuota
-	if(Pnode first_attribute = table_const_node->child == N_ATOMIC_TYPE){
+	Pnode first_attribute;
+	if(first_attribute = table_const_node->child == N_ATOMIC_TYPE){
 		//calcolo lo schema della tabella
 	
 		//calcolo lo schema del primo attributo
@@ -457,7 +459,7 @@ Code table_const(Pnode table_const_node, Pschema schema_tabella){
 		//Estraggo la dimensione dello schema di attributi
 		int size = get_size(schema_tabella);
 		//Genero il codice nel caso di tabella vuota
-		Code table_const_code = appcode(makecode(T_LDTAB,size,0),T_ENDTAB);
+		Code table_const_code = appcode(makecode2(T_LDTAB,size,0),T_ENDTAB);
 	}
 	else {
 		//calcolo la lista di tuple della tabella
@@ -465,8 +467,8 @@ Code table_const(Pnode table_const_node, Pschema schema_tabella){
 		Pnode first_tuple = table_const_node->child;
 
 		//Calcolo il codice della prima tupla
-		//Pschema first_tupla_schema = (Pschema) newmem(sizeof(Schema));
-		Code tuple_list_code = tuple_const(schema_tabella);
+		Pschema first_tupla_schema = (Pschema) newmem(sizeof(Schema));
+		Code tuple_list_code = tuple_const(schema_tabella,first_tupla_schema);
 		
 		int tuple_number = 1;
 		
@@ -480,7 +482,7 @@ Code table_const(Pnode table_const_node, Pschema schema_tabella){
 
 			//Controllo i vincoli semantici
 			//Controllo che gli schemi siano compatibili
-			if !compatible(first_tupla_schema,schema_tupla)
+			if (!compatible(first_tupla_schema,schema_tupla))
 				semerror(tuple_node,"Incompatible tuple in table");
 	
 			//Appendo il codice della tupla a quello della lista di tuple
@@ -504,7 +506,7 @@ Code table_const(Pnode table_const_node, Pschema schema_tabella){
 /*Genera il codice dello specifier e ne ritorna lo schema.
 Lo schema dello specifier può essere una costante stringa o NULL*/
 Code specifier(Pnode specifier_node, Pschema schema){
-	Code specifier_code = NULL;
+	Code specifier_code ;
 	Pnode expr_node = specifier_node->child;
 	if (expr_node==NULL){
 		schema->type = NULL;
@@ -554,8 +556,8 @@ Pschema attr_list(Pnode attr_list_node){
 		if(name_in_schema(attr_schema->name,schema)!=NULL)
 			semerror(attr_decl_node,"Variabile già presente nella tabella");
 		//Aggiungo lo schema allo schema della attr_list
-		prev_schema->next = attr->schema;
-		prev_schema = prec_schema->next;
+		prev_schema->next = attr_schema->schema;
+		prev_schema = prev_schema->next;
 	}
 	return schema;
 }

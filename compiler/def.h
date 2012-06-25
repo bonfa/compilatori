@@ -248,14 +248,14 @@ Deve garantire due cose: il risultato dello schema, + il codice computato*/
      makecode3(Operator, int, int, int),
      make_get_fget(Operator, int, char*),		/*serve per la lettura (read)*/
      make_ldint(int),					/*carica costante intera*/
-     make_ldstrmake_ldstr(char *s),				/*carica costante stringa*/
+     make_ldstr(char *s),				/*carica costante stringa*/
      make_print_fprint(Operator, char*),		/*serve per la write*/
      make_sattr(char*),					/*serve per generare gli schemi*/
      /*Questi qui non hanno schema perchè non sono espressioni e non devono ritornare degli schemi
        Gli stat non devono generare schemi*/
      program(Pnode),
      read_stat(Pnode),
-     specifier(Pnode),
+//     specifier(Pnode),
      stat(Pnode),
      stat_list(Pnode),
      tuple_const(Pnode, Pschema),
@@ -288,7 +288,7 @@ Pschema append_schemas(Pschema, Pschema),	/*appende due schemi tra loro*/
 Psymbol insert(Schema),				/*insert nella tabella dei simboli-inserisci lo schema (Nome->attributi)*/
         lookup(char*);				/*cerca in base al nome: (nome del primo elemento sia se atomico che tabella)*/
 	
-Schema type(Pnode);
+//Schema type(Pnode);
 
 size_t strlen (const char*);
 
@@ -315,6 +315,8 @@ void codeprint(Code, int),
      syserror(char*),		/**/
      treeprint(Pnode, int);
 
-
-
+//^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-
+Pschema attr_list(Pnode attr_list_node);
+Code specifier(Pnode specifier_node, Pschema schema);
+Pschema type(Pnode);
 
