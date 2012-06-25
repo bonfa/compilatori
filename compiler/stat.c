@@ -2,6 +2,7 @@
 #include "parser.h"
 #include <string.h>
 
+#define NIHIL -1
 
 void semerror(Pnode p, char *message)
 {
@@ -51,15 +52,15 @@ Code read_stat(Pnode read_stat_node){
 
 	//Controllo che non ci siano errori semantici
 	//Controllo che il tipo di specifier sia corretto
-	if (schema_specifier->type != STRING && schema_specifier->type != NULL)
+	if ((schema_specifier->type != STRING) && (schema_specifier->type != NIHIL))
 		semerror(read_stat_node,"Expected string type");
 	//Controllo che il nome dell'id sia visibile
-	if (!name_in_environment(name(id_node)))
+	if (!name_in_environment(valname(id_node)))
 		semerror(id_node,"Variable not defined");
 
 	//Genero il codice di readstat
 	//La sintassi della read dipende dalla presenza dello specifier
-	Psymbol symbol = lookup(name(id_node));
+	Psymbol symbol = lookup(valname(id_node));
 	if (specifier_node->child == NULL)		
 		read_stat_code = make_get_fget(T_GET,symbol->oid,get_format((symbol->schema)));
 	else
@@ -85,7 +86,7 @@ Code write_stat(Pnode write_stat_node){
 
 	//Controllo che non ci siano errori semantici
 	//Controllo che il tipo di specifier sia corretto
-	if (schema_specifier->type != STRING && schema_specifier->type != NULL)
+	if (schema_specifier->type != STRING && schema_specifier->type != NIHIL)
 		semerror(write_stat_node,"Expected string type");
 
 	//Genero il codice di write_stat
@@ -379,13 +380,13 @@ Code assign_stat(Pnode assign_stat_node){
 	
 	//Controllo i vincoli semantici
 	//Visibilità del nome
-	if (!name_in_environment(name(id_node)))
+	if (!name_in_environment(valname(id_node)))
 		semerror(id_node,"undefined variabile");
 	//Compatibilità degli schemi
 	Pschema schema_expr = (Pschema) newmem(sizeof(Schema));
 	Code expr_code = expr(expr_node,schema_expr);
 
-	Psymbol symbol = lookup(name(id_node)); 
+	Psymbol symbol = lookup(valname(id_node)); 
 	if (!type_equal((symbol->schema),*(schema_expr)))
 		semerror(assign_stat_node,"id e expr non hanno lo stesso tipo");
 
@@ -402,25 +403,25 @@ Code tuple_const(Pnode tuple_const_node,Pschema schema){
 	//Non ci sono vincoli semantici
 
 	//Preparo il codice della tupla
-	Code tuple_const_code ;
+	Code tuple_const_code;
 
 	//Punto al primo elemento della tupla
 	Pnode atomic_const_node = tuple_const_node->child;
 
 	//Preparo la variabile che contiene il codice dell'id
-	Code atomic_const_code ;
+	Code atomic_const_code;
 	
 	do{
 		//Calcolo il codice della prima costante
 		switch(atomic_const_node->type){
 		case (N_INTCONST): 
-		case (N_BOOLCONST):	atomic_const_code = makeCode1(T_IATTR,(atomic_const_node->value.ival));
+		case (N_BOOLCONST):	atomic_const_code = makecode1(T_IATTR,atomic_const_node->value.ival);
 					break;	
-		case (N_STRCONST):	atomic_const_code = make_sattr(T_SATTR,(atomic_const_node->value.sval));
+		case (N_STRCONST):	atomic_const_code = make_sattr(atomic_const_node->value.sval);
 					break;
 		}	
 		//Appendo il codice della costante al codice della tupla
-		tuple_const_code = appcode(tuple_const_code,atomic_const_node);
+		tuple_const_code = appcode(tuple_const_code,atomic_const_code);
 		
 		//Passo al fratello
 		atomic_const_node = atomic_const_node->brother;	
@@ -442,8 +443,8 @@ Code table_const(Pnode table_const_node, Pschema schema_tabella){
 	Code tuple_list_code ;
 
 	//Testo se la tabella è vuota
-	Pnode first_attribute;
-	if(first_attribute = table_const_node->child == N_ATOMIC_TYPE){
+	Pnode first_attribute = table_const_node->child;
+	if (first_attribute->type == N_ATOMIC_TYPE){
 		//calcolo lo schema della tabella
 	
 		//calcolo lo schema del primo attributo
@@ -459,7 +460,7 @@ Code table_const(Pnode table_const_node, Pschema schema_tabella){
 		//Estraggo la dimensione dello schema di attributi
 		int size = get_size(schema_tabella);
 		//Genero il codice nel caso di tabella vuota
-		Code table_const_code = appcode(makecode2(T_LDTAB,size,0),T_ENDTAB);
+		table_const_code = appcode(makecode2(T_LDTAB,size,0),makecode(T_ENDTAB));
 	}
 	else {
 		//calcolo la lista di tuple della tabella
@@ -468,7 +469,7 @@ Code table_const(Pnode table_const_node, Pschema schema_tabella){
 
 		//Calcolo il codice della prima tupla
 		Pschema first_tupla_schema = (Pschema) newmem(sizeof(Schema));
-		Code tuple_list_code = tuple_const(schema_tabella,first_tupla_schema);
+		Code tuple_list_code = tuple_const(first_tuple,first_tupla_schema);
 		
 		int tuple_number = 1;
 		
@@ -482,7 +483,7 @@ Code table_const(Pnode table_const_node, Pschema schema_tabella){
 
 			//Controllo i vincoli semantici
 			//Controllo che gli schemi siano compatibili
-			if (!compatible(first_tupla_schema,schema_tupla))
+			if (!type_equal(*first_tupla_schema,*schema_tupla))
 				semerror(tuple_node,"Incompatible tuple in table");
 	
 			//Appendo il codice della tupla a quello della lista di tuple
@@ -493,8 +494,9 @@ Code table_const(Pnode table_const_node, Pschema schema_tabella){
 			//Aggiorno il numero di tuple
 			tuple_number++;	
 		}
+		int size = get_size(first_tupla_schema);
 		//Creo il codice per la generazione della tabella
-		table_const_code = concode(makecode(T_LDTAB,size,tuple_number),tuple_list_code,T_ENDTAB,endcode());
+		table_const_code = concode(makecode2(T_LDTAB,size,tuple_number),tuple_list_code,makecode(T_ENDTAB),endcode());
 	}
 
 	return table_const_code;
@@ -509,7 +511,7 @@ Code specifier(Pnode specifier_node, Pschema schema){
 	Code specifier_code ;
 	Pnode expr_node = specifier_node->child;
 	if (expr_node==NULL){
-		schema->type = NULL;
+		schema->type = NIHIL;
 	}
 	else {
 		Code expr_code = expr(expr_node,schema);
@@ -556,7 +558,7 @@ Pschema attr_list(Pnode attr_list_node){
 		if(name_in_schema(attr_schema->name,schema)!=NULL)
 			semerror(attr_decl_node,"Variabile già presente nella tabella");
 		//Aggiungo lo schema allo schema della attr_list
-		prev_schema->next = attr_schema->schema;
+		prev_schema->next = attr_schema;
 		prev_schema = prev_schema->next;
 	}
 	return schema;

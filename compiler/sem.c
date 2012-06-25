@@ -151,8 +151,8 @@ Pschema name_in_schema(char *name, Pschema pschema)
 /*crea un nodo schema*/
 Pschema newschema(char* name, int type){
 	Pschema p = (Pschema) newmem(sizeof(Schema));
-	p->type = name;
-	p->line = type;
+	p->name = name;
+	p->type = type;
 	p->next = NULL;
 	return(p);
 }

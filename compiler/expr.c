@@ -61,40 +61,54 @@ Pschema append_schemas(Pschema psch1, Pschema psch2)
 
 
 
-//^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^
-
+//^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^
 /**/
-Code rename_expr(){
-	
+Code expr(Pnode expr_node,Pschema expr_schema){
+	return NULL;
 }
 
 /**/
-Code select_expr(){}
+Code rename_expr(){
+	return NULL;
+}
 
 /**/
-Code update_expr(){}
+Code select_expr(){
+return NULL;
+}
 
 /**/
-Code join_expr(){}
+Code update_expr(){
+return NULL;
+}
 
 /**/
-Code logic_expr(){}
+Code join_expr(){
+return NULL;
+}
 
 /**/
-Code math_expr(){}
+Code logic_expr(){
+return NULL;
+}
 
 /**/
-Code neg_expr(){}
+Code math_expr(){return NULL;
+}
 
 /**/
-Code extend_expr(){}
+Code neg_expr(){return NULL;
+}
 
 /**/
-Code comp_expr(){}
+Code extend_expr(){return NULL;}
+
+/**/
+Code comp_expr(){return NULL;}
 
 /**/
 Code project_expr(Pnode project_expr, Pschema proj_schema){
-	Code project_code = NULL;
+	/*Code project_code = NULL;
 	Pschema schema_expr = (Pschema) newmem(sizeof(Schema));
 	
 	//Prendo il nodo figlio
@@ -109,6 +123,7 @@ Code project_expr(Pnode project_expr, Pschema proj_schema){
 	}
 	
 	//Calcolo i nomi nell'id list
-	
+	*/
+return NULL;
 }
 
