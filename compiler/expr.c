@@ -73,7 +73,7 @@ Code expr(Pnode expr_node,Pschema expr_schema){
 		case(N_COMP_EXPR):	expr_code = comp_expr(expr_node,expr_schema); break;
 		case(N_LOGIC_EXPR): 	expr_code = logic_expr(expr_node,expr_schema); break;		
 		case(N_MATH_EXPR): 	expr_code = math_expr(expr_node,expr_schema); break;
-		case(N_NEG_EXPR): 	expr_code = (expr_node,expr_schema); break;
+		case(N_NEG_EXPR): 	expr_code = neg_expr(expr_node,expr_schema); break;
 		case(N_SELECT_EXPR): 	expr_code = select_kind_expr(expr_node,expr_schema); break;
 		case(N_PROJECT_EXPR):	expr_code = project_expr(expr_node,expr_schema); break;
 		case(N_UPDATE_EXPR):	expr_code = update_expr(expr_node,expr_schema); break;
@@ -86,9 +86,77 @@ Code expr(Pnode expr_node,Pschema expr_schema){
 
 
 
-/**/
-Code comp_expr(){
-return NULL;
+/*Genera lo schema della comp_expr e ritorna il codice pcode*/
+Code comp_expr(Pnode comp_expr_node, Pschema comp_expr_schema){
+	//Definisco i due figli del nodo comp_expr
+	Pnode first_op_node = comp_expr_node->child;
+	Pnode second_op_node = comp_expr_node->child->brother;
+
+	//Preparo la variabile che contiene il codice
+	Code comp_expr_code;
+
+	//Definisco il codice per i due operandi
+	Code first_op_code;
+	Code second_op_code;
+
+	//Creo gli schemi per i due operandi
+	Pschema first_op_schema = (Pschema) newmem(sizeof(Schema));
+	Pschema second_op_schema = (Pschema) newmem(sizeof(Schema));
+
+	//Genero ricorsivamente gli schemi e il codice dei due operandi
+	first_op_code = expr(first_op_node, first_op_schema); 
+	second_op_code = expr(second_op_node, second_op_schema);
+
+
+	//La generazione di codice e gli errori semantici dipendono dal tipo di operazione
+	if(qualifier(comp_expr_node) == EQ || qualifier(comp_expr_node) == NE) {
+		//Controllo gli errori semantici
+		//I due tipi dell'espressione devono essere uguali
+		if(!type_equal(*first_op_schema,*second_op_schema))
+			semerror(comp_expr_node, "Comparison operation requires equal types");
+
+		//Imposto il tipo del risultato
+		comp_expr_schema->type = BOOLEAN;
+
+		//Genero il codice
+		Operator op;
+		if (qualifier(comp_expr_node) == EQ)
+			op = T_EQU;
+		else 
+			op = T_NEQ;
+
+		comp_expr_code = concode(first_op_code,second_op_code,op,endcode());				
+	}
+	else {
+		//Controllo gli errori semantici
+		//Entrambi i tipi dei due operandi devono essere string o integer
+		if(((first_op_schema->type != INTEGER) || (second_op_schema->type != INTEGER)) 
+		&& ((first_op_schema->type != STRING) || (second_op_schema->type != STRING))) 
+			semerror(comp_expr_node, "Operator types must be integer or string");
+
+		//Imposto il tipo del risultato
+		comp_expr_schema->type = BOOLEAN;
+
+		//Genero il codice
+		Operator op;
+		if (first_op_schema->type == INTEGER)
+			switch (qualifier(comp_expr_node)) {
+				case ('>'): op = T_IGT ; break;
+				case (GE):  op = T_IGE ; break;
+				case ('<'): op = T_ILT ; break;
+				case (LE):  op = T_ILE ; break;	
+			}
+		else
+			switch (qualifier(comp_expr_node)) {
+				case ('>'): op = T_SGT ; break;
+				case (GE):  op = T_SGE ; break;
+				case ('<'): op = T_SLT ; break;
+				case (LE):  op = T_SLE ; break;
+			}
+		comp_expr_code = concode(first_op_code,second_op_code,op,endcode());
+	}
+	
+	return comp_expr_code;
 }
 
 
@@ -119,15 +187,15 @@ Code logic_expr(Pnode logic_expr_node, Pschema logic_expr_schema){
 	//Controllo gli errori semantici
 	//Entrambi i tipi dei due operandi devono essere boolean
 	if(first_op_schema->type != BOOLEAN || second_op_schema->type != BOOLEAN) 
-		semerror(root, "Logic operation requires boolean types");
+		semerror(logic_expr_node, "Logic operation requires boolean types");
 
 	//Imposto lo schema del risultato dell'espressione
-	logic_expr_schema-­>type = BOOLEAN;
+	logic_expr_schema->type = BOOLEAN;
 
 	//Le operazioni booleane vengono valutate in corto circuito
 	//Genero il codice in modo diverso per l'AND e per l'OR
 	if(qualifier(logic_expr_node)==AND){
-		int offset = second_op_code->size+2;
+		int offset = second_op_code.size+2;
 		logic_expr_code = concode(
 					first_op_code,
 					makecode1(T_SKIPF,offset),
@@ -137,7 +205,7 @@ Code logic_expr(Pnode logic_expr_node, Pschema logic_expr_schema){
 					endcode());
 	}
 	else{ //OR
-		int exit = second_op_code->size+2;
+		int exit = second_op_code.size+2;
 		logic_expr_code = concode(
 					first_op_code,
 					makecode1(T_SKIPF,3),
@@ -174,11 +242,14 @@ Code math_expr(Pnode math_expr_node, Pschema math_expr_schema){
 	//Controllo gli errori semantici
 	//Entrambi i tipi dei due operandi devono essere interi
 	if(first_op_schema->type != INTEGER || second_op_schema->type != INTEGER) 
-		semerror(root, "Math operation requires integer types");
+		semerror(math_expr_node, "Math operation requires integer types");
 
 	//Imposto lo schema del risultato dell'espressione
-	math_expr_schema-­>type = INTEGER;
+	math_expr_schema->type = INTEGER;
 	
+	//Definisco il codice dell'operatore
+	Operator op;
+
 	//Analizzo il tipo dell'operazione
 	switch(qualifier(math_expr_node)) {
 		case '+' : op = T_PLUS; break;
@@ -188,46 +259,94 @@ Code math_expr(Pnode math_expr_node, Pschema math_expr_schema){
 		default: noderror(math_expr_node);
 	}
 	//Ritorno il codice dell'operazione
-	return concode(code1,code2,makecode(op),endcode());
+	return concode(first_op_code,second_op_code,makecode(op),endcode());
 }
 
 
 
-/**/
-Code neg_expr(){return NULL;
+/*Genera il codice, definisce lo schema e controlla i vincoli semantici*/
+Code neg_expr(Pnode neg_expr_node, Pschema neg_expr_schema){
+	//Definisco il figlio del nodo neg_expr
+	Pnode expr_node = neg_expr_node->child;
+
+	//Preparo la variabile che contiene il codice
+	Code neg_expr_code;
+
+	//Definisco il codice per il nodo figlio
+	Code expr_code;
+
+	//Creo lo schema per il nodo figlio
+	Pschema expr_schema = (Pschema) newmem(sizeof(Schema));
+
+	//Genero ricorsivamente lo schema e il codice per il nodo figlio
+	expr_code = expr(expr_node, expr_schema); 
+
+	//Definisco il codice dell'operatore
+	Operator op;
+
+	//La generazione di codice e gli errori semantici dipendono dal tipo di operazione
+	if (qualifier(neg_expr_node) == '-') {
+		//Controllo la semantica
+		if (expr_schema->type != INTEGER)
+			semerror(neg_expr_node,"Unary minus requires integer type");
+		//Imposto lo schema di neg_expr
+		neg_expr_schema->type = INTEGER;
+
+		//Assegno il codice dell'operatore
+		op = T_UMI;		
+	}
+	else { //NOT
+		//Controllo la semantica		
+		if (expr_schema->type != BOOLEAN)
+			semerror(neg_expr_node,"Not operator requires boolean type");
+	
+		//Imposto lo schema di neg_expr
+		neg_expr_schema->type = BOOLEAN;
+
+		//Assegno il codice dell'operatore
+		op = T_NEG;		
+	}		
+
+	//Definisco il codice da ritornare
+	neg_expr_code = appcode(expr_code,makecode(op));
+
+	return expr_code;
 }
 
 
 
 
-
-
 /**/
-Code rename_expr(){
+Code rename_expr(Pnode rename_expr_node, Pschema rename_expr_schema){
 	return NULL;
 }
 
-/**/
-Code select_kind_expr(){
-return NULL;
-}
+
 
 /**/
-Code update_expr(){
-return NULL;
-}
-
-/**/
-Code join_expr(){
+Code select_kind_expr(Pnode select_expr_node, Pschema select_expr_schema){
 return NULL;
 }
 
 
 
+/**/
+Code update_expr(Pnode update_expr_node, Pschema update_expr_schema){
+return NULL;
+}
+
 
 
 /**/
-Code extend_expr(){return NULL;}
+Code join_expr(Pnode join_expr_node, Pschema join_expr_schema){
+return NULL;
+}
+
+
+
+/**/
+Code extend_expr(Pnode extend_expr_node, Pschema extend_expr_schema){
+return NULL;}
 
 
 

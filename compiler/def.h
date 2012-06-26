@@ -319,4 +319,14 @@ void codeprint(Code, int),
 Pschema attr_list(Pnode attr_list_node);
 Code specifier(Pnode specifier_node, Pschema schema);
 Pschema type(Pnode);
+Code comp_expr(Pnode expr_node,Pschema expr_schema); 
+Code logic_expr(Pnode expr_node,Pschema expr_schema); 		
+Code math_expr(Pnode expr_node,Pschema expr_schema); 
+Code neg_expr(Pnode expr_node,Pschema expr_schema); 
+Code select_kind_expr(Pnode expr_node,Pschema expr_schema); 
+Code project_expr(Pnode expr_node,Pschema expr_schema); 
+Code update_expr(Pnode expr_node,Pschema expr_schema); 
+Code extend_expr(Pnode expr_node,Pschema expr_schema); 
+Code rename_expr(Pnode expr_node,Pschema expr_schema); 
+
 
