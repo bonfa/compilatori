@@ -311,7 +311,7 @@ void codeprint(Code, int),
      relocate_address(Code, int),
      schprint(Schema),			/*Stampa in modo leggibile lo schema*/
      semerror(Pnode, char*),
-     symprint(),		/*Stampa in modo leggibile la tabella dei simboli, solo per i banchi che sono non-nuli*/
+     symprint(),		/*Stampa in modo leggibile la tabella dei simboli, solo per i banchi che sono non-nulli*/
      syserror(char*),		/**/
      treeprint(Pnode, int);
 

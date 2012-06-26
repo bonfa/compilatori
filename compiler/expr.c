@@ -314,6 +314,68 @@ Code neg_expr(Pnode neg_expr_node, Pschema neg_expr_schema){
 }
 
 
+//^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^
+
+
+/**/
+Code project_expr(Pnode project_expr_node, Pschema proj_schema){
+	//Definisco i figli del nodo project_expr
+	Pnode expr_node = project_expr_node->child;
+	Pnode id_list_node = project_expr_node->child->brother;
+
+	//Definisco il codice per i due operandi
+	Code first_op_code;
+	Code second_op_code;
+
+	//Preparo la variabile che contiene il codice
+	Code project_code;
+
+	//Creo lo schema per expr
+	Pschema schema_expr = (Pschema) newmem(sizeof(Schema));
+
+	//Calcolo il codice di expr
+	Code expr_code = expr(expr_node,schema_expr);
+
+	//Calcolo l'elenco di nomi di id_list
+	Pname name_list = id_list(id_list_node);
+
+	//Analisi semantica
+	//Controllo il tipo di expr
+	if(schema_expr->type != TABLE)
+		semerror(project_expr_node,"project needs table type");
+	//Controllo che non ci siano nomi duppi nella lista
+	if (repeated_names(name_list))
+		semerror((project_expr_node,"repeated names in id list"););
+	//Controllo che ciascun nome nella lista appartenga alla tabella
+	Pname n = name_list;
+	while(n != NULL){
+		if (name_in_schema(n->name,schema_expr) != NULL)
+			semerror(project_expr_node,"Attribute must exist in table")
+		n = n->next;
+	}
+	
+	//Genero il pcode
+	n = name_list;
+	int len = 0;
+	Code attr_list_code;
+	while(n != NULL){
+		//Estraggo lo schema della variabile
+		Pschema schema_var = name_in_schema(n->name,schema_expr);
+		//Genero il codice
+		Code attr_code = makecode2(T_ATTR,,get_size(schema_var->type));
+		n = n->next;
+		len++;
+	}
+	
+	Code project_code = concode(
+				makecode1(T_PROJ,len),
+				attr_list_code,
+				makecode(T_ENDPROJ),
+				makecode(T_REMDUP),
+				endcode());
+	return project_code;
+}
+
 
 
 /**/
@@ -350,24 +412,4 @@ return NULL;}
 
 
 
-/**/
-Code project_expr(Pnode project_expr, Pschema proj_schema){
-	/*Code project_code = NULL;
-	Pschema schema_expr = (Pschema) newmem(sizeof(Schema));
-	
-	//Prendo il nodo figlio
-	Pnode expr_node = project_expr->child;
-	
-	//Calcolo il codice di expr
-	Code expr_code = expr(expr_node,schema_expr);
-	
-	//Controllo i vincoli semantici
-	if (schema_expr->type != NULL){ 
-		semerror(expr_node,"Boolean result expected");
-	}
-	
-	//Calcolo i nomi nell'id list
-	*/
-return NULL;
-}
 
