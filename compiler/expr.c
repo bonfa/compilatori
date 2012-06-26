@@ -317,7 +317,7 @@ Code neg_expr(Pnode neg_expr_node, Pschema neg_expr_schema){
 //^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^^-^-^-^-^-^-^-^
 
 
-/**/
+/*Genera il codice della expr e lo schema risultante*/
 Code project_expr(Pnode project_expr_node, Pschema proj_schema){
 	//Definisco i figli del nodo project_expr
 	Pnode expr_node = project_expr_node->child;
@@ -337,7 +337,8 @@ Code project_expr(Pnode project_expr_node, Pschema proj_schema){
 	Code expr_code = expr(expr_node,schema_expr);
 
 	//Calcolo l'elenco di nomi di id_list
-	Pname name_list = id_list(id_list_node);
+	int len;
+	Pname name_list = id_list(id_list_node,&len);
 
 	//Analisi semantica
 	//Controllo il tipo di expr
@@ -345,29 +346,31 @@ Code project_expr(Pnode project_expr_node, Pschema proj_schema){
 		semerror(project_expr_node,"project needs table type");
 	//Controllo che non ci siano nomi duppi nella lista
 	if (repeated_names(name_list))
-		semerror((project_expr_node,"repeated names in id list"););
+		semerror(project_expr_node,"repeated names in id list");
 	//Controllo che ciascun nome nella lista appartenga alla tabella
 	Pname n = name_list;
 	while(n != NULL){
 		if (name_in_schema(n->name,schema_expr) != NULL)
-			semerror(project_expr_node,"Attribute must exist in table")
+			semerror(project_expr_node,"Attribute must exist in table");
 		n = n->next;
 	}
 	
 	//Genero il pcode
 	n = name_list;
-	int len = 0;
+	len = 0;
 	Code attr_list_code;
 	while(n != NULL){
-		//Estraggo lo schema della variabile
-		Pschema schema_var = name_in_schema(n->name,schema_expr);
+		//Estraggo lo schema della variabile e l'indirizzo della variabile
+		int context_offset,attribute_offset;
+		//Prendo la variable 
+		Pschema schema_var = name_in_constack(n->name,&context_offset,&attribute_offset);
 		//Genero il codice
-		Code attr_code = makecode2(T_ATTR,,get_size(schema_var->type));
+		Code attr_code = makecode2(T_ATTR,context_offset+attribute_offset,get_size(schema_var->type));
 		n = n->next;
 		len++;
 	}
 	
-	Code project_code = concode(
+	project_code = concode(
 				makecode1(T_PROJ,len),
 				attr_list_code,
 				makecode(T_ENDPROJ),
@@ -378,16 +381,90 @@ Code project_expr(Pnode project_expr_node, Pschema proj_schema){
 
 
 
-/**/
+/*Genera il codice della expr e lo schema risultante*/
 Code rename_expr(Pnode rename_expr_node, Pschema rename_expr_schema){
-	return NULL;
+	//Definisco i figli del nodo rename_expr
+	Pnode expr_node = rename_expr_node->child;
+	Pnode id_list_node = rename_expr_node->child->brother;
+
+	//Preparo la variabile che contiene il codice
+	Code rename_code;
+
+	//Creo lo schema per expr
+	Pschema schema_expr = (Pschema) newmem(sizeof(Schema));
+
+	//Calcolo il codice di expr
+	Code expr_code = expr(expr_node,schema_expr);
+
+	//Calcolo l'elenco di nomi di id_list
+	int id_list_len;
+	Pname name_list = id_list(id_list_node,&id_list_len);
+
+	//Controllo la semantica
+	//Tipo di expr dev'essere table
+	if(schema_expr->type != TABLE)
+		semerror(rename_expr_node,"project needs table type");
+	//Controllo che la lunghezza delle due liste di nomi sia uguale
+	//Calcolo la lunghezza della seconda lista
+	int len_schema = 1;
+	Pschema s;	
+	for(s=schema_expr;s!=NULL;s=s->next)
+		len_schema++;
+	if (len_schema != id_list_len)
+		semerror(rename_expr_node,"has different name");
+	//Controllo che non ci siano nomi duppi nella lista
+	if (repeated_names(name_list))
+		semerror(rename_expr_node,"repeated names in id list");
+	
+//	"manca l'inserimento nello stack"
+
+	//Il codice della rename è il codice della expr
+	rename_code = expr_code;
+	return rename_code;
 }
 
 
 
 /**/
 Code select_kind_expr(Pnode select_expr_node, Pschema select_expr_schema){
-return NULL;
+	//Definisco i figli del nodo
+	Pnode expr1_node = select_expr_node->child;
+	Pnode expr2_node = select_expr_node->child->brother;
+
+	//Preparo la variabile che contiene il codice
+	Code select_code;
+
+	//Creo lo schema per le due expr
+	Pschema schema_expr1 = (Pschema) newmem(sizeof(Schema));
+	Pschema schema_expr2 = (Pschema) newmem(sizeof(Schema));
+
+	//Calcolo il codice delle due expr
+	Code expr_code1 = expr(expr1_node,schema_expr1);
+	Code expr_code2 = expr(expr2_node,schema_expr2);
+	
+	//Controllo la semantica
+	if (schema_expr1->type != BOOLEAN)
+		semerror(select_expr_node,"expected boolean type");
+	if (schema_expr2->type != TABLE)	
+		semerror(select_expr_node,"expected table type");
+
+	//Imposto il tipo di ritorno
+	if (qualifier(select_expr_node)==SELECT)
+		select_expr_schema = clone_schema(schema_expr2); 
+	else
+		select_expr_schema->type = BOOLEAN; 
+
+//	"manca l'inserimento nello stack"
+	
+	int gap = expr_code1.size;
+	//Genero il codice
+	switch(qualifier(select_expr_node)){
+	case(SELECT): select_code = concode(expr_code2,makecode1(T_SEL,gap),endcode(T_ENDSEL));
+	case(EXISTS): select_code = concode(expr_code2,makecode1(T_EXS,gap),endcode(T_ENDEXS));
+	case(ALL): select_code = concode(expr_code2,makecode1(T_ALL,gap),endcode(T_ENDALL));
+	}
+
+	return select_code;
 }
 
 
