@@ -198,16 +198,30 @@ Code def_stat(Pnode def_stat_node){
 	Pname id_list_name = id_list(id_list_head_node,&id_list_len);
 	
 	//Controllo gli errori semantici
-	//id ripetuti	
-	if (repeated_names(id_list_name))
-		semerror(def_stat_node,"id ripetuti");
+	//id ripetuti
+	Boolean repetition = repeated_names(id_list_name);
+#ifdef DEBUG
+	printf("Repeated_names =%d\n",repetition);
+#endif
+	if (repetition == TRUE){
+#ifdef DEBUG
+		printf("error\n");
+#endif
+		semerror(def_stat_node,"Variable redeclaration");
+	}
 	//variabili già assegnate
+#ifdef DEBUG
+	printf("not_error_in_repetition_check\n");	
+#endif
+
 	Pnode id_node;
 	for (id_node = id_list_head_node; id_node!=NULL; id_node=id_node->brother)
 		if (name_in_environment(valname(id_node)))
-			semerror(id_node,"variabile già definita");
+			semerror(id_node,"Variable already defined");
 
-		
+#ifdef DEBUG
+	printf("not_error_in declaration_check\n");	
+#endif		
 	//Genero il codice per la definizione delle variabili
 	for (id_node = id_list_head_node; id_node!=NULL; id_node=id_node->brother){
 		//Genero il codice dell'id
@@ -221,6 +235,10 @@ Code def_stat(Pnode def_stat_node){
 		def_stat_code = appcode(def_stat_code,id_code);
 	}
 	
+#ifdef DEBUG
+	printf("not_error_in definition_code\n");	
+#endif
+
 	return def_stat_code;
 }
 
@@ -355,9 +373,15 @@ Code stat_list(Pnode stat_list_node){
 			case(N_READ_STAT): 	stat_code = read_stat(stat_node);break;
 			case(N_WRITE_STAT): 	stat_code = write_stat(stat_node);break;
 		}
-		/*Appendo il codice a stat_list_code*/
+#ifdef DEBUG
+		printf("not_error_in_statement\n");	
+#endif		
+		//Appendo il codice a stat_list_code
 		stat_list_code = appcode(stat_list_code,stat_code);
-		/*Punto al fratello successivo*/
+#ifdef DEBUG
+		printf("not_error_in_appcode\n");	
+#endif
+		//Punto al fratello successivo
 		stat_node=stat_node->brother;
 	}
 	

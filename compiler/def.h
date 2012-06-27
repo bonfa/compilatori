@@ -329,4 +329,4 @@ Code update_expr(Pnode expr_node,Pschema expr_schema);
 Code extend_expr(Pnode expr_node,Pschema expr_schema); 
 Code rename_expr(Pnode expr_node,Pschema expr_schema); 
 
-
+#define DEBUG

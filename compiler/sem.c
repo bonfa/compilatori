@@ -161,10 +161,29 @@ Pschema newschema(char* name, int type){
 Boolean repeated_names(Pname name_list){
 	Pname p1,p2;
 	//Ciclo per tutta la lista
-	for(p1 = name_list;p1!=NULL;p1=p1->next)
-		if (name_in_list(p1->name,name_list))
+	int i = 1;
+	for(p1 = name_list;p1->next!=NULL;p1=p1->next){
+#ifdef DEBUG		
+		printf("-%d-\n",i);
+		printf("P1 = ");
+		idlprint(p1);
+#endif
+		//Faccio partire la lista dall'elemento successivo al nome che voglio cercare nella lista
+		Pname short_list = p1->next;
+#ifdef DEBUG
+		printf("SHORT_L = ");
+		idlprint(short_list);
+		printf("Result = %d\n",name_in_list(p1->name,short_list));
+		printf("nil_ok\n\n");
+#endif
+		if ((short_list!=NULL) && (name_in_list(p1->name,short_list)))
 			return TRUE;
-	return(FALSE);
+		i++;
+	}
+#ifdef DEBUG	
+	printf("exit_cicle\n");
+#endif
+	return FALSE;
 }
 
 
