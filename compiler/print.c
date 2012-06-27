@@ -178,3 +178,9 @@ void codeprint(Code code, int indent)
 }
   
 
+#ifdef DEBUG
+	void enumprint(char *name,Typenode t){
+		printf("%s = %d\n",name,t);
+	}
+#endif
+
