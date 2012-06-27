@@ -163,14 +163,14 @@ Boolean repeated_names(Pname name_list){
 	//Ciclo per tutta la lista
 	int i = 1;
 	for(p1 = name_list;p1->next!=NULL;p1=p1->next){
-#ifdef DEBUG		
+#ifdef DEBUG_REPEATED_NAMES		
 		printf("-%d-\n",i);
 		printf("P1 = ");
 		idlprint(p1);
 #endif
 		//Faccio partire la lista dall'elemento successivo al nome che voglio cercare nella lista
 		Pname short_list = p1->next;
-#ifdef DEBUG
+#ifdef DEBUG_REPEATED_NAMES
 		printf("SHORT_L = ");
 		idlprint(short_list);
 		printf("Result = %d\n",name_in_list(p1->name,short_list));
@@ -180,7 +180,7 @@ Boolean repeated_names(Pname name_list){
 			return TRUE;
 		i++;
 	}
-#ifdef DEBUG	
+#ifdef DEBUG_REPEATED_NAMES	
 	printf("exit_cicle\n");
 #endif
 	return FALSE;

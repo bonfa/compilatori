@@ -329,4 +329,11 @@ Code update_expr(Pnode expr_node,Pschema expr_schema);
 Code extend_expr(Pnode expr_node,Pschema expr_schema); 
 Code rename_expr(Pnode expr_node,Pschema expr_schema); 
 
-#define DEBUG
+//#define DEBUG_REPEATED_NAMES
+//#define DEBUG_DEF_STAT
+//#define DEBUG_ATOMIC_TYPE
+//#define DEBUG_TYPE
+//#define DEBUG_TABLE_TYPE
+//#define DEBUG_STAT_LIST
+//#define DEBUG_ATTR_DECL
+//#define DEBUG_ATTR_LIST

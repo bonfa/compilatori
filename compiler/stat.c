@@ -194,7 +194,7 @@ Code def_stat(Pnode def_stat_node){
 	def_stat_code.tail = NULL;
 	def_stat_code.size = 0;
 
-#ifdef DEBUG
+#ifdef DEBUG_DEF_STAT
 	printf("__TEST__\n");
 	
 #endif
@@ -207,18 +207,18 @@ Code def_stat(Pnode def_stat_node){
 	//Controllo gli errori semantici
 	//id ripetuti
 	Boolean repetition = repeated_names(id_list_name);
-#ifdef DEBUG
+#ifdef DEBUG_DEF_STAT
 	idlprint(id_list_name);
 	printf("Repeated_names =%d\n",repetition);
 #endif
 	if (repetition == TRUE){
-#ifdef DEBUG
+#ifdef DEBUG_DEF_STAT
 		printf("error\n");
 #endif
 		semerror(def_stat_node,"Variable redeclaration");
 	}
 	//variabili già assegnate
-#ifdef DEBUG
+#ifdef DEBUG_DEF_STAT
 	printf("not_error_in_repetition_check\n");	
 #endif
 
@@ -227,7 +227,7 @@ Code def_stat(Pnode def_stat_node){
 		if (name_in_environment(valname(id_node)))
 			semerror(id_node,"Variable already defined");
 
-#ifdef DEBUG
+#ifdef DEBUG_DEF_STAT
 	printf("not_error_in declaration_check\n");	
 #endif		
 	//Genero il codice per la definizione delle variabili
@@ -235,7 +235,7 @@ Code def_stat(Pnode def_stat_node){
 		//Genero il codice dell'id
 		Code id_code ;
 		int spazio_da_allocare = get_size(schema_type);
-#ifdef DEBUG
+#ifdef DEBUG_DEF_STAT
 		printf("len = %s\n",valname(id_node));
 		printf("dim = %d\n",get_size(schema_type));
 #endif
@@ -247,7 +247,7 @@ Code def_stat(Pnode def_stat_node){
 		def_stat_code = appcode(def_stat_code,id_code);
 	}
 	
-#ifdef DEBUG
+#ifdef DEBUG_DEF_STAT
 	printf("not_error_in definition_code\n");
 	codeprint(def_stat_code,1);	
 #endif
@@ -259,7 +259,7 @@ Code def_stat(Pnode def_stat_node){
 
 /*Ritorna lo schema e imposta il tipo nel campo type di schema*/
 Pschema atomic_type(Pnode atomic_type_node){
-#ifdef DEBUG
+#ifdef DEBUG_ATOMIC_TYPE
 	printf( "ATOMIC_TYPE_NODE - enter\n");
 #endif
 	//Creo lo schema
@@ -269,7 +269,7 @@ Pschema atomic_type(Pnode atomic_type_node){
 	schema->next = NULL;
 	//Imposto il type
 	schema->type = qualifier(atomic_type_node);
-#ifdef DEBUG
+#ifdef DEBUG_ATOMIC_TYPE
 	printf( "ATOMIC_TYPE_NODE - exit\n");
 #endif
 	return schema;
@@ -280,7 +280,7 @@ Pschema atomic_type(Pnode atomic_type_node){
 /*Ritorna lo schema del type.
 Il puntatore allo schema successivo che sarà NULL nel caso di tipi semplici, e non nullo per tipi tabella*/
 Pschema type(Pnode type_node){
-#ifdef DEBUG
+#ifdef DEBUG_TYPE
 	printf( "TYPE_NODE - enter\n");
 #endif
 
@@ -295,26 +295,26 @@ Pschema type(Pnode type_node){
 Ritorna lo schema del table_type.
 */
 Pschema table_type(Pnode type_node){
-#ifdef DEBUG
+#ifdef DEBUG_TABLE_TYPE
 	printf( "TABLE_TYPE - enter\n");
 #endif
 	//Creo lo schema
 	Pschema schema = (Pschema) newmem(sizeof(Schema));
 	schema->name = NULL;
-#ifdef DEBUG
+#ifdef DEBUG_TABLE_TYPE
 	printf( "TABLE_TYPE - ok schema def\n");
 #endif
 
 	//Imposto il type (che sarà TABLE)
 	schema->type = qualifier(type_node);
 	
-#ifdef DEBUG
+#ifdef DEBUG_TABLE_TYPE
 	printf( "TABLE_TYPE - pre_attr_list\n");
 #endif
 	//Genero la lista di attributi
 	schema->next = attr_list(type_node->child);
 	
-#ifdef DEBUG
+#ifdef DEBUG_TABLE_TYPE
 	printf( "TABLE_TYPE - ok attr_list definition\n");
 #endif
 	return schema;
@@ -411,14 +411,14 @@ Code stat_list(Pnode stat_list_node){
 			case(N_READ_STAT): 	stat_code = read_stat(stat_node);break;
 			case(N_WRITE_STAT): 	stat_code = write_stat(stat_node);break;
 		}
-#ifdef DEBUG
+#ifdef DEBUG_STAT_LIST
 		printf("not_error_in_statement\n");
 		codeprint(stat_code,0);
 #endif		
 		
 		//Appendo il codice a stat_list_code
 		stat_list_code = appcode(stat_list_code,stat_code);
-#ifdef DEBUG
+#ifdef DEBUG_STAT_LIST
 		printf("not_error_in_appcode\n");	
 #endif
 		//Punto al fratello successivo
@@ -587,7 +587,7 @@ Code specifier(Pnode specifier_node, Pschema schema){
 
 /*Ritorno lo schema dell'attr_decl*/
 Pschema attr_decl(Pnode attr_decl_node){
-#ifdef DEBUG
+#ifdef DEBUG_ATTR_DECL
 	printf( "ATTR_DECL - enter\n");
 	printf("pnode = %p\n",attr_decl_node);
 	printf("Node_type = %d\n",attr_decl_node->type);
@@ -599,20 +599,20 @@ Pschema attr_decl(Pnode attr_decl_node){
 	Pnode type_node = attr_decl_node->child;
 	Pnode id_node = attr_decl_node->child->brother;
 
-#ifdef DEBUG
+#ifdef DEBUG_ATTR_DECL
 	fprintf(stderr, "ATTR_DECL - ok two child nodes\n");
 #endif	
 	//Analizzo il tipo 
 	Pschema schema = atomic_type(type_node);
 
-#ifdef DEBUG
+#ifdef DEBUG_ATTR_DECL
 	printf( "ATTR_DECL - ok get atomic schema\n");
 #endif
 
 	//Dall'id_node prendo il nome e lo aggiungo a schema
 	schema->name = valname(id_node);
 
-#ifdef DEBUG
+#ifdef DEBUG_ATTR_DECL
 	printf( "ATTR_DECL - exit\n");
 #endif
 
@@ -623,7 +623,7 @@ Pschema attr_decl(Pnode attr_decl_node){
 
 /*Ritorno lo schema dell'attr_list*/
 Pschema attr_list(Pnode attr_list_node){
-#ifdef DEBUG
+#ifdef DEBUG_ATTR_LIST
 	printf( "ATTR_LIST - enter\n");
 #endif
 	//Punto al primo figlio
@@ -632,7 +632,7 @@ Pschema attr_list(Pnode attr_list_node){
 	//Estraggo lo schema del primo figlio
 	Pschema schema = attr_decl(first_attr_decl_node);
 
-#ifdef DEBUG
+#ifdef DEBUG_ATTR_LIST
 	printf( "ATTR_LIST - ok attr_decl_call\n");
 #endif	
 
@@ -640,7 +640,7 @@ Pschema attr_list(Pnode attr_list_node){
 	Pnode attr_decl_node = first_attr_decl_node->brother;
 	//Punto al primo schema
 	Pschema prev_schema = schema;
-#ifdef DEBUG
+#ifdef DEBUG_ATTR_LIST
 	printf( "ATTR_LIST - ok attr_decl brother\n");
 	int c=1;
 #endif	
@@ -648,7 +648,7 @@ Pschema attr_list(Pnode attr_list_node){
 	while (attr_decl_node != NULL) {
 		//Prendo lo schema del nodo
 		Pschema attr_schema = attr_decl(attr_decl_node);
-#ifdef DEBUG
+#ifdef DEBUG_ATTR_LIST
 		printf( "ATTR_LIST - ok attr_decl schema\n");
 		printf("			ciaociaociao");
 		printf("%d\n",c);
@@ -657,7 +657,7 @@ Pschema attr_list(Pnode attr_list_node){
 		//Controllo che nell'elenco dei nomi non ci sia già un id con quel nome
 		if(name_in_schema(attr_schema->name,schema)!=NULL)
 			semerror(attr_decl_node,"Variabile già presente nella tabella");
-#ifdef DEBUG
+#ifdef DEBUG_ATTR_LIST
 		printf("			ciaociaociao\n\n");
 		printf("prev_schema = %p\n",prev_schema);
 		printf("prev_schema->next = %p\n",prev_schema->next);
@@ -665,19 +665,18 @@ Pschema attr_list(Pnode attr_list_node){
 #endif
 		//Aggiungo lo schema allo schema della attr_list
 		prev_schema->next = attr_schema;
-		printf("			prrrrrrrrrrr\n\n");
 		prev_schema = prev_schema->next;
-#ifdef DEBUG
+#ifdef DEBUG_ATTR_LIST
 	printf( "ATTR_LIST - ok insert schema\n");
 #endif
 		//Passo al fratello di attr_decl
 		attr_decl_node = attr_decl_node->brother;
-#ifdef DEBUG
+#ifdef DEBUG_ATTR_LIST
 	printf( "ATTR_LIST - ok attr_decl brother\n");
 #endif	
 	}
 
-#ifdef DEBUG
+#ifdef DEBUG_ATTR_LIST
 	printf( "ATTR_LIST - exit\n");
 #endif
 
