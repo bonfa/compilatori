@@ -425,7 +425,7 @@ Code rename_expr(Pnode rename_expr_node, Pschema rename_expr_schema){
 
 
 
-/**/
+/*Genera il codice della expr e lo schema risultante*/
 Code select_kind_expr(Pnode select_expr_node, Pschema select_expr_schema){
 	//Definisco i figli del nodo
 	Pnode expr1_node = select_expr_node->child;
@@ -469,23 +469,161 @@ Code select_kind_expr(Pnode select_expr_node, Pschema select_expr_schema){
 
 
 
-/**/
+/*Genera il codice della expr e lo schema risultante*/
 Code update_expr(Pnode update_expr_node, Pschema update_expr_schema){
-return NULL;
+	//Definisco i figli del nodo
+	Pnode expr1_node = update_expr_node->child;
+	Pnode id_node = update_expr_node->child->brother;
+	Pnode expr2_node = update_expr_node->child->brother->brother;
+
+	//Preparo la variabile che contiene il codice
+	Code update_code;
+
+	//Creo lo schema per le due expr e per l'id
+	Pschema schema_expr1 = (Pschema) newmem(sizeof(Schema));
+	Pschema schema_expr2 = (Pschema) newmem(sizeof(Schema));
+
+	//Calcolo il codice delle due expr
+	Code expr_code1 = expr(expr1_node,schema_expr1);
+	Code expr_code2 = expr(expr2_node,schema_expr2);
+	
+
+	//Controllo la semantica
+	//expr1 dev'essere di tipo tabella
+	if (schema_expr1->type != TABLE)
+		semerror(update_expr_node,"expected table type");
+	//id deve appartenere all'elenco degli attributi di expr1
+	Pschema schema_id = name_in_schema(valname(id_node),schema_expr1);
+	if (schema_id == NULL)
+		semerror(update_expr_node,"attribute must exist in table");
+	//tipo di expr2 e di id devono essere compatibili
+	if (!type_equal(*schema_id,*schema_expr2))	
+		semerror(update_expr_node,"id and expr must have same type");
+
+	//Imposto il tipo di ritorno
+	update_expr_schema = clone_schema(schema_expr1); 
+	
+	//Genero il codice
+	int gap = expr_code2.size;
+	int context_offset,attribute_offset;
+	Pschema schema_var = name_in_constack(valname(id_node),&context_offset,&attribute_offset);
+	update_code = concode(
+				expr_code1,
+				makecode3(T_UPD,attribute_offset,get_size(schema_var),gap),
+				expr_code2,
+				makecode1(T_ENDUPD,gap),
+				makecode(T_REMDUP),
+				endcode());		
+
+	return update_code;
 }
 
 
 
-/**/
+/*Genera il codice della expr e lo schema risultante*/
 Code join_expr(Pnode join_expr_node, Pschema join_expr_schema){
-return NULL;
+	//Definisco i figli del nodo
+	Pnode expr1_node = join_expr_node->child;
+	Pnode expr2_node = join_expr_node->child->brother;
+	Pnode expr3_node = join_expr_node->child->brother->brother;
+
+	//Preparo la variabile che contiene il codice
+	Code join_code;
+
+	//Creo lo schema per le expr
+	Pschema schema_expr1 = (Pschema) newmem(sizeof(Schema));
+	Pschema schema_expr2 = (Pschema) newmem(sizeof(Schema));
+	Pschema schema_expr3 = (Pschema) newmem(sizeof(Schema));
+
+	//Calcolo il codice delle expr
+	Code expr_code1 = expr(expr1_node,schema_expr1);
+	Code expr_code2 = expr(expr2_node,schema_expr2);
+	Code expr_code3 = expr(expr3_node,schema_expr3);	
+
+	//Controllo la semantica
+	//expr1 dev'essere di tipo tabella
+	if (schema_expr1->type != TABLE)
+		semerror(join_expr_node,"expected table type");
+	//expr3 dev'essere di tipo tabella
+	if (schema_expr3->type != TABLE)
+		semerror(join_expr_node,"expected table type");
+	//expr2 dev'essere di tipo boolean
+	if (schema_expr2->type != BOOLEAN)
+		semerror(join_expr_node,"expected boolean type");
+	//le due tabelle non devono avere nomi in comune
+	Pschema p = schema_expr1;
+	while(p!=NULL){	
+		if(name_in_schema(p->name,schema_expr3))
+			semerror(join_expr_node,"tables have attribute with the same name");
+		p=p->next;
+	}
+
+	//Genero il codice
+	int gap = expr_code2.size;
+	join_code = concode(
+				expr_code1,
+				expr_code3,
+				makecode1(T_JOIN,gap),
+				expr_code2,
+				makecode1(T_ENDJOIN,gap),
+				endcode());
+	return join_code;
 }
 
 
 
-/**/
+/*Genera il codice della expr e lo schema risultante*/
 Code extend_expr(Pnode extend_expr_node, Pschema extend_expr_schema){
-return NULL;}
+	//Definisco i figli del nodo
+	Pnode expr1_node = extend_expr_node->child;
+	Pnode atomic_type_node = extend_expr_node->child->brother;
+	Pnode id_node = extend_expr_node->child->brother->brother;
+	Pnode expr2_node = extend_expr_node->child->brother->brother->brother;
+
+	//Preparo la variabile che contiene il codice
+	Code extend_code;
+	
+	//Creo lo schema per le due expr
+	Pschema schema_expr1 = (Pschema) newmem(sizeof(Schema));
+	Pschema schema_expr2 = (Pschema) newmem(sizeof(Schema));
+
+	//Calcolo il codice delle due expr
+	Code expr_code1 = expr(expr1_node,schema_expr1);
+	Code expr_code2 = expr(expr2_node,schema_expr2);
+
+	//Calcolo il tipo dell'elemento
+	Pschema	atomic_type_schema = atomic_type(atomic_type_node);
+	
+	//Controllo la semantica
+	//expr1 dev'essere di tipo tabella
+	if (schema_expr1->type != TABLE)
+		semerror(extend_expr_node,"expected table type");
+	//id non deve appartenere all'elenco degli attributi di expr1
+	Pschema schema_id = name_in_schema(valname(id_node),schema_expr1);
+	if (schema_id != NULL)
+		semerror(extend_expr_node,"attribute already exists in table");
+	//il tipo di expr2 dev'essere uguale al tipo di atomic type
+	if (type_equal(*schema_expr2, *atomic_type_schema))
+		semerror(extend_expr_node,"different types");
+		
+	//Definisco il nuovo schema
+	//Aggiorno lo schema di type
+	atomic_type_schema->name = valname(id_node);
+	//Appendo lo schema del nuovo attributo a quello della tabella
+	extend_expr_schema = append_schemas(schema_expr1,atomic_type_schema);
+	
+	//Genero il codice
+	int gap = expr_code2.size;
+	int size = get_size(atomic_type_schema);
+	extend_code = concode(
+				expr_code1,
+				makecode2(T_EXT,size,gap),
+				expr_code2,
+				makecode1(T_ENDEXT,gap),
+				endcode());
+
+	return extend_code;
+}
 
 
 

@@ -157,3 +157,14 @@ Pschema newschema(char* name, int type){
 	return(p);
 }
 
+/*Ritorna true se ci sono nomi ripetuti nella lista di nomi*/
+Boolean repeated_names(Pname name_list){
+	Pname p1,p2;
+	//Ciclo per tutta la lista
+	for(p1 = name_list;p1!=NULL;p1=p1->next)
+		if (name_in_list(p1->name,name_list))
+			return TRUE;
+	return(FALSE);
+}
+
+
