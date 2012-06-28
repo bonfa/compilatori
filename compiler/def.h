@@ -327,7 +327,13 @@ Code select_kind_expr(Pnode expr_node,Pschema expr_schema);
 Code project_expr(Pnode expr_node,Pschema expr_schema); 
 Code update_expr(Pnode expr_node,Pschema expr_schema); 
 Code extend_expr(Pnode expr_node,Pschema expr_schema); 
-Code rename_expr(Pnode expr_node,Pschema expr_schema); 
+Code rename_expr(Pnode expr_node,Pschema expr_schema);
+
+Code bool_const(Pnode bool_const_node,Pschema schema);
+Code str_const(Pnode str_const_node,Pschema schema);
+Code int_const(Pnode int_const_node,Pschema schema);
+Code id_expr(Pnode id_node,Pschema schema);
+ 
 
 //#define DEBUG_REPEATED_NAMES
 //#define DEBUG_DEF_STAT
@@ -337,3 +343,5 @@ Code rename_expr(Pnode expr_node,Pschema expr_schema);
 //#define DEBUG_STAT_LIST
 //#define DEBUG_ATTR_DECL
 //#define DEBUG_ATTR_LIST
+//#define DEBUG_ASSIGN_STAT
+//#define DEBUG_NEG_EXPR

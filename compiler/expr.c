@@ -79,6 +79,11 @@ Code expr(Pnode expr_node,Pschema expr_schema){
 		case(N_UPDATE_EXPR):	expr_code = update_expr(expr_node,expr_schema); break;
 		case(N_EXTEND_EXPR):	expr_code = extend_expr(expr_node,expr_schema); break;
 		case(N_RENAME_EXPR):	expr_code = rename_expr(expr_node,expr_schema); break;
+		case(N_ID):		expr_code = id_expr(expr_node,expr_schema); break;
+		case(N_BOOLCONST):	expr_code = bool_const(expr_node,expr_schema); break;
+		case(N_INTCONST):	expr_code = int_const(expr_node,expr_schema); break;
+		case(N_STRCONST):	expr_code = str_const(expr_node,expr_schema); break;
+		default: printf("mi sono dimenticato qualcosa\n");
 	}
 	return expr_code;
 }
@@ -266,6 +271,9 @@ Code math_expr(Pnode math_expr_node, Pschema math_expr_schema){
 
 /*Genera il codice, definisce lo schema e controlla i vincoli semantici*/
 Code neg_expr(Pnode neg_expr_node, Pschema neg_expr_schema){
+#ifdef DEBUG_NEG_EXPR
+	printf("NEG_EXPR - enter\n");
+#endif
 	//Definisco il figlio del nodo neg_expr
 	Pnode expr_node = neg_expr_node->child;
 
@@ -309,8 +317,11 @@ Code neg_expr(Pnode neg_expr_node, Pschema neg_expr_schema){
 
 	//Definisco il codice da ritornare
 	neg_expr_code = appcode(expr_code,makecode(op));
-
-	return expr_code;
+#ifdef DEBUG_NEG_EXPR
+	//codeprint(neg_expr_code,1);	
+	printf("NEG_EXPR - exit\n");
+#endif
+	return neg_expr_code;
 }
 
 
@@ -626,5 +637,42 @@ Code extend_expr(Pnode extend_expr_node, Pschema extend_expr_schema){
 }
 
 
+
+/*Genera il codice per il caricamento di una variabile booleana*/
+Code bool_const(Pnode bool_const_node,Pschema schema){
+	schema->type = BOOLEAN;
+	if (bool_const_node->value.ival == TRUE)
+		return make_ldint(1);
+	else 
+		return make_ldint(0);
+}
+
+
+
+/*Genera il codice per il caricamento di una variabile stringa*/
+Code str_const(Pnode str_const_node,Pschema schema){
+	schema->type = STRING;
+	return make_ldstr(valname(str_const_node));
+}
+
+
+
+/*Genera il codice per il caricamento di una variabile intera*/
+Code int_const(Pnode int_const_node,Pschema schema){
+	schema->type = INTEGER;
+	return make_ldint(int_const_node->value.ival);
+}
+
+/*Genera il codice per il caricamento dell'id e ritorna lo schema*/
+Code id_expr(Pnode id_node,Pschema schema){
+	//Cerca il simbolo nella tabella dei simboli
+	Psymbol symbol = lookup(valname(id_node));
+	if(symbol == NULL)
+		semerror(id_node,"variable not found in stack");
+	//imposto lo schema
+	schema = clone_schema(&(symbol->schema));
+	//Ritorno il codice
+	return makecode1(T_LOB,symbol->oid);
+}
 
 

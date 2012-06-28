@@ -230,7 +230,7 @@ Code def_stat(Pnode def_stat_node){
 #ifdef DEBUG_DEF_STAT
 	printf("not_error_in declaration_check\n");	
 #endif		
-	//Genero il codice per la definizione delle variabili
+	//Genero il codice per la definizione delle variabili e inserisco i nomi nel contesto
 	for (id_node = id_list_head_node; id_node!=NULL; id_node=id_node->brother){
 		//Genero il codice dell'id
 		Code id_code ;
@@ -243,6 +243,12 @@ Code def_stat(Pnode def_stat_node){
 			id_code = makecode1(T_NEWTAB,spazio_da_allocare);
 		else		
 			id_code = makecode1(T_NEWATOM,spazio_da_allocare);
+		//Inserisco il nome nell'ambiente
+		insert_name_into_environment(valname(id_node));
+		//Inserisco il nome nella symbol table
+		Pschema schema_symbol = clone_schema(schema_type);
+		schema_symbol->name = valname(id_node);
+		insert(*schema_symbol);
 		//Appendo a def_stat_code l'id_code
 		def_stat_code = appcode(def_stat_code,id_code);
 	}
@@ -362,29 +368,6 @@ Pname id_list(Pnode id_list_head, int *length){
 
 
 
-/*Genera il codice per il caricamento di una variabile booleana*/
-Code bool_const(Pnode bool_const_node){
-	if (bool_const_node->value.ival == TRUE)
-		return make_ldint(1);
-	else 
-		return make_ldint(0);
-}
-
-
-
-/*Genera il codice per il caricamento di una variabile stringa*/
-Code str_const(Pnode str_const_node){
-	return make_ldstr(valname(str_const_node));
-}
-
-
-
-/*Genera il codice per il caricamento di una variabile intera*/
-Code int_const(Pnode int_const_node){
-	return make_ldint(int_const_node->value.ival);
-}
-
-
 
 /*Genera il codice per il nodo stat_list e crea lo scope del programma*/
 Code stat_list(Pnode stat_list_node){
@@ -396,7 +379,10 @@ Code stat_list(Pnode stat_list_node){
 
 	//Creo l'ambiente del programma
 	push_environment();
-	
+#ifdef DEBUG_STAT_LIST
+		printf("STAT_LIST - creato nuovo environment\n");
+		//printf("level = %d\n",envstack->level);
+#endif	
 	//Punto al primo stat
 	Pnode stat_node = stat_list_node->child;
 	//Ciclo lungo tutti gli stat_node
@@ -425,8 +411,24 @@ Code stat_list(Pnode stat_list_node){
 		stat_node = stat_node->brother;
 	}
 	
+	//Appendo il codice per fare il pop dell'environment a stat_list_code
+	stat_list_code = appcode(stat_list_code,makecode1(T_POP,numobj_in_current_env()));
+#ifdef DEBUG_STAT_LIST
+printf("STAT_LIST - aggiunto il codice per fare il pop delle variabile\n");	
+printf("%d\n",numobj_in_current_env());
+printf("symbol table");
+symprint();
+printf("--------");
+printf("%d\n",name_in_environment("min"));
+#endif
 	//elimino l'ambiente creato
 	pop_environment();
+
+#ifdef DEBUG_STAT_LIST
+printf("STAT_LIST - effettuato il pop dell'ambiente\n");	
+//printf("%d\n",numobj_in_current_env());
+#endif
+
 
 	return stat_list_code;
 }
@@ -435,6 +437,9 @@ Code stat_list(Pnode stat_list_node){
 
 /*Controlla i vincoli semantici dell'assegnamento e ne ritorna il codice*/
 Code assign_stat(Pnode assign_stat_node){
+#ifdef DEBUG_ASSIGN_STAT
+	printf("ASSIGN_LIST - enter\n");
+#endif
 	//Imposto le due parti del nodo	
 	Pnode id_node = assign_stat_node->child;
 	Pnode expr_node = assign_stat_node->child->brother;
@@ -451,12 +456,20 @@ Code assign_stat(Pnode assign_stat_node){
 	Code expr_code = expr(expr_node,schema_expr);
 
 	Psymbol symbol = lookup(valname(id_node)); 
+#ifdef DEBUG_ASSIGN_STAT
+	printf("schema_expr = %s\n",schema_expr->name);
+	symprint();
+#endif
+
 	if (!type_equal((symbol->schema),*(schema_expr)))
 		semerror(assign_stat_node,"id e expr non hanno lo stesso tipo");
 
 	//Genero il codice
 	assign_stat_code = appcode(expr_code,makecode1(T_STO,symbol->oid));
 
+#ifdef DEBUG_ASSIGN_STAT
+	printf("ASSIGN_LIST - exit");
+#endif
 	return assign_stat_code;
 }
 
