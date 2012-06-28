@@ -39,7 +39,6 @@ class TestTableCompiler(unittest.TestCase):
 		# leggo da file il risultato corretto
 		codice_esatto = (p_printer.communicate()[0])
 
-		print codice_esatto
 		#definisco il processo che stampa il codice sorgente
 		p_printer = Popen(['cat',self.path_file_table+name_file],stdout=PIPE)
 	
@@ -62,7 +61,7 @@ class TestTableCompiler(unittest.TestCase):
 		#definisco il nome del file da testare
 		name_file = "es_00.table"
 		#chiamo il codice che fa il test
-		self.general_test(name_file)
+		self.do_test(name_file)
 
 
 	'''def test_es_01(self):
