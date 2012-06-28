@@ -276,6 +276,8 @@ Pschema atomic_type(Pnode atomic_type_node){
 	//Imposto il type
 	schema->type = qualifier(atomic_type_node);
 #ifdef DEBUG_ATOMIC_TYPE
+	printf("schema_atomic\n");
+	schprint(*schema);
 	printf( "ATOMIC_TYPE_NODE - exit\n");
 #endif
 	return schema;
@@ -438,7 +440,7 @@ printf("STAT_LIST - effettuato il pop dell'ambiente\n");
 /*Controlla i vincoli semantici dell'assegnamento e ne ritorna il codice*/
 Code assign_stat(Pnode assign_stat_node){
 #ifdef DEBUG_ASSIGN_STAT
-	printf("ASSIGN_LIST - enter\n");
+	printf("ASSIGN_STAT - enter\n");
 #endif
 	//Imposto le due parti del nodo	
 	Pnode id_node = assign_stat_node->child;
@@ -457,8 +459,10 @@ Code assign_stat(Pnode assign_stat_node){
 
 	Psymbol symbol = lookup(valname(id_node)); 
 #ifdef DEBUG_ASSIGN_STAT
-	printf("schema_expr = %s\n",schema_expr->name);
-	symprint();
+	printf("schema\n");
+	schprint(*schema_expr);
+	printf("------------\n");	
+	//symprint();
 #endif
 
 	if (!type_equal((symbol->schema),*(schema_expr)))
@@ -468,7 +472,7 @@ Code assign_stat(Pnode assign_stat_node){
 	assign_stat_code = appcode(expr_code,makecode1(T_STO,symbol->oid));
 
 #ifdef DEBUG_ASSIGN_STAT
-	printf("ASSIGN_LIST - exit");
+	printf("ASSIGN_STAT - exit\n");
 #endif
 	return assign_stat_code;
 }
@@ -478,105 +482,63 @@ Code assign_stat(Pnode assign_stat_node){
 /*Genera lo schema della tupla e ritorna il codice*/
 Code tuple_const(Pnode tuple_const_node,Pschema schema){
 	//Non ci sono vincoli semantici
-
+#ifdef DEBUG_TUPLE_CONST
+	printf( "TUPLE_CONST - enter\n");
+#endif
 	//Preparo il codice della tupla
 	Code tuple_const_code;
+	tuple_const_code.head = NULL;
+	
 
 	//Punto al primo elemento della tupla
 	Pnode atomic_const_node = tuple_const_node->child;
-
+#ifdef DEBUG_TUPLE_CONST
+	printf("%p\n",tuple_const_node->child);
+	printf("type node = %d\n",tuple_const_node->type);
+	printf("type child = %d\n",tuple_const_node->child->type);
+	printf("q = %d\n",qualifier(tuple_const_node->child));
+#endif
 	//Preparo la variabile che contiene il codice dell'id
 	Code atomic_const_code;
-	
+	Pschema prev_schema = schema;	
 	do{
-		//Calcolo il codice della prima costante
+		//Calcolo il codice e lo schema della prima costante
 		switch(atomic_const_node->type){
-		case (N_INTCONST): 
-		case (N_BOOLCONST):	atomic_const_code = makecode1(T_IATTR,atomic_const_node->value.ival);
-					break;	
-		case (N_STRCONST):	atomic_const_code = make_sattr(atomic_const_node->value.sval);
+		case (N_INTCONST): 	atomic_const_code = makecode1(T_IATTR,qualifier(atomic_const_node));
+					prev_schema->type = INTEGER;
 					break;
-		}	
+		case (N_BOOLCONST):	atomic_const_code = makecode1(T_IATTR,qualifier(atomic_const_node));
+					prev_schema->type = BOOLEAN;
+					break;	
+		case (N_STRCONST):	atomic_const_code = make_sattr(valname(atomic_const_node));
+					prev_schema->type = STRING;
+					break;
+		}
+#ifdef DEBUG_TUPLE_CONST
+	printf("ciaociao\n");
+	codeprint(atomic_const_code,1);
+	print("type = ",prev_schema->type);
+#endif	
 		//Appendo il codice della costante al codice della tupla
 		tuple_const_code = appcode(tuple_const_code,atomic_const_code);
+#ifdef DEBUG_TUPLE_CONST
+	printf( "provaprova\n");
+	codeprint(tuple_const_code,1);
+#endif			
 		
 		//Passo al fratello
 		atomic_const_node = atomic_const_node->brother;	
+		//Creo un nuovo schema
+		if (atomic_const_node!=NULL){
+			Pschema newSchema = (Pschema) newmem(sizeof(Schema));
+			prev_schema->next = newSchema;
+			prev_schema = prev_schema->next;
+		}
 	}while(atomic_const_node!=NULL);
-
+#ifdef DEBUG_TUPLE_CONST
+	printf( "TUPLE_CONST - exit\n");
+#endif
 	return tuple_const_code;
-}
-
-
-
-/*Genera il codice per la creazione della tabella e ritorna lo schema della tabella*/
-Code table_const(Pnode table_const_node, Pschema schema_tabella){
-	//Il codice per la costante tupla dipende dal fatto che la tabella sia vuota o meno
-
-	//Preparo il codice della tabella
-	Code table_const_code ;
-
-	//Preparo il codice della tuple_list
-	Code tuple_list_code ;
-
-	//Testo se la tabella è vuota
-	Pnode first_attribute = table_const_node->child;
-	if (first_attribute->type == N_ATOMIC_TYPE){
-		//calcolo lo schema della tabella
-	
-		//calcolo lo schema del primo attributo
-		schema_tabella = atomic_type(first_attribute);
-		
-		//se ci sono altri attributi, aggiungo altri schemi
-		Pnode attr_node = first_attribute->brother;
-		Pschema attr_schema = schema_tabella->next;
-		while (attr_node != NULL){
-			attr_schema = atomic_type(attr_node);
-			attr_schema = attr_schema->next;
-		}
-		//Estraggo la dimensione dello schema di attributi
-		int size = get_size(schema_tabella);
-		//Genero il codice nel caso di tabella vuota
-		table_const_code = appcode(makecode2(T_LDTAB,size,0),makecode(T_ENDTAB));
-	}
-	else {
-		//calcolo la lista di tuple della tabella
-		//Punto alla prima tupla
-		Pnode first_tuple = table_const_node->child;
-
-		//Calcolo il codice della prima tupla
-		Pschema first_tupla_schema = (Pschema) newmem(sizeof(Schema));
-		Code tuple_list_code = tuple_const(first_tuple,first_tupla_schema);
-		
-		int tuple_number = 1;
-		
-		//Aggiungo il codice e lo schema della tabella
-		Pnode tuple_node = first_tuple->brother;
-		
-		while(tuple_node != NULL){
-			//Calcolo il codice e lo schema della tupla
-			Pschema schema_tupla = (Pschema) newmem(sizeof(Schema));
-			Code tuple_code = tuple_const(tuple_node,schema_tupla);
-
-			//Controllo i vincoli semantici
-			//Controllo che gli schemi siano compatibili
-			if (!type_equal(*first_tupla_schema,*schema_tupla))
-				semerror(tuple_node,"Incompatible tuple in table");
-	
-			//Appendo il codice della tupla a quello della lista di tuple
-			tuple_list_code = appcode(tuple_list_code,tuple_code);
-			//Passo al fratello successivo
-			tuple_node = tuple_node->brother;
-
-			//Aggiorno il numero di tuple
-			tuple_number++;	
-		}
-		int size = get_size(first_tupla_schema);
-		//Creo il codice per la generazione della tabella
-		table_const_code = concode(makecode2(T_LDTAB,size,tuple_number),tuple_list_code,makecode(T_ENDTAB),endcode());
-	}
-
-	return table_const_code;
 }
 
 

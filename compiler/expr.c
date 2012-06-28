@@ -83,7 +83,8 @@ Code expr(Pnode expr_node,Pschema expr_schema){
 		case(N_BOOLCONST):	expr_code = bool_const(expr_node,expr_schema); break;
 		case(N_INTCONST):	expr_code = int_const(expr_node,expr_schema); break;
 		case(N_STRCONST):	expr_code = str_const(expr_node,expr_schema); break;
-		default: printf("mi sono dimenticato qualcosa\n");
+		case(N_TABLE_CONST):	expr_code = table_const(expr_node,expr_schema); break;
+		default: printf("mi sono dimenticato qualcosa\nN_TYPE = %d\n",expr_node->type);
 	}
 	return expr_code;
 }
@@ -674,5 +675,123 @@ Code id_expr(Pnode id_node,Pschema schema){
 	//Ritorno il codice
 	return makecode1(T_LOB,symbol->oid);
 }
+
+
+
+/*Genera il codice per la creazione della tabella e ritorna lo schema della tabella*/
+Code table_const(Pnode table_const_node, Pschema schema_tabella){
+	//Il codice per la costante tupla dipende dal fatto che la tabella sia vuota o meno
+#ifdef DEBUG_TABLE_CONST
+	printf("DEBUG_TABLE_CONST - enter\n");
+#endif
+	//Preparo il codice della tabella
+	Code table_const_code ;
+	table_const_code.head = NULL;
+	table_const_code.tail = NULL;
+	table_const_code.size = 0;
+
+	//Preparo il codice della tuple_list
+	Code tuple_list_code ;
+
+	//Testo se la tabella è vuota
+	Pnode first_attribute = table_const_node->child;
+	
+	//Imposto il tipo dello schema
+	schema_tabella->type = TABLE;
+
+	if (first_attribute->type == N_ATOMIC_TYPE){
+		//calcolo lo schema della tabella
+		//calcolo lo schema del primo attributo
+		Pschema schema_first_attr = atomic_type(first_attribute);
+		//lo aggiungo in coda a tabella
+		schema_tabella->next = schema_first_attr;		
+#ifdef DEBUG_TABLE_CONST
+	printf("schema_1\n");
+	schprint(*schema_first_attr);
+	printf("--------------------\n");
+#endif
+		//se ci sono altri attributi, aggiungo altri schemi
+		Pnode attr_node = first_attribute->brother;
+		Pschema prev_attr_schema = schema_first_attr;
+		while (attr_node != NULL){
+			prev_attr_schema->next = atomic_type(attr_node);
+			prev_attr_schema = prev_attr_schema->next;
+			attr_node = attr_node->brother;
+		}
+#ifdef DEBUG_TABLE_CONST
+	printf("schema_2\n");
+	schprint(*schema_tabella);
+	printf("--------------------\n");
+#endif
+		//Estraggo la dimensione dello schema di attributi
+		int size = get_size(schema_tabella);
+		//Genero il codice nel caso di tabella vuota
+		table_const_code = appcode(makecode2(T_LDTAB,size,0),makecode(T_ENDTAB));
+	}
+	else {
+#ifdef DEBUG_TABLE_CONST
+	printf("tuple_list\n");
+#endif
+		//calcolo la lista di tuple della tabella
+		//Punto alla prima tupla
+		Pnode first_tuple = table_const_node->child;
+
+		//Calcolo il codice della prima tupla
+		Pschema first_tupla_schema = (Pschema) newmem(sizeof(Schema));
+//printf("bo\n");
+		Code tuple_list_code = tuple_const(first_tuple,first_tupla_schema);
+#ifdef DEBUG_TABLE_CONST
+	schprint(*first_tupla_schema);
+#endif
+		//Imposto lo schema della tupla in coda alla tabella
+		schema_tabella->next = first_tupla_schema;		
+
+		int tuple_number = 1;
+		
+		//Aggiungo il codice e lo schema della tabella
+		Pnode tuple_node = first_tuple->brother;
+
+#ifdef DEBUG_TABLE_CONST
+	printf("prima del while\n");
+#endif		
+		while(tuple_node != NULL){
+			//Calcolo il codice e lo schema della tupla
+			Pschema schema_tupla = (Pschema) newmem(sizeof(Schema));
+
+			Code tuple_code = tuple_const(tuple_node,schema_tupla);
+
+			//Controllo i vincoli semantici
+			//Controllo che gli schemi siano compatibili
+			if (!type_equal(*first_tupla_schema,*schema_tupla))
+				semerror(tuple_node,"Incompatible tuple in table");
+	
+			//Appendo il codice della tupla a quello della lista di tuple
+			tuple_list_code = appcode(tuple_list_code,tuple_code);
+			//Passo al fratello successivo
+			tuple_node = tuple_node->brother;
+
+			//Aggiorno il numero di tuple
+			tuple_number++;	
+		}
+#ifdef DEBUG_TABLE_CONST
+printf("dopo il while\n");
+#endif
+		int size = get_size(schema_tabella);
+//printf("dopo size\n");
+//codeprint(tuple_list_code,1);
+		//Creo il codice per la generazione della tabella
+		table_const_code = concode(makecode2(T_LDTAB,size,tuple_number),tuple_list_code,makecode(T_ENDTAB),endcode());
+//printf("dopo const code\n");
+	}
+#ifdef DEBUG_TABLE_CONST
+	printf("schema\n");
+	schprint(*schema_tabella);
+	printf("--------------------\n");
+	printf("DEBUG_TABLE_CONST - exit\n");
+#endif
+
+	return table_const_code;
+}
+
 
 
