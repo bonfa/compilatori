@@ -187,3 +187,18 @@ Boolean repeated_names(Pname name_list){
 }
 
 
+/*Copia lo schema sorgente in quello destinazione*/
+void schema_copy(Pschema src,Pschema dst){
+	dst->name = src->name;
+	dst->type = src->type;
+	dst->next = src->next;
+}
+
+
+
+/*Ritorna la lista di nomi presenti nell'environment*/
+Pname get_name_list_in_environment(){
+	return (envstack->pname);
+}
+
+

@@ -139,6 +139,9 @@ Code while_stat(Pnode while_stat_node){
 
 /*Controlla la semantica del nodo if e ne ritorna il codice*/
 Code if_stat(Pnode if_stat_node){
+#ifdef DEBUG_IF_STAT
+	printf("IF_STAT - enter\n");
+#endif
 	//Imposto le tre parti del nodo	
 	Pnode expr_node = if_stat_node->child;
 	Pnode then_node = if_stat_node->child->brother;
@@ -159,16 +162,35 @@ Code if_stat(Pnode if_stat_node){
 
 	//Genero il codice di then_node
 	Code then_code = stat_list(then_node);
-	
+#ifdef DEBUG_IF_STAT
+	printf("before if\n");
+	printf("then_node->type = %d\n",then_node->type);
+#endif	
 	if (else_node==NULL){//if then endif
+#ifdef DEBUG_IF_STAT
+	printf("without else\n");
+	codeprint(then_code,2);
+	codeprint(expr_code,1);
+#endif	
 		//Calcolo l'offset
 		int offset = then_code.size + 1;
 		//Genero il codice di if_stat
 		if_stat_code = concode(expr_code,makecode1(T_SKIPF,offset),then_code,endcode());
+#ifdef DEBUG_IF_STAT
+	printf("end codegen\n");
+#endif	
 	}
 	else {//if then else
+#ifdef DEBUG_IF_STAT
+	printf("with else\n");
+	codeprint(then_code,2);
+	codeprint(expr_code,1);
+#endif		
 		//Genero il codice di else_node
 		Code else_code = stat_list(else_node);
+#ifdef DEBUG_IF_STAT
+	codeprint(else_code,2);
+#endif
 		//Calcolo gli offset
 		int offset_then = then_code.size + 2;
 		int offset_else = else_code.size + 1;
@@ -176,7 +198,9 @@ Code if_stat(Pnode if_stat_node){
 		if_stat_code = concode(expr_code,makecode1(T_SKIPF,offset_then),then_code,makecode1(T_SKIP,offset_else),else_code,endcode());
 
 	}
-	
+#ifdef DEBUG_IF_STAT
+	printf("IF_STAT - exit\n");
+#endif	
 	return if_stat_code;
 }
 
@@ -414,7 +438,8 @@ Code stat_list(Pnode stat_list_node){
 	}
 	
 	//Appendo il codice per fare il pop dell'environment a stat_list_code
-	stat_list_code = appcode(stat_list_code,makecode1(T_POP,numobj_in_current_env()));
+	if(numobj_in_current_env()!=0)
+		stat_list_code = appcode(stat_list_code,makecode1(T_POP,numobj_in_current_env()));
 #ifdef DEBUG_STAT_LIST
 printf("STAT_LIST - aggiunto il codice per fare il pop delle variabile\n");	
 printf("%d\n",numobj_in_current_env());
@@ -423,8 +448,9 @@ symprint();
 printf("--------");
 printf("%d\n",name_in_environment("min"));
 #endif
-	//elimino l'ambiente creato
+	//elimino l'ambiente creato (elimina già le variabili dall'ambiente)
 	pop_environment();
+
 
 #ifdef DEBUG_STAT_LIST
 printf("STAT_LIST - effettuato il pop dell'ambiente\n");	
@@ -451,7 +477,7 @@ Code assign_stat(Pnode assign_stat_node){
 	
 	//Controllo i vincoli semantici
 	//Visibilità del nome
-	if (!name_in_environment(valname(id_node)))
+	if (lookup(valname(id_node))==NULL)
 		semerror(id_node,"undefined variabile");
 	//Compatibilità degli schemi
 	Pschema schema_expr = (Pschema) newmem(sizeof(Schema));

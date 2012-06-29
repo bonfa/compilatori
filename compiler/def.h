@@ -315,8 +315,11 @@ void codeprint(Code, int),
      syserror(char*),		/**/
      treeprint(Pnode, int);
 
+
 //^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-
+void schema_copy(Pschema src,Pschema dst);
 Pschema attr_list(Pnode attr_list_node);
+Pname get_name_list_in_environment();
 Code specifier(Pnode specifier_node, Pschema schema);
 Pschema type(Pnode);
 Code comp_expr(Pnode expr_node,Pschema expr_schema); 
@@ -348,3 +351,6 @@ Code table_const(Pnode table_const_node, Pschema schema_tabella);
 //#define DEBUG_NEG_EXPR
 //#define DEBUG_TABLE_CONST
 //#define DEBUG_TUPLE_CONST
+//#define DEBUG_COMP_EXPR
+//#define DEBUG_ID
+//#define DEBUG_IF_STAT

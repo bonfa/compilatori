@@ -94,6 +94,10 @@ Code expr(Pnode expr_node,Pschema expr_schema){
 
 /*Genera lo schema della comp_expr e ritorna il codice pcode*/
 Code comp_expr(Pnode comp_expr_node, Pschema comp_expr_schema){
+#ifdef DEBUG_COMP_EXPR
+	printf("COMP_EXPR - enter\n");
+#endif
+
 	//Definisco i due figli del nodo comp_expr
 	Pnode first_op_node = comp_expr_node->child;
 	Pnode second_op_node = comp_expr_node->child->brother;
@@ -113,7 +117,15 @@ Code comp_expr(Pnode comp_expr_node, Pschema comp_expr_schema){
 	first_op_code = expr(first_op_node, first_op_schema); 
 	second_op_code = expr(second_op_node, second_op_schema);
 
-
+#ifdef DEBUG_COMP_EXPR
+	printf("inizio analisi semantica\n");
+	printf("Schema_first\n");
+	schprint(*first_op_schema);
+	codeprint(first_op_code,1);	
+	printf("Schema_second\n");
+	schprint(*second_op_schema);
+	codeprint(second_op_code,1);	
+#endif
 	//La generazione di codice e gli errori semantici dipendono dal tipo di operazione
 	if(qualifier(comp_expr_node) == EQ || qualifier(comp_expr_node) == NE) {
 		//Controllo gli errori semantici
@@ -131,7 +143,7 @@ Code comp_expr(Pnode comp_expr_node, Pschema comp_expr_schema){
 		else 
 			op = T_NEQ;
 
-		comp_expr_code = concode(first_op_code,second_op_code,op,endcode());				
+		comp_expr_code = concode(first_op_code,second_op_code,makecode(op),endcode());				
 	}
 	else {
 		//Controllo gli errori semantici
@@ -159,9 +171,11 @@ Code comp_expr(Pnode comp_expr_node, Pschema comp_expr_schema){
 				case ('<'): op = T_SLT ; break;
 				case (LE):  op = T_SLE ; break;
 			}
-		comp_expr_code = concode(first_op_code,second_op_code,op,endcode());
+		comp_expr_code = concode(first_op_code,second_op_code,makecode(op),endcode());
 	}
-	
+#ifdef DEBUG_COMP_EXPR
+	printf("COMP_EXPR - exit\n");
+#endif	
 	return comp_expr_code;
 }
 
@@ -666,12 +680,27 @@ Code int_const(Pnode int_const_node,Pschema schema){
 
 /*Genera il codice per il caricamento dell'id e ritorna lo schema*/
 Code id_expr(Pnode id_node,Pschema schema){
+#ifdef DEBUG_ID
+	printf("ID_EXPR - enter\n");
+#endif
 	//Cerca il simbolo nella tabella dei simboli
 	Psymbol symbol = lookup(valname(id_node));
 	if(symbol == NULL)
 		semerror(id_node,"variable not found in stack");
 	//imposto lo schema
-	schema = clone_schema(&(symbol->schema));
+#ifdef DEBUG_ID
+	printf("schema\n");
+	schprint((symbol->schema));
+	printf("%p\n",schema);
+#endif	
+	schema_copy(&(symbol->schema),schema);
+
+#ifdef DEBUG_ID
+	printf("cloned\n");
+	schprint(*schema);
+	printf("%p\n",schema);
+	printf("ID_EXPR - exit\n");
+#endif
 	//Ritorno il codice
 	return makecode1(T_LOB,symbol->oid);
 }
