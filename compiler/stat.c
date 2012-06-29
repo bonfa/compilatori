@@ -127,7 +127,7 @@ Code while_stat(Pnode while_stat_node){
 	Code stat_list_code = stat_list(stat_list_node);
 	//Calcolo gli offset
 	int exit = stat_list_code.size + 2;
-	int up = expr_code.size + stat_list_code.size + 1;
+	int up = -(expr_code.size + stat_list_code.size + 1);
 	
 	//Genero il codice di while_stat
 	while_stat_code = concode(expr_code,makecode1(T_SKIPF,exit),stat_list_code,makecode1(T_SKIP,up),endcode());
