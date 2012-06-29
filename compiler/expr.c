@@ -453,6 +453,9 @@ Code rename_expr(Pnode rename_expr_node, Pschema rename_expr_schema){
 
 /*Genera il codice della expr e lo schema risultante*/
 Code select_kind_expr(Pnode select_expr_node, Pschema select_expr_schema){
+#ifdef DEBUG_SELECT_EXPR
+	printf("SELECT_EXPR - enter\n");
+#endif
 	//Definisco i figli del nodo
 	Pnode expr1_node = select_expr_node->child;
 	Pnode expr2_node = select_expr_node->child->brother;
@@ -464,31 +467,46 @@ Code select_kind_expr(Pnode select_expr_node, Pschema select_expr_schema){
 	Pschema schema_expr1 = (Pschema) newmem(sizeof(Schema));
 	Pschema schema_expr2 = (Pschema) newmem(sizeof(Schema));
 
-	//Calcolo il codice delle due expr
-	Code expr_code1 = expr(expr1_node,schema_expr1);
+	//Genero il codice di expr_2 (che è il nome della tabella)
 	Code expr_code2 = expr(expr2_node,schema_expr2);
-	
-	//Controllo la semantica
-	if (schema_expr1->type != BOOLEAN)
-		semerror(select_expr_node,"expected boolean type");
+	//Controllo la semantica per expr2	
 	if (schema_expr2->type != TABLE)	
 		semerror(select_expr_node,"expected table type");
+	//Inserisco nello stack lo schema di expr_2
+	push_context(schema_expr2->next);
+
+	//Calcolo il codice delle due expr
+	Code expr_code1 = expr(expr1_node,schema_expr1);
+	//Controllo la semantica di expr_1
+	if (schema_expr1->type != BOOLEAN)
+		semerror(select_expr_node,"expected boolean type");
+	
 
 	//Imposto il tipo di ritorno
 	if (qualifier(select_expr_node)==SELECT)
-		select_expr_schema = clone_schema(schema_expr2); 
+		schema_copy(schema_expr2,select_expr_schema); 
 	else
 		select_expr_schema->type = BOOLEAN; 
 
-//	"manca l'inserimento nello stack"
-	
+		
 	int gap = expr_code1.size;
 	//Genero il codice
 	switch(qualifier(select_expr_node)){
-	case(SELECT): select_code = concode(expr_code2,makecode1(T_SEL,gap),endcode(T_ENDSEL));
-	case(EXISTS): select_code = concode(expr_code2,makecode1(T_EXS,gap),endcode(T_ENDEXS));
-	case(ALL): select_code = concode(expr_code2,makecode1(T_ALL,gap),endcode(T_ENDALL));
+	case(SELECT): select_code = concode(expr_code2,makecode1(T_SEL,gap),expr_code1,makecode1(T_ENDSEL,gap),endcode());break;
+	case(EXISTS): select_code = concode(expr_code2,makecode1(T_EXS,gap),expr_code1,makecode1(T_ENDEXS,gap),endcode());break;
+	case(ALL): select_code = concode(expr_code2,makecode1(T_ALL,gap),expr_code1,makecode1(T_ENDALL,gap),endcode());break;
 	}
+
+	//Faccio il pop del context
+	pop_context();
+
+#ifdef DEBUG_SELECT_EXPR
+	printf("Schema\n");
+	schprint(*select_expr_schema);
+	printf("------------\n");
+	codeprint(select_code,0);
+	printf("SELECT_EXPR - exit\n");
+#endif
 
 	return select_code;
 }
@@ -509,11 +527,8 @@ Code update_expr(Pnode update_expr_node, Pschema update_expr_schema){
 	Pschema schema_expr1 = (Pschema) newmem(sizeof(Schema));
 	Pschema schema_expr2 = (Pschema) newmem(sizeof(Schema));
 
-	//Calcolo il codice delle due expr
+	//Calcolo il codice dei expr1
 	Code expr_code1 = expr(expr1_node,schema_expr1);
-	Code expr_code2 = expr(expr2_node,schema_expr2);
-	
-
 	//Controllo la semantica
 	//expr1 dev'essere di tipo tabella
 	if (schema_expr1->type != TABLE)
@@ -522,12 +537,18 @@ Code update_expr(Pnode update_expr_node, Pschema update_expr_schema){
 	Pschema schema_id = name_in_schema(valname(id_node),schema_expr1);
 	if (schema_id == NULL)
 		semerror(update_expr_node,"attribute must exist in table");
+
+	//Push del context
+	push_context(schema_expr1->next);
+
+	//Calcolo il codice dei expr2
+	Code expr_code2 = expr(expr2_node,schema_expr2);
 	//tipo di expr2 e di id devono essere compatibili
 	if (!type_equal(*schema_id,*schema_expr2))	
 		semerror(update_expr_node,"id and expr must have same type");
 
 	//Imposto il tipo di ritorno
-	update_expr_schema = clone_schema(schema_expr1); 
+	schema_copy(schema_expr1,update_expr_schema);
 	
 	//Genero il codice
 	int gap = expr_code2.size;
@@ -540,6 +561,9 @@ Code update_expr(Pnode update_expr_node, Pschema update_expr_schema){
 				makecode1(T_ENDUPD,gap),
 				makecode(T_REMDUP),
 				endcode());		
+
+	//Pop del context
+	pop_context();
 
 	return update_code;
 }
@@ -561,21 +585,17 @@ Code join_expr(Pnode join_expr_node, Pschema join_expr_schema){
 	Pschema schema_expr2 = (Pschema) newmem(sizeof(Schema));
 	Pschema schema_expr3 = (Pschema) newmem(sizeof(Schema));
 
-	//Calcolo il codice delle expr
+	//Calcolo il codice delle tabelle
 	Code expr_code1 = expr(expr1_node,schema_expr1);
-	Code expr_code2 = expr(expr2_node,schema_expr2);
 	Code expr_code3 = expr(expr3_node,schema_expr3);	
 
-	//Controllo la semantica
+	//Controllo la semantica delle tabella
 	//expr1 dev'essere di tipo tabella
 	if (schema_expr1->type != TABLE)
 		semerror(join_expr_node,"expected table type");
 	//expr3 dev'essere di tipo tabella
 	if (schema_expr3->type != TABLE)
 		semerror(join_expr_node,"expected table type");
-	//expr2 dev'essere di tipo boolean
-	if (schema_expr2->type != BOOLEAN)
-		semerror(join_expr_node,"expected boolean type");
 	//le due tabelle non devono avere nomi in comune
 	Pschema p = schema_expr1;
 	while(p!=NULL){	
@@ -583,6 +603,18 @@ Code join_expr(Pnode join_expr_node, Pschema join_expr_schema){
 			semerror(join_expr_node,"tables have attribute with the same name");
 		p=p->next;
 	}
+
+	//Creo il context
+	push_context(append_schemas(schema_expr1->next,schema_expr3->next));
+	//Imposto lo schema dell'espressione ritornata
+	join_expr_schema = append_schemas(schema_expr1,schema_expr3);
+
+	//Controllo la semantica dell'espressione vera e propria
+	Code expr_code2 = expr(expr2_node,schema_expr2);
+	//expr2 dev'essere di tipo boolean
+	if (schema_expr2->type != BOOLEAN)
+		semerror(join_expr_node,"expected boolean type");
+	
 
 	//Genero il codice
 	int gap = expr_code2.size;
@@ -593,6 +625,9 @@ Code join_expr(Pnode join_expr_node, Pschema join_expr_schema){
 				expr_code2,
 				makecode1(T_ENDJOIN,gap),
 				endcode());
+	//Faccio il pop del context
+	pop_context();
+
 	return join_code;
 }
 
@@ -613,14 +648,10 @@ Code extend_expr(Pnode extend_expr_node, Pschema extend_expr_schema){
 	Pschema schema_expr1 = (Pschema) newmem(sizeof(Schema));
 	Pschema schema_expr2 = (Pschema) newmem(sizeof(Schema));
 
-	//Calcolo il codice delle due expr
+	//Calcolo il codice di expr1
 	Code expr_code1 = expr(expr1_node,schema_expr1);
-	Code expr_code2 = expr(expr2_node,schema_expr2);
 
-	//Calcolo il tipo dell'elemento
-	Pschema	atomic_type_schema = atomic_type(atomic_type_node);
-	
-	//Controllo la semantica
+	//Controllo la semantica per expr1
 	//expr1 dev'essere di tipo tabella
 	if (schema_expr1->type != TABLE)
 		semerror(extend_expr_node,"expected table type");
@@ -628,6 +659,16 @@ Code extend_expr(Pnode extend_expr_node, Pschema extend_expr_schema){
 	Pschema schema_id = name_in_schema(valname(id_node),schema_expr1);
 	if (schema_id != NULL)
 		semerror(extend_expr_node,"attribute already exists in table");
+
+	//Faccio il push del context
+	push_context(schema_expr1->next);
+	
+	//Calcolo il codice di expr2
+	Code expr_code2 = expr(expr2_node,schema_expr2);
+
+	//Controllo la semantica per expr2
+	//Calcolo il tipo dell'elemento
+	Pschema	atomic_type_schema = atomic_type(atomic_type_node);
 	//il tipo di expr2 dev'essere uguale al tipo di atomic type
 	if (type_equal(*schema_expr2, *atomic_type_schema))
 		semerror(extend_expr_node,"different types");
@@ -647,6 +688,8 @@ Code extend_expr(Pnode extend_expr_node, Pschema extend_expr_schema){
 				expr_code2,
 				makecode1(T_ENDEXT,gap),
 				endcode());
+	//Pop context
+	pop_context();	
 
 	return extend_code;
 }
@@ -678,31 +721,59 @@ Code int_const(Pnode int_const_node,Pschema schema){
 	return make_ldint(int_const_node->value.ival);
 }
 
+
 /*Genera il codice per il caricamento dell'id e ritorna lo schema*/
 Code id_expr(Pnode id_node,Pschema schema){
 #ifdef DEBUG_ID
 	printf("ID_EXPR - enter\n");
+	
 #endif
-	//Cerca il simbolo nella tabella dei simboli
-	Psymbol symbol = lookup(valname(id_node));
-	if(symbol == NULL)
-		semerror(id_node,"variable not found in stack");
-	//imposto lo schema
+	//Cerca il simbolo nello stack dei contesti
+	int context_offset,attribute_context;
+	Pschema schema_context = name_in_constack(valname(id_node),&context_offset,&attribute_context);
+#ifdef DEBUG_ID
+	printf("valname = %s\n",valname(id_node));
+	printf("schema = %p\n",schema_context);
+	if (schema_context != NULL)
+		schprint(*schema_context);	
+#endif
+	if (schema_context != NULL){
+		//Copio lo schema
+		schema_copy(schema_context,schema);
+		//Ritorno il codice
+#ifdef DEBUG_ID
+	printf("schema\n");
+	//codeprint(schema);
+	printf("%p\n",schema);
+	codeprint(makecode2(T_LAT,context_offset,attribute_context),3);
+	printf("ID_EXPR - exit\n");
+#endif
+		return makecode3(T_LAT,context_offset,attribute_context,get_size(schema));
+	}
+	else {
+		//Altrimenti
+		//Cerca il simbolo nella tabella dei simboli
+		Psymbol symbol = lookup(valname(id_node));
+		if(symbol == NULL)
+			semerror(id_node,"variable not found in stack");
+		//imposto lo schema
 #ifdef DEBUG_ID
 	printf("schema\n");
 	schprint((symbol->schema));
 	printf("%p\n",schema);
 #endif	
-	schema_copy(&(symbol->schema),schema);
+		schema_copy(&(symbol->schema),schema);
 
 #ifdef DEBUG_ID
-	printf("cloned\n");
-	schprint(*schema);
-	printf("%p\n",schema);
+	//printf("cloned\n");
+	//schprint(*schema);
+	//printf("%p\n",schema);
+
 	printf("ID_EXPR - exit\n");
 #endif
-	//Ritorno il codice
-	return makecode1(T_LOB,symbol->oid);
+		//Ritorno il codice
+		return makecode1(T_LOB,symbol->oid);
+	}
 }
 
 

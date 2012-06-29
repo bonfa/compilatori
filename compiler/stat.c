@@ -498,9 +498,13 @@ Code assign_stat(Pnode assign_stat_node){
 
 	Psymbol symbol = lookup(valname(id_node)); 
 #ifdef DEBUG_ASSIGN_STAT
-	printf("schema\n");
+	printf("schema_expr\n");
 	schprint(*schema_expr);
-	printf("------------\n");	
+	printf("------------\n");
+	
+	printf("schema_var\n");
+	schprint(symbol->schema);
+	printf("------------\n");
 	//symprint();
 #endif
 

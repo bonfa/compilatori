@@ -121,11 +121,14 @@ class TestTableCompiler(unittest.TestCase):
 		self.do_test(name_file)
 
 
-	'''def test_es_08(self):
-		
+	def test_es_08(self):
+		#definisco il nome del file da testare
+		name_file = "es_08.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
 
 
-	def test_es_09(self):
+	'''def test_es_09(self):
 		
 
 
