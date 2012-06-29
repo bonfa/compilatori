@@ -39,12 +39,16 @@ Code program(Pnode root){
 
 /*Controlla la semantica della read e ritorna il codice della read*/
 Code read_stat(Pnode read_stat_node){
+#ifdef DEBUG_READ_STAT
+	printf("READ_STAT - enter\n");
+#endif
 	//Imposto le due parti del nodo
 	Pnode specifier_node = read_stat_node->child;
 	Pnode id_node = read_stat_node->child->brother;
 	
 	//Definisco il codice del nodo
 	Code read_stat_code;
+	read_stat_code.head = NULL;
 
 	//Calcolo il codice di specifier
 	Pschema schema_specifier = (Pschema) newmem(sizeof(Schema));
@@ -58,6 +62,14 @@ Code read_stat(Pnode read_stat_node){
 	if (!name_in_environment(valname(id_node)))
 		semerror(id_node,"Variable not defined");
 
+#ifdef DEBUG_READ_STAT
+	printf("ok semantica\n");
+	printf("p = %p\n",specifier_node->child);
+//	printf
+	if (specifier_node->child != NULL)
+		codeprint(specifier_code,1);
+	printf("endprint\n");
+#endif
 	//Genero il codice di readstat
 	//La sintassi della read dipende dalla presenza dello specifier
 	Psymbol symbol = lookup(valname(id_node));
@@ -65,7 +77,9 @@ Code read_stat(Pnode read_stat_node){
 		read_stat_code = make_get_fget(T_GET,symbol->oid,get_format((symbol->schema)));
 	else
 		read_stat_code = appcode(specifier_code,make_get_fget(T_FGET,symbol->oid,get_format((symbol->schema))));
-
+#ifdef DEBUG_READ_STAT
+	printf("READ_STAT - exit\n");
+#endif
 	return read_stat_code;
 }
 
@@ -573,14 +587,22 @@ Code tuple_const(Pnode tuple_const_node,Pschema schema){
 /*Genera il codice dello specifier e ne ritorna lo schema.
 Lo schema dello specifier può essere una costante stringa o NULL*/
 Code specifier(Pnode specifier_node, Pschema schema){
+#ifdef DEBUG_SPECIFIER
+	printf( "SPECIFIER - enter\n");
+#endif
 	Code specifier_code ;
 	Pnode expr_node = specifier_node->child;
 	if (expr_node==NULL){
 		schema->type = NIHIL;
 	}
 	else {
-		Code expr_code = expr(expr_node,schema);
+		specifier_code = expr(expr_node,schema);
 	}
+#ifdef DEBUG_SPECIFIER
+	codeprint(specifier_code,1);
+	printf( "SPECIFIER - exit\n");
+	
+#endif
 	return specifier_code;
 }
 

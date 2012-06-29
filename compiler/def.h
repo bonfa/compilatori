@@ -354,3 +354,5 @@ Code table_const(Pnode table_const_node, Pschema schema_tabella);
 //#define DEBUG_COMP_EXPR
 //#define DEBUG_ID
 //#define DEBUG_IF_STAT
+//#define DEBUG_READ_STAT
+//#define DEBUG_SPECIFIER
