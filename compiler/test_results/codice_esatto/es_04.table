@@ -1,0 +1,10 @@
+TCODE 10
+NEWATOM 4
+NEWATOM 4
+NEWTAB 8
+GET 0 "b"
+GET 2 "(a:i,b:s)"
+LOB 1
+FGET 2 "(a:i,b:s)"
+POP 3
+HALT

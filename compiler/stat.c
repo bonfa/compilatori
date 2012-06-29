@@ -59,7 +59,7 @@ Code read_stat(Pnode read_stat_node){
 	if ((schema_specifier->type != STRING) && (schema_specifier->type != NIHIL))
 		semerror(read_stat_node,"Expected string type");
 	//Controllo che il nome dell'id sia visibile
-	if (!name_in_environment(valname(id_node)))
+	if (lookup(valname(id_node))==NULL)
 		semerror(id_node,"Variable not defined");
 
 #ifdef DEBUG_READ_STAT
@@ -460,7 +460,6 @@ printf("%d\n",numobj_in_current_env());
 printf("symbol table");
 symprint();
 printf("--------");
-printf("%d\n",name_in_environment("min"));
 #endif
 	//elimino l'ambiente creato (elimina già le variabili dall'ambiente)
 	pop_environment();
