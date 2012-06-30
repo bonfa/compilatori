@@ -337,6 +337,7 @@ Code str_const(Pnode str_const_node,Pschema schema);
 Code int_const(Pnode int_const_node,Pschema schema);
 Code id_expr(Pnode id_node,Pschema schema);
 Code table_const(Pnode table_const_node, Pschema schema_tabella);
+Code join_expr(Pnode join_expr_node, Pschema join_expr_schema);
 //Code tuple_const(Pnode tuple_const_node,Pschema schema);
 
 //#define DEBUG_REPEATED_NAMES
@@ -357,4 +358,5 @@ Code table_const(Pnode table_const_node, Pschema schema_tabella);
 //#define DEBUG_READ_STAT
 //#define DEBUG_SPECIFIER
 //#define DEBUG_SELECT_EXPR
-#define DEBUG_UPDATE_EXPR
+//#define DEBUG_UPDATE_EXPR
+//#define DEBUG_JOIN_EXPR

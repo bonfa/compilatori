@@ -84,6 +84,7 @@ Code expr(Pnode expr_node,Pschema expr_schema){
 		case(N_INTCONST):	expr_code = int_const(expr_node,expr_schema); break;
 		case(N_STRCONST):	expr_code = str_const(expr_node,expr_schema); break;
 		case(N_TABLE_CONST):	expr_code = table_const(expr_node,expr_schema); break;
+		case(N_JOIN_EXPR):	expr_code = join_expr(expr_node,expr_schema); break;
 		default: printf("mi sono dimenticato qualcosa\nN_TYPE = %d\n",expr_node->type);
 	}
 	return expr_code;
@@ -578,10 +579,18 @@ Code update_expr(Pnode update_expr_node, Pschema update_expr_schema){
 
 /*Genera il codice della expr e lo schema risultante*/
 Code join_expr(Pnode join_expr_node, Pschema join_expr_schema){
+#ifdef DEBUG_JOIN_EXPR
+	printf("JOIN_EXPR - enter\n");
+#endif
 	//Definisco i figli del nodo
 	Pnode expr1_node = join_expr_node->child;
 	Pnode expr2_node = join_expr_node->child->brother;
 	Pnode expr3_node = join_expr_node->child->brother->brother;
+
+#ifdef DEBUG_JOIN_EXPR
+	printf("pnodes\n%p\n%p\n%p\n",expr1_node,expr2_node,expr3_node);
+	printf("pnodes\n%d\n%d\n%d\n",expr1_node->type,expr2_node->type,expr3_node->type);
+#endif
 
 	//Preparo la variabile che contiene il codice
 	Code join_code;
@@ -591,9 +600,18 @@ Code join_expr(Pnode join_expr_node, Pschema join_expr_schema){
 	Pschema schema_expr2 = (Pschema) newmem(sizeof(Schema));
 	Pschema schema_expr3 = (Pschema) newmem(sizeof(Schema));
 
+#ifdef DEBUG_JOIN_EXPR
+	printf("creati gli schemi delle tabelle\n");
+#endif
 	//Calcolo il codice delle tabelle
 	Code expr_code1 = expr(expr1_node,schema_expr1);
 	Code expr_code3 = expr(expr3_node,schema_expr3);	
+
+#ifdef DEBUG_JOIN_EXPR
+	printf("generato il codice delle tabelle\n");
+	schprint(*schema_expr1);
+	schprint(*schema_expr3);
+#endif
 
 	//Controllo la semantica delle tabella
 	//expr1 dev'essere di tipo tabella
@@ -611,10 +629,21 @@ Code join_expr(Pnode join_expr_node, Pschema join_expr_schema){
 	}
 
 	//Creo il context
-	push_context(append_schemas(schema_expr1->next,schema_expr3->next));
+	push_context(append_schemas(clone_schema(schema_expr1->next),clone_schema(schema_expr3->next)));
+#ifdef DEBUG_JOIN_EXPR
+	printf("prima dell'append\n");
+	printf("%p\n",join_expr_schema);
+	schprint(*schema_expr1);
+#endif
 	//Imposto lo schema dell'espressione ritornata
-	join_expr_schema = append_schemas(schema_expr1,schema_expr3);
+	schema_copy(append_schemas(clone_schema(schema_expr1),clone_schema(schema_expr3->next)	),join_expr_schema);
 
+#ifdef DEBUG_JOIN_EXPR
+	printf("dopo dell'append\n");
+	printf("%p\n",join_expr_schema);
+	//schprint(*schema_expr1);
+	//schprint(*schema_expr3->next);
+#endif
 	//Controllo la semantica dell'espressione vera e propria
 	Code expr_code2 = expr(expr2_node,schema_expr2);
 	//expr2 dev'essere di tipo boolean
@@ -633,7 +662,10 @@ Code join_expr(Pnode join_expr_node, Pschema join_expr_schema){
 				endcode());
 	//Faccio il pop del context
 	pop_context();
-
+#ifdef DEBUG_JOIN_EXPR
+	codeprint(join_code,1);
+	printf("JOIN_EXPR - exit\n");
+#endif
 	return join_code;
 }
 
