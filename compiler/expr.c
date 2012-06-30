@@ -515,6 +515,9 @@ Code select_kind_expr(Pnode select_expr_node, Pschema select_expr_schema){
 
 /*Genera il codice della expr e lo schema risultante*/
 Code update_expr(Pnode update_expr_node, Pschema update_expr_schema){
+#ifdef DEBUG_UPDATE_EXPR
+	printf("UPDATE_EXPR - enter\n");
+#endif
 	//Definisco i figli del nodo
 	Pnode expr1_node = update_expr_node->child;
 	Pnode id_node = update_expr_node->child->brother;
@@ -565,6 +568,9 @@ Code update_expr(Pnode update_expr_node, Pschema update_expr_schema){
 	//Pop del context
 	pop_context();
 
+#ifdef DEBUG_UPDATE_EXPR
+	printf("UPDATE_EXPR - exit\n");
+#endif
 	return update_code;
 }
 
