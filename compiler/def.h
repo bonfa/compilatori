@@ -362,4 +362,4 @@ Code join_expr(Pnode join_expr_node, Pschema join_expr_schema);
 //#define DEBUG_JOIN_EXPR
 //#define DEBUG_EXTEND_EXPR
 //#define DEBUG_RENAME_EXPR
-#define DEBUG_PROJECT_EXPR
+//#define DEBUG_PROJECT_EXPR

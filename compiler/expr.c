@@ -398,20 +398,18 @@ Code project_expr(Pnode project_expr_node, Pschema proj_schema){
 		n = n->next;
 	}
 
-	//Metto nel constack il codice di expr
-	push_context(schema_expr);
-	
-	//Imposto lo schema di proj expr
-	proj_schema->type = TABLE;
-	""""""
-
 #ifdef DEBUG_PROJECT_EXPR
-	printf("generazione pcode\n");
-	idlprint(name_list);
+	printf("bla\n");
 #endif
-	//Genero il pcode
-	n = name_list;
 
+	//Metto nel constack il codice di expr
+	push_context(schema_expr->next);
+	
+	//Imposto lo schema di proj expr e genero il codice
+	proj_schema->type = TABLE;
+	Pschema prec = proj_schema;
+	Pschema p;
+	n = name_list;
 	len = 0;
 	Code attr_list_code;
 	attr_list_code.head = NULL;
@@ -421,26 +419,31 @@ Code project_expr(Pnode project_expr_node, Pschema proj_schema){
 		//Prendo la variable 
 		Pschema schema_var = name_in_constack(n->name,&context_offset,&attribute_offset);
 #ifdef DEBUG_PROJECT_EXPR
-	schprint(*schema_var);
-	printf("%d\t%d\n",context_offset,attribute_offset);
-	
-#endif	
-
-		//Genero il codice
+	printf("%s\t%d\n",n->name,attribute_offset);
+#endif
 		Code attr_code = makecode2(T_ATTR,attribute_offset,get_size(schema_var));
-#ifdef DEBUG_PROJECT_EXPR
-	printf("%d\t%d\n",context_offset,attribute_offset);
-#endif	
 		attr_list_code = appcode(attr_list_code,attr_code);
+
+		prec->next = schema_var;
+		prec = prec->next;
 		n = n->next;
 		len++;
 	}
+
+
+#ifdef DEBUG_PROJECT_EXPR
+	printf("generazione pcode\n");
+	idlprint(name_list);
+#endif
+	//Genero il pcode
+	n = name_list;
 
 #ifdef DEBUG_PROJECT_EXPR
 	printf("generazione fatta\n");
 #endif	
 
 	project_code = concode(
+				expr_code,
 				makecode1(T_PROJ,len),
 				attr_list_code,
 				makecode(T_ENDPROJ),
