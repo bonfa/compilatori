@@ -185,6 +185,9 @@ Code comp_expr(Pnode comp_expr_node, Pschema comp_expr_schema){
 
 /*Genera il codice e definisce lo schema della logic_expr*/
 Code logic_expr(Pnode logic_expr_node, Pschema logic_expr_schema){
+#ifdef DEBUG_LOGIC_EXPR
+	printf("LOGIC_EXPR - enter\n");
+#endif
 	//Definisco i due figli del nodo logic_expr
 	Pnode first_op_node = logic_expr_node->child;
 	Pnode second_op_node = logic_expr_node->child->brother;
@@ -226,7 +229,7 @@ Code logic_expr(Pnode logic_expr_node, Pschema logic_expr_schema){
 					endcode());
 	}
 	else{ //OR
-		int exit = second_op_code.size+2;
+		int exit = second_op_code.size+1;
 		logic_expr_code = concode(
 					first_op_code,
 					makecode1(T_SKIPF,3),
@@ -235,6 +238,10 @@ Code logic_expr(Pnode logic_expr_node, Pschema logic_expr_schema){
 					second_op_code,	
 					endcode());
 	}
+
+#ifdef DEBUG_LOGIC_EXPR
+	printf("LOGIC_EXPR - exit\n");
+#endif
 	//Ritorno il codice
 	return logic_expr_code;
 }
@@ -244,6 +251,9 @@ Code logic_expr(Pnode logic_expr_node, Pschema logic_expr_schema){
 
 /*Genera il codice e definisce lo schema della math_expr*/
 Code math_expr(Pnode math_expr_node, Pschema math_expr_schema){
+#ifdef DEBUG_MATH_EXPR
+	printf("MATH_EXPR - enter\n");
+#endif
 	//Definisco i due figli del nodo math_expr
 	Pnode first_op_node = math_expr_node->child;
 	Pnode second_op_node = math_expr_node->child->brother;
@@ -279,6 +289,9 @@ Code math_expr(Pnode math_expr_node, Pschema math_expr_schema){
 		case '/' : op = T_DIV; break;
 		default: noderror(math_expr_node);
 	}
+#ifdef DEBUG_MATH_EXPR
+	printf("MATH_EXPR - enter\n");
+#endif
 	//Ritorno il codice dell'operazione
 	return concode(first_op_code,second_op_code,makecode(op),endcode());
 }
@@ -346,6 +359,9 @@ Code neg_expr(Pnode neg_expr_node, Pschema neg_expr_schema){
 
 /*Genera il codice della expr e lo schema risultante*/
 Code project_expr(Pnode project_expr_node, Pschema proj_schema){
+#ifdef DEBUG_PROJECT_EXPR
+	printf("PROJECT_EXPR - enter\n");
+#endif
 	//Definisco i figli del nodo project_expr
 	Pnode expr_node = project_expr_node->child;
 	Pnode id_list_node = project_expr_node->child->brother;
@@ -377,32 +393,65 @@ Code project_expr(Pnode project_expr_node, Pschema proj_schema){
 	//Controllo che ciascun nome nella lista appartenga alla tabella
 	Pname n = name_list;
 	while(n != NULL){
-		if (name_in_schema(n->name,schema_expr) != NULL)
+		if (name_in_schema(n->name,schema_expr) == NULL)
 			semerror(project_expr_node,"Attribute must exist in table");
 		n = n->next;
 	}
+
+	//Metto nel constack il codice di expr
+	push_context(schema_expr);
 	
+	//Imposto lo schema di proj expr
+	proj_schema->type = TABLE;
+	""""""
+
+#ifdef DEBUG_PROJECT_EXPR
+	printf("generazione pcode\n");
+	idlprint(name_list);
+#endif
 	//Genero il pcode
 	n = name_list;
+
 	len = 0;
 	Code attr_list_code;
+	attr_list_code.head = NULL;
 	while(n != NULL){
 		//Estraggo lo schema della variabile e l'indirizzo della variabile
 		int context_offset,attribute_offset;
 		//Prendo la variable 
 		Pschema schema_var = name_in_constack(n->name,&context_offset,&attribute_offset);
+#ifdef DEBUG_PROJECT_EXPR
+	schprint(*schema_var);
+	printf("%d\t%d\n",context_offset,attribute_offset);
+	
+#endif	
+
 		//Genero il codice
-		Code attr_code = makecode2(T_ATTR,context_offset+attribute_offset,get_size(schema_var->type));
+		Code attr_code = makecode2(T_ATTR,attribute_offset,get_size(schema_var));
+#ifdef DEBUG_PROJECT_EXPR
+	printf("%d\t%d\n",context_offset,attribute_offset);
+#endif	
+		attr_list_code = appcode(attr_list_code,attr_code);
 		n = n->next;
 		len++;
 	}
-	
+
+#ifdef DEBUG_PROJECT_EXPR
+	printf("generazione fatta\n");
+#endif	
+
 	project_code = concode(
 				makecode1(T_PROJ,len),
 				attr_list_code,
 				makecode(T_ENDPROJ),
 				makecode(T_REMDUP),
 				endcode());
+#ifdef DEBUG_PROJECT_EXPR
+	codeprint(project_code,0);
+	
+	printf("PROJECT_EXPR - exit\n");
+#endif
+
 	return project_code;
 }
 
@@ -410,6 +459,9 @@ Code project_expr(Pnode project_expr_node, Pschema proj_schema){
 
 /*Genera il codice della expr e lo schema risultante*/
 Code rename_expr(Pnode rename_expr_node, Pschema rename_expr_schema){
+#ifdef DEBUG_RENAME_EXPR
+	printf("RENAME_EXPR - enter\n");
+#endif
 	//Definisco i figli del nodo rename_expr
 	Pnode expr_node = rename_expr_node->child;
 	Pnode id_list_node = rename_expr_node->child->brother;
@@ -433,20 +485,44 @@ Code rename_expr(Pnode rename_expr_node, Pschema rename_expr_schema){
 		semerror(rename_expr_node,"project needs table type");
 	//Controllo che la lunghezza delle due liste di nomi sia uguale
 	//Calcolo la lunghezza della seconda lista
-	int len_schema = 1;
+	int len_schema = 0;
 	Pschema s;	
-	for(s=schema_expr;s!=NULL;s=s->next)
+	for(s=schema_expr->next;s!=NULL;s=s->next)
 		len_schema++;
+
+#ifdef DEBUG_RENAME_EXPR
+	printf("%d\t%d\n",len_schema,id_list_len);
+	schprint(*schema_expr);
+	idlprint(name_list);
+#endif
 	if (len_schema != id_list_len)
 		semerror(rename_expr_node,"has different name");
 	//Controllo che non ci siano nomi duppi nella lista
 	if (repeated_names(name_list))
 		semerror(rename_expr_node,"repeated names in id list");
 	
-//	"manca l'inserimento nello stack"
-
+	//Creo lo schema
+	//copio lo schema della tabella originale
+	schema_copy(schema_expr,rename_expr_schema);
+	//Cambio i nomi di rename schema expr
+	rename_expr_schema->name = NULL;
+	Pschema p = rename_expr_schema->next;
+	while (p!=NULL){
+		p->name = name_list->name;
+		p = p->next;
+		name_list = name_list->next;
+	}
+#ifdef DEBUG_RENAME_EXPR
+	schprint(*rename_expr_schema);
+	//idlprint(name_list);
+#endif
 	//Il codice della rename è il codice della expr
 	rename_code = expr_code;
+
+#ifdef DEBUG_RENAME_EXPR
+	schprint(*rename_expr_schema);
+	printf("RENAME_EXPR - exit\n");
+#endif
 	return rename_code;
 }
 
@@ -673,6 +749,9 @@ Code join_expr(Pnode join_expr_node, Pschema join_expr_schema){
 
 /*Genera il codice della expr e lo schema risultante*/
 Code extend_expr(Pnode extend_expr_node, Pschema extend_expr_schema){
+#ifdef DEBUG_EXTEND_EXPR
+	printf("EXTEND_EXPR - enter\n");
+#endif
 	//Definisco i figli del nodo
 	Pnode expr1_node = extend_expr_node->child;
 	Pnode atomic_type_node = extend_expr_node->child->brother;
@@ -707,15 +786,20 @@ Code extend_expr(Pnode extend_expr_node, Pschema extend_expr_schema){
 	//Controllo la semantica per expr2
 	//Calcolo il tipo dell'elemento
 	Pschema	atomic_type_schema = atomic_type(atomic_type_node);
+#ifdef DEBUG_EXTEND_EXPR
+	printf("schemi\n");
+	schprint(*atomic_type_schema);
+	schprint(*schema_expr2);
+#endif
 	//il tipo di expr2 dev'essere uguale al tipo di atomic type
-	if (type_equal(*schema_expr2, *atomic_type_schema))
+	if (!type_equal(*schema_expr2, *atomic_type_schema))
 		semerror(extend_expr_node,"different types");
 		
 	//Definisco il nuovo schema
 	//Aggiorno lo schema di type
 	atomic_type_schema->name = valname(id_node);
 	//Appendo lo schema del nuovo attributo a quello della tabella
-	extend_expr_schema = append_schemas(schema_expr1,atomic_type_schema);
+	schema_copy(append_schemas(clone_schema(schema_expr1),clone_schema(atomic_type_schema)),extend_expr_schema);
 	
 	//Genero il codice
 	int gap = expr_code2.size;
@@ -728,6 +812,10 @@ Code extend_expr(Pnode extend_expr_node, Pschema extend_expr_schema){
 				endcode());
 	//Pop context
 	pop_context();	
+
+#ifdef DEBUG_EXTEND_EXPR
+	printf("EXTEND_EXPR - exit\n");
+#endif
 
 	return extend_code;
 }
