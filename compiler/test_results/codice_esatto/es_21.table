@@ -1,0 +1,193 @@
+TCODE 193
+NEWTAB 20
+LDTAB 20 10
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+ENDTAB
+STO 0
+LOB 0
+SEL 27
+  LAT 0 0 4
+  LDINT 5
+  IGE
+  SKIPF 5
+  LAT 0 4 4
+  LDINT 1
+  EQU
+  SKIP 2
+  LDINT 0
+  SKIPF 5
+  LAT 0 8 4
+  LDSTR ""
+  EQU
+  SKIP 2
+  LDINT 0
+  SKIPF 3
+  LDINT 1
+  SKIP 4
+  LAT 0 12 4
+  LDINT 3
+  ILE
+  SKIPF 5
+  LAT 0 16 4
+  LDSTR "empty"
+  EQU
+  SKIP 2
+  LDINT 0
+ENDSEL 27
+PRINT "(a:i,b:b,c:s,x:i,y:s)"
+LOB 0
+SEL 1
+  LDINT 1
+ENDSEL 1
+PRINT "(a:i,b:b,c:s,x:i,y:s)"
+LOB 0
+SEL 1
+  LDINT 0
+ENDSEL 1
+PRINT "(a:i,b:b,c:s,x:i,y:s)"
+LOB 0
+SEL 15
+  LAT 0 0 4
+  LDINT 5
+  IGE
+  SKIPF 5
+  LAT 0 4 4
+  LDINT 1
+  EQU
+  SKIP 2
+  LDINT 0
+  SKIPF 5
+  LAT 0 8 4
+  LDSTR ""
+  EQU
+  SKIP 2
+  LDINT 0
+ENDSEL 15
+PRINT "(a:i,b:b,c:s,x:i,y:s)"
+LOB 0
+SEL 3
+  LAT 0 0 4
+  LDINT 5
+  IGE
+ENDSEL 3
+PRINT "(a:i,b:b,c:s,x:i,y:s)"
+LOB 0
+SEL 3
+  LAT 0 16 4
+  LDSTR "ciao"
+  EQU
+ENDSEL 3
+PRINT "(a:i,b:b,c:s,x:i,y:s)"
+LOB 0
+SEL 1
+  LDINT 1
+ENDSEL 1
+SEL 3
+  LAT 0 0 4
+  LDINT 0
+  ILT
+ENDSEL 3
+PRINT "(a:i,b:b,c:s,x:i,y:s)"
+LOB 0
+SEL 1
+  LDINT 0
+ENDSEL 1
+SEL 3
+  LAT 0 12 4
+  LDINT 10
+  IGT
+ENDSEL 3
+PRINT "(a:i,b:b,c:s,x:i,y:s)"
+LOB 0
+SEL 1
+  LDINT 1
+ENDSEL 1
+SEL 3
+  LAT 0 4 4
+  LDINT 0
+  EQU
+ENDSEL 3
+SEL 3
+  LAT 0 12 4
+  LDINT 56
+  NEQ
+ENDSEL 3
+PRINT "(a:i,b:b,c:s,x:i,y:s)"
+LOB 0
+SEL 3
+  LAT 0 16 4
+  LDSTR "empty"
+  EQU
+ENDSEL 3
+SEL 3
+  LAT 0 12 4
+  LDINT 3
+  ILE
+ENDSEL 3
+SEL 3
+  LAT 0 8 4
+  LDSTR ""
+  EQU
+ENDSEL 3
+SEL 3
+  LAT 0 4 4
+  LDINT 1
+  EQU
+ENDSEL 3
+SEL 3
+  LAT 0 0 4
+  LDINT 5
+  IGE
+ENDSEL 3
+PRINT "(a:i,b:b,c:s,x:i,y:s)"
+POP 1
+HALT

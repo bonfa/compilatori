@@ -1,0 +1,160 @@
+TCODE 160
+NEWTAB 20
+LDTAB 20 10
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+ENDTAB
+STO 0
+NEWATOM 4
+GET 1 "b"
+LOB 0
+UPD 0 4 3
+  LDINT 2
+  LAT 0 12 4
+  TIMES
+ENDUPD 3
+REMDUP
+PRINT "(a:i,b:b,c:s,x:i,y:s)"
+LOB 0
+UPD 4 4 1
+  LDINT 1
+ENDUPD 1
+REMDUP
+PRINT "(a:i,b:b,c:s,x:i,y:s)"
+LOB 0
+UPD 4 4 5
+  LAT 0 4 4
+  SKIPF 3
+  LDINT 1
+  SKIP 2
+  LDINT 0
+ENDUPD 5
+REMDUP
+PRINT "(a:i,b:b,c:s,x:i,y:s)"
+LOB 0
+UPD 8 4 1
+  LAT 0 16 4
+ENDUPD 1
+REMDUP
+PRINT "(a:i,b:b,c:s,x:i,y:s)"
+LOB 0
+UPD 4 4 1
+  LDINT 1
+ENDUPD 1
+REMDUP
+UPD 0 4 3
+  LDINT 2
+  LAT 0 12 4
+  TIMES
+ENDUPD 3
+REMDUP
+PRINT "(a:i,b:b,c:s,x:i,y:s)"
+LOB 0
+UPD 4 4 5
+  LAT 0 4 4
+  SKIPF 3
+  LDINT 1
+  SKIP 2
+  LDINT 0
+ENDUPD 5
+REMDUP
+UPD 8 4 1
+  LDSTR ""
+ENDUPD 1
+REMDUP
+PRINT "(a:i,b:b,c:s,x:i,y:s)"
+LOB 0
+UPD 4 4 1
+  LDINT 0
+ENDUPD 1
+REMDUP
+UPD 8 4 1
+  LDSTR "prova"
+ENDUPD 1
+REMDUP
+UPD 12 4 3
+  LAT 0 0 4
+  LDINT 25
+  MINUS
+ENDUPD 3
+REMDUP
+PRINT "(a:i,b:b,c:s,x:i,y:s)"
+LOB 0
+UPD 16 4 1
+  LDSTR "empty"
+ENDUPD 1
+REMDUP
+UPD 12 4 1
+  LDINT 5
+ENDUPD 1
+REMDUP
+UPD 8 4 1
+  LAT 0 16 4
+ENDUPD 1
+REMDUP
+UPD 4 4 6
+  LOB 1
+  NEG
+  SKIPF 3
+  LDINT 1
+  SKIP 2
+  LDINT 0
+ENDUPD 6
+REMDUP
+UPD 0 4 3
+  LAT 0 12 4
+  LDINT 4
+  PLUS
+ENDUPD 3
+REMDUP
+PRINT "(a:i,b:b,c:s,x:i,y:s)"
+POP 2
+HALT

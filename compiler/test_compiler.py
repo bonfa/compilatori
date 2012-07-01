@@ -210,6 +210,36 @@ class TestTableCompiler(unittest.TestCase):
 		self.do_test(name_file)
 
 
+	
+	def test_es_19(self):
+		#definisco il nome del file da testare
+		name_file = "es_19.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+	def test_es_20(self):
+		#definisco il nome del file da testare
+		name_file = "es_20.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+	def test_es_21(self):
+		#definisco il nome del file da testare
+		name_file = "es_21.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+	def test_es_22(self):
+		#definisco il nome del file da testare
+		name_file = "es_22.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
 if __name__ == '__main__':
 	suite = unittest.TestLoader().loadTestsFromTestCase(TestTableCompiler)
 	unittest.TextTestRunner(verbosity=3).run(suite)

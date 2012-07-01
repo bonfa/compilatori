@@ -430,6 +430,7 @@ Code project_expr(Pnode project_expr_node, Pschema proj_schema){
 
 		prec->next = clone_schema(schema_var);
 		prec = prec->next;
+		prec->next = NULL;
 		n = n->next;
 		len++;
 	}
@@ -510,7 +511,7 @@ Code rename_expr(Pnode rename_expr_node, Pschema rename_expr_schema){
 	
 	//Creo lo schema
 	//copio lo schema della tabella originale
-	schema_copy(schema_expr,rename_expr_schema);
+	schema_copy(clone_schema(schema_expr),rename_expr_schema);
 	//Cambio i nomi di rename schema expr
 	rename_expr_schema->name = NULL;
 	Pschema p = rename_expr_schema->next;
@@ -568,7 +569,7 @@ Code select_kind_expr(Pnode select_expr_node, Pschema select_expr_schema){
 
 	//Imposto il tipo di ritorno
 	if (qualifier(select_expr_node)==SELECT)
-		schema_copy(schema_expr2,select_expr_schema); 
+		schema_copy(clone_schema(schema_expr2),select_expr_schema); 
 	else
 		select_expr_schema->type = BOOLEAN; 
 
@@ -635,7 +636,7 @@ Code update_expr(Pnode update_expr_node, Pschema update_expr_schema){
 		semerror(update_expr_node,"id and expr must have same type");
 
 	//Imposto il tipo di ritorno
-	schema_copy(schema_expr1,update_expr_schema);
+	schema_copy(clone_schema(schema_expr1),update_expr_schema);
 	
 	//Genero il codice
 	int gap = expr_code2.size;
@@ -872,7 +873,7 @@ Code id_expr(Pnode id_node,Pschema schema){
 #endif
 	if (schema_context != NULL){
 		//Copio lo schema
-		schema_copy(schema_context,schema);
+		schema_copy(clone_schema(schema_context),schema);
 		//Ritorno il codice
 #ifdef DEBUG_ID
 	printf("schema\n");
@@ -895,7 +896,7 @@ Code id_expr(Pnode id_node,Pschema schema){
 	schprint((symbol->schema));
 	printf("%p\n",schema);
 #endif	
-		schema_copy(&(symbol->schema),schema);
+		schema_copy(clone_schema(&(symbol->schema)),schema);
 
 #ifdef DEBUG_ID
 	//printf("cloned\n");
@@ -1010,11 +1011,11 @@ Code table_const(Pnode table_const_node, Pschema schema_tabella){
 printf("dopo il while\n");
 #endif
 		int size = get_size(schema_tabella);
-//printf("dopo size\n");
+
 //codeprint(tuple_list_code,1);
 		//Creo il codice per la generazione della tabella
 		table_const_code = concode(makecode2(T_LDTAB,size,tuple_number),tuple_list_code,makecode(T_ENDTAB),endcode());
-//printf("dopo const code\n");
+
 	}
 #ifdef DEBUG_TABLE_CONST
 	printf("schema\n");
