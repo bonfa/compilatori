@@ -203,6 +203,13 @@ class TestTableCompiler(unittest.TestCase):
 
 
 
+	def test_es_18(self):
+		#definisco il nome del file da testare
+		name_file = "es_18.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
 if __name__ == '__main__':
 	suite = unittest.TestLoader().loadTestsFromTestCase(TestTableCompiler)
 	unittest.TextTestRunner(verbosity=3).run(suite)

@@ -419,12 +419,16 @@ Code project_expr(Pnode project_expr_node, Pschema proj_schema){
 		//Prendo la variable 
 		Pschema schema_var = name_in_constack(n->name,&context_offset,&attribute_offset);
 #ifdef DEBUG_PROJECT_EXPR
-	printf("%s\t%d\n",n->name,attribute_offset);
+	printf("schemi\n");
+	schprint(*proj_schema);
+	printf("---------------------\n");
+	schprint(*schema_expr);
+	printf("---------------------\n");
 #endif
 		Code attr_code = makecode2(T_ATTR,attribute_offset,get_size(schema_var));
 		attr_list_code = appcode(attr_list_code,attr_code);
 
-		prec->next = schema_var;
+		prec->next = clone_schema(schema_var);
 		prec = prec->next;
 		n = n->next;
 		len++;
