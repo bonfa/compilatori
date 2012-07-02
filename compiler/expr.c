@@ -120,15 +120,6 @@ Code comp_expr(Pnode comp_expr_node, Pschema comp_expr_schema){
 	first_op_code = expr(first_op_node, first_op_schema); 
 	second_op_code = expr(second_op_node, second_op_schema);
 
-#ifdef DEBUG_COMP_EXPR
-	printf("inizio analisi semantica\n");
-	printf("Schema_first\n");
-	schprint(*first_op_schema);
-	codeprint(first_op_code,1);	
-	printf("Schema_second\n");
-	schprint(*second_op_schema);
-	codeprint(second_op_code,1);	
-#endif
 	//La generazione di codice e gli errori semantici dipendono dal tipo di operazione
 	if(qualifier(comp_expr_node) == EQ || qualifier(comp_expr_node) == NE) {
 		//Controllo gli errori semantici
@@ -349,7 +340,6 @@ Code neg_expr(Pnode neg_expr_node, Pschema neg_expr_schema){
 	//Definisco il codice da ritornare
 	neg_expr_code = appcode(expr_code,makecode(op));
 #ifdef DEBUG_NEG_EXPR
-	//codeprint(neg_expr_code,1);	
 	printf("NEG_EXPR - exit\n");
 #endif
 	return neg_expr_code;
@@ -400,10 +390,6 @@ Code project_expr(Pnode project_expr_node, Pschema proj_schema){
 		n = n->next;
 	}
 
-#ifdef DEBUG_PROJECT_EXPR
-	printf("bla\n");
-#endif
-
 	//Metto nel constack il codice di expr
 	push_context(schema_expr->next);
 	
@@ -420,13 +406,7 @@ Code project_expr(Pnode project_expr_node, Pschema proj_schema){
 		int context_offset,attribute_offset;
 		//Prendo la variable 
 		Pschema schema_var = name_in_constack(n->name,&context_offset,&attribute_offset);
-#ifdef DEBUG_PROJECT_EXPR
-	printf("schemi\n");
-	schprint(*proj_schema);
-	printf("---------------------\n");
-	schprint(*schema_expr);
-	printf("---------------------\n");
-#endif
+
 		Code attr_code = makecode2(T_ATTR,attribute_offset,get_size(schema_var));
 		attr_list_code = appcode(attr_list_code,attr_code);
 
@@ -436,19 +416,8 @@ Code project_expr(Pnode project_expr_node, Pschema proj_schema){
 		n = n->next;
 		len++;
 	}
-
-
-#ifdef DEBUG_PROJECT_EXPR
-	printf("generazione pcode\n");
-	idlprint(name_list);
-#endif
 	//Genero il pcode
 	n = name_list;
-
-#ifdef DEBUG_PROJECT_EXPR
-	printf("generazione fatta\n");
-#endif	
-
 	project_code = concode(
 				expr_code,
 				makecode1(T_PROJ,len),
@@ -457,8 +426,6 @@ Code project_expr(Pnode project_expr_node, Pschema proj_schema){
 				makecode(T_REMDUP),
 				endcode());
 #ifdef DEBUG_PROJECT_EXPR
-	codeprint(project_code,0);
-	
 	printf("PROJECT_EXPR - exit\n");
 #endif
 
@@ -500,11 +467,6 @@ Code rename_expr(Pnode rename_expr_node, Pschema rename_expr_schema){
 	for(s=schema_expr->next;s!=NULL;s=s->next)
 		len_schema++;
 
-#ifdef DEBUG_RENAME_EXPR
-	printf("%d\t%d\n",len_schema,id_list_len);
-	schprint(*schema_expr);
-	idlprint(name_list);
-#endif
 	if (len_schema != id_list_len)
 		semerror(rename_expr_node,"New names number different from old names number");
 	//Controllo che non ci siano nomi duppi nella lista
@@ -522,15 +484,11 @@ Code rename_expr(Pnode rename_expr_node, Pschema rename_expr_schema){
 		p = p->next;
 		name_list = name_list->next;
 	}
-#ifdef DEBUG_RENAME_EXPR
-	schprint(*rename_expr_schema);
-	//idlprint(name_list);
-#endif
+
 	//Il codice della rename è il codice della expr
 	rename_code = expr_code;
 
 #ifdef DEBUG_RENAME_EXPR
-	schprint(*rename_expr_schema);
 	printf("RENAME_EXPR - exit\n");
 #endif
 	return rename_code;
@@ -588,10 +546,6 @@ Code select_kind_expr(Pnode select_expr_node, Pschema select_expr_schema){
 	pop_context();
 
 #ifdef DEBUG_SELECT_EXPR
-	printf("Schema\n");
-	schprint(*select_expr_schema);
-	printf("------------\n");
-	codeprint(select_code,0);
 	printf("SELECT_EXPR - exit\n");
 #endif
 
@@ -673,11 +627,6 @@ Code join_expr(Pnode join_expr_node, Pschema join_expr_schema){
 	Pnode expr2_node = join_expr_node->child->brother;
 	Pnode expr3_node = join_expr_node->child->brother->brother;
 
-#ifdef DEBUG_JOIN_EXPR
-	printf("pnodes\n%p\n%p\n%p\n",expr1_node,expr2_node,expr3_node);
-	printf("pnodes\n%d\n%d\n%d\n",expr1_node->type,expr2_node->type,expr3_node->type);
-#endif
-
 	//Preparo la variabile che contiene il codice
 	Code join_code;
 
@@ -686,18 +635,9 @@ Code join_expr(Pnode join_expr_node, Pschema join_expr_schema){
 	Pschema schema_expr2 = (Pschema) newmem(sizeof(Schema));
 	Pschema schema_expr3 = (Pschema) newmem(sizeof(Schema));
 
-#ifdef DEBUG_JOIN_EXPR
-	printf("creati gli schemi delle tabelle\n");
-#endif
 	//Calcolo il codice delle tabelle
 	Code expr_code1 = expr(expr1_node,schema_expr1);
 	Code expr_code3 = expr(expr3_node,schema_expr3);	
-
-#ifdef DEBUG_JOIN_EXPR
-	printf("generato il codice delle tabelle\n");
-	schprint(*schema_expr1);
-	schprint(*schema_expr3);
-#endif
 
 	//Controllo la semantica delle tabella
 	//expr1 dev'essere di tipo tabella
@@ -716,20 +656,10 @@ Code join_expr(Pnode join_expr_node, Pschema join_expr_schema){
 
 	//Creo il context
 	push_context(append_schemas(clone_schema(schema_expr1->next),clone_schema(schema_expr3->next)));
-#ifdef DEBUG_JOIN_EXPR
-	printf("prima dell'append\n");
-	printf("%p\n",join_expr_schema);
-	schprint(*schema_expr1);
-#endif
+
 	//Imposto lo schema dell'espressione ritornata
 	schema_copy(append_schemas(clone_schema(schema_expr1),clone_schema(schema_expr3->next)	),join_expr_schema);
 
-#ifdef DEBUG_JOIN_EXPR
-	printf("dopo dell'append\n");
-	printf("%p\n",join_expr_schema);
-	//schprint(*schema_expr1);
-	//schprint(*schema_expr3->next);
-#endif
 	//Controllo la semantica dell'espressione vera e propria
 	Code expr_code2 = expr(expr2_node,schema_expr2);
 	//expr2 dev'essere di tipo boolean
@@ -749,7 +679,6 @@ Code join_expr(Pnode join_expr_node, Pschema join_expr_schema){
 	//Faccio il pop del context
 	pop_context();
 #ifdef DEBUG_JOIN_EXPR
-	codeprint(join_code,1);
 	printf("JOIN_EXPR - exit\n");
 #endif
 	return join_code;
@@ -796,11 +725,7 @@ Code extend_expr(Pnode extend_expr_node, Pschema extend_expr_schema){
 	//Controllo la semantica per expr2
 	//Calcolo il tipo dell'elemento
 	Pschema	atomic_type_schema = atomic_type(atomic_type_node);
-#ifdef DEBUG_EXTEND_EXPR
-	printf("schemi\n");
-	schprint(*atomic_type_schema);
-	schprint(*schema_expr2);
-#endif
+
 	//il tipo di expr2 dev'essere uguale al tipo di atomic type
 	if (!type_equal(*schema_expr2, *atomic_type_schema))
 		semerror(extend_expr_node,"Different types");
@@ -867,23 +792,11 @@ Code id_expr(Pnode id_node,Pschema schema){
 	//Cerca il simbolo nello stack dei contesti
 	int context_offset,attribute_context;
 	Pschema schema_context = name_in_constack(valname(id_node),&context_offset,&attribute_context);
-#ifdef DEBUG_ID
-	printf("valname = %s\n",valname(id_node));
-	printf("schema = %p\n",schema_context);
-	if (schema_context != NULL)
-		schprint(*schema_context);	
-#endif
+
 	if (schema_context != NULL){
 		//Copio lo schema
 		schema_copy(clone_schema(schema_context),schema);
 		//Ritorno il codice
-#ifdef DEBUG_ID
-	printf("schema\n");
-	//codeprint(schema);
-	printf("%p\n",schema);
-	codeprint(makecode2(T_LAT,context_offset,attribute_context),3);
-	printf("ID_EXPR - exit\n");
-#endif
 		return makecode3(T_LAT,context_offset,attribute_context,get_size(schema));
 	}
 	else {
@@ -893,18 +806,9 @@ Code id_expr(Pnode id_node,Pschema schema){
 		if(symbol == NULL)
 			semerror(id_node,"Variable not found in stack");
 		//imposto lo schema
-#ifdef DEBUG_ID
-	printf("schema\n");
-	schprint((symbol->schema));
-	printf("%p\n",schema);
-#endif	
 		schema_copy(clone_schema(&(symbol->schema)),schema);
 
 #ifdef DEBUG_ID
-	//printf("cloned\n");
-	//schprint(*schema);
-	//printf("%p\n",schema);
-
 	printf("ID_EXPR - exit\n");
 #endif
 		//Ritorno il codice
@@ -941,11 +845,6 @@ Code table_const(Pnode table_const_node, Pschema schema_tabella){
 		Pschema schema_first_attr = atomic_type(first_attribute);
 		//lo aggiungo in coda a tabella
 		schema_tabella->next = schema_first_attr;		
-#ifdef DEBUG_TABLE_CONST
-	printf("schema_1\n");
-	schprint(*schema_first_attr);
-	printf("--------------------\n");
-#endif
 		//se ci sono altri attributi, aggiungo altri schemi
 		Pnode attr_node = first_attribute->brother;
 		Pschema prev_attr_schema = schema_first_attr;
@@ -954,20 +853,12 @@ Code table_const(Pnode table_const_node, Pschema schema_tabella){
 			prev_attr_schema = prev_attr_schema->next;
 			attr_node = attr_node->brother;
 		}
-#ifdef DEBUG_TABLE_CONST
-	printf("schema_2\n");
-	schprint(*schema_tabella);
-	printf("--------------------\n");
-#endif
 		//Estraggo la dimensione dello schema di attributi
 		int size = get_size(schema_tabella);
 		//Genero il codice nel caso di tabella vuota
 		table_const_code = appcode(makecode2(T_LDTAB,size,0),makecode(T_ENDTAB));
 	}
 	else {
-#ifdef DEBUG_TABLE_CONST
-	printf("tuple_list\n");
-#endif
 		//calcolo la lista di tuple della tabella
 		//Punto alla prima tupla
 		Pnode first_tuple = table_const_node->child;
@@ -975,15 +866,7 @@ Code table_const(Pnode table_const_node, Pschema schema_tabella){
 		//Calcolo il codice della prima tupla
 		Pschema first_tupla_schema = (Pschema) newmem(sizeof(Schema));
 		Code tuple_list_code = tuple_const(first_tuple,first_tupla_schema);
-#ifdef DEBUG_TABLE_CONST
-	printf("schema della prima tupla\n");
-	Pschema p = first_tupla_schema;
-	while (p!=NULL){
-		schprint(*p);
-		p=p->next;
-	}
-	printf("--------------------\n");
-#endif
+#
 		//Imposto lo schema della tupla in coda alla tabella
 		schema_tabella->next = first_tupla_schema;		
 
@@ -992,24 +875,12 @@ Code table_const(Pnode table_const_node, Pschema schema_tabella){
 		//Aggiungo il codice e lo schema della tabella
 		Pnode tuple_node = first_tuple->brother;
 
-#ifdef DEBUG_TABLE_CONST
-	printf("prima del while\n");
-#endif		
 		while(tuple_node != NULL){
 			//Calcolo il codice e lo schema della tupla
 			Pschema schema_tupla = (Pschema) newmem(sizeof(Schema));
 
 			Code tuple_code = tuple_const(tuple_node,schema_tupla);
 
-#ifdef DEBUG_TABLE_CONST
-	printf("schema_tupla\n");
-	Pschema p = schema_tupla;
-	while (p!=NULL){
-		schprint(*p);
-		p=p->next;
-	}
-	printf("--------------------\n");
-#endif
 			//Controllo i vincoli semantici
 			//Controllo che gli schemi siano compatibili
 			Pschema p1 = first_tupla_schema;
@@ -1028,20 +899,13 @@ Code table_const(Pnode table_const_node, Pschema schema_tabella){
 			//Aggiorno il numero di tuple
 			tuple_number++;	
 		}
-#ifdef DEBUG_TABLE_CONST
-printf("dopo il while\n");
-#endif
 		int size = get_size(schema_tabella);
 
-//codeprint(tuple_list_code,1);
 		//Creo il codice per la generazione della tabella
 		table_const_code = concode(makecode2(T_LDTAB,size,tuple_number),tuple_list_code,makecode(T_ENDTAB),endcode());
 
 	}
 #ifdef DEBUG_TABLE_CONST
-	printf("schema\n");
-	schprint(*schema_tabella);
-	printf("--------------------\n");
 	printf("DEBUG_TABLE_CONST - exit\n");
 #endif
 
