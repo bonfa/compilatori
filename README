@@ -56,8 +56,8 @@ Esempio di utilizzo:
 cat ./file_table/es_0.table | ./solo_sintassi	(controlla la correttezza della frase)
 cat ./file_table/es_0.table | ./parser	 (genera l'albero sintattico)
 -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-La cartella /compiler contiene il front end del linguaggio. Esso genera il codice intermedio del codice ricevuto in ingresso. La cartella contiene:
-docs/: cartella che contiene la documentazione
+La cartella /compiler contiene il front end del compilatore del linguaggio table. Esso genera il codice intermedio del codice ricevuto in ingresso. La cartella contiene:
+docs/: cartella che contiene la specifica del linguaggio
 esempi_table/: cartella che contiene i file table su cui sono stati realizzati i test
 test_results/: i risultati dei test esatti e quelli generati
 expr.c: contiene il codice che effettua l'analisi semantica e la generazione di codice delle espressioni della EBNF
