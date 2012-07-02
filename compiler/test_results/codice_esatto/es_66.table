@@ -1,4 +1,0 @@
-program
-	table(integer a,integer b,integer c) K;
-	K = {(1,2,3),(4,5,"prova")}
-end

@@ -1,5 +1,1 @@
-program
-	integer a,b;
-	table (integer a,integer b,integer c) K;
-	rename [a,b] K
-end
+Line 4: New names number different from old names number

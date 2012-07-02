@@ -974,10 +974,15 @@ Code table_const(Pnode table_const_node, Pschema schema_tabella){
 
 		//Calcolo il codice della prima tupla
 		Pschema first_tupla_schema = (Pschema) newmem(sizeof(Schema));
-//printf("bo\n");
 		Code tuple_list_code = tuple_const(first_tuple,first_tupla_schema);
 #ifdef DEBUG_TABLE_CONST
-	schprint(*first_tupla_schema);
+	printf("schema della prima tupla\n");
+	Pschema p = first_tupla_schema;
+	while (p!=NULL){
+		schprint(*p);
+		p=p->next;
+	}
+	printf("--------------------\n");
 #endif
 		//Imposto lo schema della tupla in coda alla tabella
 		schema_tabella->next = first_tupla_schema;		
@@ -996,11 +1001,25 @@ Code table_const(Pnode table_const_node, Pschema schema_tabella){
 
 			Code tuple_code = tuple_const(tuple_node,schema_tupla);
 
+#ifdef DEBUG_TABLE_CONST
+	printf("schema_tupla\n");
+	Pschema p = schema_tupla;
+	while (p!=NULL){
+		schprint(*p);
+		p=p->next;
+	}
+	printf("--------------------\n");
+#endif
 			//Controllo i vincoli semantici
 			//Controllo che gli schemi siano compatibili
-			if (!type_equal(*first_tupla_schema,*schema_tupla))
-				semerror(tuple_node,"Incompatible tuple in table");
-	
+			Pschema p1 = first_tupla_schema;
+			Pschema p2 = schema_tupla;
+			while (p1!=NULL){
+				if (!type_equal(*p1,*p2))
+					semerror(tuple_node,"Incompatible tuple in table");
+				p1=p1->next;
+				p2=p2->next;		
+			}
 			//Appendo il codice della tupla a quello della lista di tuple
 			tuple_list_code = appcode(tuple_list_code,tuple_code);
 			//Passo al fratello successivo

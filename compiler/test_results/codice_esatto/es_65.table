@@ -1,4 +1,1 @@
-program
-	integer a,b,z;
-	c = 5
-end
+Line 3: Incompatible tuple in table
