@@ -135,7 +135,7 @@ Code while_stat(Pnode while_stat_node){
 	
 	//Controllo i vincoli semantici
 	if (schema_expr->type!=BOOLEAN)
-		semerror(expr_node,"il risultato dell'espressione dev'essere booleano");
+		semerror(expr_node,"Expected boolean type");
 	
 	//Genero il codice di stat_list
 	Code stat_list_code = stat_list(stat_list_node);
@@ -172,7 +172,7 @@ Code if_stat(Pnode if_stat_node){
 	
 	//Controllo i vincoli semantici
 	if (schema_expr->type!=BOOLEAN)
-		semerror(expr_node,"il risultato dell'espressione dev'essere booleano");
+		semerror(expr_node,"Expected boolean type");
 
 	//Genero il codice di then_node
 	Code then_code = stat_list(then_node);
@@ -253,7 +253,7 @@ Code def_stat(Pnode def_stat_node){
 #ifdef DEBUG_DEF_STAT
 		printf("error\n");
 #endif
-		semerror(def_stat_node,"Variable redeclaration");
+		semerror(def_stat_node,"More than one variable with the same name");
 	}
 	//variabili già assegnate
 #ifdef DEBUG_DEF_STAT
@@ -491,7 +491,7 @@ Code assign_stat(Pnode assign_stat_node){
 	//Controllo i vincoli semantici
 	//Visibilità del nome
 	if (lookup(valname(id_node))==NULL)
-		semerror(id_node,"undefined variabile");
+		semerror(id_node,"Undefined variable");
 	//Compatibilità degli schemi
 	Pschema schema_expr = (Pschema) newmem(sizeof(Schema));
 	Code expr_code = expr(expr_node,schema_expr);
@@ -509,7 +509,7 @@ Code assign_stat(Pnode assign_stat_node){
 #endif
 
 	if (!type_equal((symbol->schema),*(schema_expr)))
-		semerror(assign_stat_node,"id e expr non hanno lo stesso tipo");
+		semerror(assign_stat_node,"Incompatible types");
 
 	//Genero il codice
 	assign_stat_code = appcode(expr_code,makecode1(T_STO,symbol->oid));
@@ -682,7 +682,7 @@ Pschema attr_list(Pnode attr_list_node){
 		
 		//Controllo che nell'elenco dei nomi non ci sia già un id con quel nome
 		if(name_in_schema(attr_schema->name,schema)!=NULL)
-			semerror(attr_decl_node,"Variabile già presente nella tabella");
+			semerror(attr_decl_node,"Variable already defined in table");
 #ifdef DEBUG_ATTR_LIST
 		printf("			ciaociaociao\n\n");
 		printf("prev_schema = %p\n",prev_schema);

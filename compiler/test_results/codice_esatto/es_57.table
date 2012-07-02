@@ -1,0 +1,5 @@
+program
+	integer a,b;
+	table (integer a,integer b,integer c) K;
+	update [b="prova"] a
+end

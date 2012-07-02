@@ -1,0 +1,4 @@
+program
+	integer a,b,z;
+	c = 5
+end

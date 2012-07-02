@@ -85,7 +85,9 @@ Code expr(Pnode expr_node,Pschema expr_schema){
 		case(N_STRCONST):	expr_code = str_const(expr_node,expr_schema); break;
 		case(N_TABLE_CONST):	expr_code = table_const(expr_node,expr_schema); break;
 		case(N_JOIN_EXPR):	expr_code = join_expr(expr_node,expr_schema); break;
+#ifdef DEBUG_EXPR		
 		default: printf("mi sono dimenticato qualcosa\nN_TYPE = %d\n",expr_node->type);
+#endif
 	}
 	return expr_code;
 }
@@ -335,7 +337,7 @@ Code neg_expr(Pnode neg_expr_node, Pschema neg_expr_schema){
 	else { //NOT
 		//Controllo la semantica		
 		if (expr_schema->type != BOOLEAN)
-			semerror(neg_expr_node,"Not operator requires boolean type");
+			semerror(neg_expr_node,"'Not' requires boolean type");
 	
 		//Imposto lo schema di neg_expr
 		neg_expr_schema->type = BOOLEAN;
@@ -386,10 +388,10 @@ Code project_expr(Pnode project_expr_node, Pschema proj_schema){
 	//Analisi semantica
 	//Controllo il tipo di expr
 	if(schema_expr->type != TABLE)
-		semerror(project_expr_node,"project needs table type");
+		semerror(project_expr_node,"Project needs table type");
 	//Controllo che non ci siano nomi duppi nella lista
 	if (repeated_names(name_list))
-		semerror(project_expr_node,"repeated names in id list");
+		semerror(project_expr_node,"Repeated names in id list");
 	//Controllo che ciascun nome nella lista appartenga alla tabella
 	Pname n = name_list;
 	while(n != NULL){
@@ -490,7 +492,7 @@ Code rename_expr(Pnode rename_expr_node, Pschema rename_expr_schema){
 	//Controllo la semantica
 	//Tipo di expr dev'essere table
 	if(schema_expr->type != TABLE)
-		semerror(rename_expr_node,"project needs table type");
+		semerror(rename_expr_node,"Rename needs table type");
 	//Controllo che la lunghezza delle due liste di nomi sia uguale
 	//Calcolo la lunghezza della seconda lista
 	int len_schema = 0;
@@ -504,10 +506,10 @@ Code rename_expr(Pnode rename_expr_node, Pschema rename_expr_schema){
 	idlprint(name_list);
 #endif
 	if (len_schema != id_list_len)
-		semerror(rename_expr_node,"has different name");
+		semerror(rename_expr_node,"New names number different from old names number");
 	//Controllo che non ci siano nomi duppi nella lista
 	if (repeated_names(name_list))
-		semerror(rename_expr_node,"repeated names in id list");
+		semerror(rename_expr_node,"Repeated names in id list");
 	
 	//Creo lo schema
 	//copio lo schema della tabella originale
@@ -556,7 +558,7 @@ Code select_kind_expr(Pnode select_expr_node, Pschema select_expr_schema){
 	Code expr_code2 = expr(expr2_node,schema_expr2);
 	//Controllo la semantica per expr2	
 	if (schema_expr2->type != TABLE)	
-		semerror(select_expr_node,"expected table type");
+		semerror(select_expr_node,"Expected table type");
 	//Inserisco nello stack lo schema di expr_2
 	push_context(schema_expr2->next);
 
@@ -564,7 +566,7 @@ Code select_kind_expr(Pnode select_expr_node, Pschema select_expr_schema){
 	Code expr_code1 = expr(expr1_node,schema_expr1);
 	//Controllo la semantica di expr_1
 	if (schema_expr1->type != BOOLEAN)
-		semerror(select_expr_node,"expected boolean type");
+		semerror(select_expr_node,"Expected boolean type");
 	
 
 	//Imposto il tipo di ritorno
@@ -620,11 +622,11 @@ Code update_expr(Pnode update_expr_node, Pschema update_expr_schema){
 	//Controllo la semantica
 	//expr1 dev'essere di tipo tabella
 	if (schema_expr1->type != TABLE)
-		semerror(update_expr_node,"expected table type");
+		semerror(update_expr_node,"Expected table type");
 	//id deve appartenere all'elenco degli attributi di expr1
 	Pschema schema_id = name_in_schema(valname(id_node),schema_expr1);
 	if (schema_id == NULL)
-		semerror(update_expr_node,"attribute must exist in table");
+		semerror(update_expr_node,"Attribute must exist in table");
 
 	//Push del context
 	push_context(schema_expr1->next);
@@ -633,7 +635,7 @@ Code update_expr(Pnode update_expr_node, Pschema update_expr_schema){
 	Code expr_code2 = expr(expr2_node,schema_expr2);
 	//tipo di expr2 e di id devono essere compatibili
 	if (!type_equal(*schema_id,*schema_expr2))	
-		semerror(update_expr_node,"id and expr must have same type");
+		semerror(update_expr_node,"Id and expr must have same type");
 
 	//Imposto il tipo di ritorno
 	schema_copy(clone_schema(schema_expr1),update_expr_schema);
@@ -700,15 +702,15 @@ Code join_expr(Pnode join_expr_node, Pschema join_expr_schema){
 	//Controllo la semantica delle tabella
 	//expr1 dev'essere di tipo tabella
 	if (schema_expr1->type != TABLE)
-		semerror(join_expr_node,"expected table type");
+		semerror(join_expr_node,"Expected table type");
 	//expr3 dev'essere di tipo tabella
 	if (schema_expr3->type != TABLE)
-		semerror(join_expr_node,"expected table type");
+		semerror(join_expr_node,"Expected table type");
 	//le due tabelle non devono avere nomi in comune
 	Pschema p = schema_expr1;
 	while(p!=NULL){	
 		if(name_in_schema(p->name,schema_expr3))
-			semerror(join_expr_node,"tables have attribute with the same name");
+			semerror(join_expr_node,"Tables have attribute with the same name");
 		p=p->next;
 	}
 
@@ -732,7 +734,7 @@ Code join_expr(Pnode join_expr_node, Pschema join_expr_schema){
 	Code expr_code2 = expr(expr2_node,schema_expr2);
 	//expr2 dev'essere di tipo boolean
 	if (schema_expr2->type != BOOLEAN)
-		semerror(join_expr_node,"expected boolean type");
+		semerror(join_expr_node,"Expected boolean type");
 	
 
 	//Genero il codice
@@ -779,11 +781,11 @@ Code extend_expr(Pnode extend_expr_node, Pschema extend_expr_schema){
 	//Controllo la semantica per expr1
 	//expr1 dev'essere di tipo tabella
 	if (schema_expr1->type != TABLE)
-		semerror(extend_expr_node,"expected table type");
+		semerror(extend_expr_node,"Expected table type");
 	//id non deve appartenere all'elenco degli attributi di expr1
 	Pschema schema_id = name_in_schema(valname(id_node),schema_expr1);
 	if (schema_id != NULL)
-		semerror(extend_expr_node,"attribute already exists in table");
+		semerror(extend_expr_node,"Attribute already exists in table");
 
 	//Faccio il push del context
 	push_context(schema_expr1->next);
@@ -801,7 +803,7 @@ Code extend_expr(Pnode extend_expr_node, Pschema extend_expr_schema){
 #endif
 	//il tipo di expr2 dev'essere uguale al tipo di atomic type
 	if (!type_equal(*schema_expr2, *atomic_type_schema))
-		semerror(extend_expr_node,"different types");
+		semerror(extend_expr_node,"Different types");
 		
 	//Definisco il nuovo schema
 	//Aggiorno lo schema di type
@@ -889,7 +891,7 @@ Code id_expr(Pnode id_node,Pschema schema){
 		//Cerca il simbolo nella tabella dei simboli
 		Psymbol symbol = lookup(valname(id_node));
 		if(symbol == NULL)
-			semerror(id_node,"variable not found in stack");
+			semerror(id_node,"Variable not found in stack");
 		//imposto lo schema
 #ifdef DEBUG_ID
 	printf("schema\n");

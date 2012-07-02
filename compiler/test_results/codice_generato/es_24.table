@@ -1,0 +1,65 @@
+TCODE 65
+NEWTAB 20
+LDTAB 20 10
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+ENDTAB
+STO 0
+NEWATOM 4
+GET 1 "b"
+LOB 0
+PRINT "(d:i,e:b,f:s,g:i,h:s)"
+LOB 0
+PRINT "(a:i,b:b,c:s,x:i,y:s)"
+LOB 0
+PRINT "(a:i,b:b,c:s,x:i,y:s)"
+POP 2
+HALT

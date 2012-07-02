@@ -1,0 +1,5 @@
+program
+	integer a,b;
+	table (integer a,integer b,integer c) K;
+	select [b>0] a
+end

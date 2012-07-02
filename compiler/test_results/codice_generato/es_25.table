@@ -1,0 +1,114 @@
+TCODE 114
+NEWTAB 20
+NEWTAB 12
+LDTAB 20 10
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+ENDTAB
+STO 0
+LOB 0
+LOB 1
+JOIN 1
+  LDINT 1
+ENDJOIN 1
+PRINT "(a:i,b:b,c:s,d:i,e:s,x:s,y:s,z:b)"
+LOB 1
+LOB 0
+JOIN 1
+  LDINT 0
+ENDJOIN 1
+PRINT "(x:s,y:s,z:b,a:i,b:b,c:s,d:i,e:s)"
+LOB 1
+LOB 0
+JOIN 9
+  LAT 0 20 4
+  LAT 0 0 4
+  EQU
+  SKIPF 3
+  LDINT 1
+  SKIP 4
+  LAT 0 20 4
+  LAT 0 4 4
+  EQU
+ENDJOIN 9
+PRINT "(x:s,y:s,z:b,a:i,b:b,c:s,d:i,e:s)"
+LOB 1
+LOB 0
+JOIN 1
+  LAT 0 8 4
+ENDJOIN 1
+PRINT "(x:s,y:s,z:b,a:i,b:b,c:s,d:i,e:s)"
+LOB 1
+LOB 0
+JOIN 1
+  LAT 0 16 4
+ENDJOIN 1
+PRINT "(x:s,y:s,z:b,a:i,b:b,c:s,d:i,e:s)"
+LOB 1
+LOB 0
+JOIN 1
+  LDINT 1
+ENDJOIN 1
+PRINT "(x:s,y:s,z:b,l:i,m:b,n:s,o:i,p:s)"
+LOB 1
+LOB 0
+JOIN 1
+  LDINT 1
+ENDJOIN 1
+LOB 0
+JOIN 3
+  LAT 0 12 4
+  LAT 0 32 4
+  EQU
+ENDJOIN 3
+PRINT "(x:s,y:s,z:b,l:i,m:b,n:s,o:i,p:s,a:i,b:b,c:s,d:i,e:s)"
+POP 2
+HALT

@@ -1,0 +1,6 @@
+program
+	integer a,b,z;
+	table (integer a,integer b,integer c) K;
+	table (integer a,integer e) L;
+	extend [integer x] b
+end

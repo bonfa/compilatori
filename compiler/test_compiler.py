@@ -225,11 +225,13 @@ class TestTableCompiler(unittest.TestCase):
 		self.do_test(name_file)
 
 
+
 	def test_es_21(self):
 		#definisco il nome del file da testare
 		name_file = "es_21.table"
 		#chiamo il codice che fa il test
 		self.do_test(name_file)
+
 
 
 	def test_es_22(self):
@@ -238,6 +240,346 @@ class TestTableCompiler(unittest.TestCase):
 		#chiamo il codice che fa il test
 		self.do_test(name_file)
 
+	
+
+	def test_es_23(self):
+		#definisco il nome del file da testare
+		name_file = "es_23.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_24(self):
+		#definisco il nome del file da testare
+		name_file = "es_24.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_25(self):
+		#definisco il nome del file da testare
+		name_file = "es_25.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_26(self):
+		#definisco il nome del file da testare
+		name_file = "es_26.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_27(self):
+		#definisco il nome del file da testare
+		name_file = "es_27.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_28(self):
+		#definisco il nome del file da testare
+		name_file = "es_28.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_29(self):
+		#definisco il nome del file da testare
+		name_file = "es_29.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_30(self):
+		#definisco il nome del file da testare
+		name_file = "es_30.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_31(self):
+		#definisco il nome del file da testare
+		name_file = "es_31.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_32(self):
+		#definisco il nome del file da testare
+		name_file = "es_32.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_33(self):
+		#definisco il nome del file da testare
+		name_file = "es_33.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_34(self):
+		#definisco il nome del file da testare
+		name_file = "es_34.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_35(self):
+		#definisco il nome del file da testare
+		name_file = "es_35.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_36(self):
+		#definisco il nome del file da testare
+		name_file = "es_36.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_37(self):
+		#definisco il nome del file da testare
+		name_file = "es_37.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_40(self):
+		#definisco il nome del file da testare
+		name_file = "es_40.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+	def test_es_41(self):
+		#definisco il nome del file da testare
+		name_file = "es_41.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_42(self):
+		#definisco il nome del file da testare
+		name_file = "es_42.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_43(self):
+		#definisco il nome del file da testare
+		name_file = "es_43.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+	def test_es_43(self):
+		#definisco il nome del file da testare
+		name_file = "es_43.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_44(self):
+		#definisco il nome del file da testare
+		name_file = "es_44.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+	def test_es_45(self):
+		#definisco il nome del file da testare
+		name_file = "es_45.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_46(self):
+		#definisco il nome del file da testare
+		name_file = "es_46.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_47(self):
+		#definisco il nome del file da testare
+		name_file = "es_47.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_48(self):
+		#definisco il nome del file da testare
+		name_file = "es_48.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_49(self):
+		#definisco il nome del file da testare
+		name_file = "es_49.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_50(self):
+		#definisco il nome del file da testare
+		name_file = "es_50.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_51(self):
+		#definisco il nome del file da testare
+		name_file = "es_51.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_52(self):
+		#definisco il nome del file da testare
+		name_file = "es_52.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_53(self):
+		#definisco il nome del file da testare
+		name_file = "es_53.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_54(self):
+		#definisco il nome del file da testare
+		name_file = "es_54.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_55(self):
+		#definisco il nome del file da testare
+		name_file = "es_55.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_56(self):
+		#definisco il nome del file da testare
+		name_file = "es_56.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_57(self):
+		#definisco il nome del file da testare
+		name_file = "es_57.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+	def test_es_58(self):
+		#definisco il nome del file da testare
+		name_file = "es_58.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_59(self):
+		#definisco il nome del file da testare
+		name_file = "es_59.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_60(self):
+		#definisco il nome del file da testare
+		name_file = "es_60.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_61(self):
+		#definisco il nome del file da testare
+		name_file = "es_61.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_62(self):
+		#definisco il nome del file da testare
+		name_file = "es_62.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_63(self):
+		#definisco il nome del file da testare
+		name_file = "es_63.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_64(self):
+		#definisco il nome del file da testare
+		name_file = "es_64.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_65(self):
+		#definisco il nome del file da testare
+		name_file = "es_65.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+
+
+
+	def test_es_66(self):
+		#definisco il nome del file da testare
+		name_file = "es_66.table"
+		#chiamo il codice che fa il test
+		self.do_test(name_file)
+	
 
 
 if __name__ == '__main__':

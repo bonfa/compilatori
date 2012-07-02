@@ -1,0 +1,6 @@
+program
+	integer a,b;
+	table (integer a,integer b,integer c) K;
+	table (integer d,integer e) L;
+	L join [true] b
+end

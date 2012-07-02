@@ -1,0 +1,105 @@
+TCODE 105
+NEWTAB 20
+LDTAB 20 10
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+  IATTR 0
+  IATTR 0
+  SATTR "ciao"
+  IATTR 1
+  SATTR "prova"
+ENDTAB
+STO 0
+NEWATOM 4
+GET 1 "b"
+LOB 0
+EXT 4 3
+  LDINT 2
+  LAT 0 12 4
+  TIMES
+ENDEXT 3
+PRINT "(a:i,b:b,c:s,x:i,y:s,d:i)"
+LOB 0
+EXT 4 1
+  LDINT 1
+ENDEXT 1
+PRINT "(a:i,b:b,c:s,x:i,y:s,e:b)"
+LOB 0
+EXT 4 5
+  LAT 0 4 4
+  SKIPF 3
+  LDINT 1
+  SKIP 2
+  LDINT 0
+ENDEXT 5
+PRINT "(a:i,b:b,c:s,x:i,y:s,f:b)"
+LOB 0
+EXT 4 1
+  LDSTR "est"
+ENDEXT 1
+PRINT "(a:i,b:b,c:s,x:i,y:s,s:s)"
+LOB 0
+EXT 4 1
+  LDSTR "est"
+ENDEXT 1
+EXT 4 5
+  LAT 0 4 4
+  SKIPF 3
+  LDINT 1
+  SKIP 2
+  LDINT 0
+ENDEXT 5
+EXT 4 1
+  LDINT 1
+ENDEXT 1
+EXT 4 3
+  LDINT 2
+  LAT 0 12 4
+  TIMES
+ENDEXT 3
+PRINT "(a:i,b:b,c:s,x:i,y:s,s:s,f:b,e:b,d:i)"
+POP 2
+HALT
