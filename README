@@ -56,3 +56,20 @@ Esempio di utilizzo:
 cat ./file_table/es_0.table | ./solo_sintassi	(controlla la correttezza della frase)
 cat ./file_table/es_0.table | ./parser	 (genera l'albero sintattico)
 -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+La cartella /compiler contiene il front end del linguaggio. Esso genera il codice intermedio del codice ricevuto in ingresso. La cartella contiene:
+docs/: cartella che contiene la documentazione
+esempi_table/: cartella che contiene i file table su cui sono stati realizzati i test
+test_results/: i risultati dei test esatti e quelli generati
+expr.c: contiene il codice che effettua l'analisi semantica e la generazione di codice delle espressioni della EBNF
+gen.c: contiene le funzioni di base che sono usate per la generazione di codice
+main.c: 
+print.c: contiene le funzioni per la stampa
+sem.c: contiene le funzioni di base che sono usate per l'analisi semantica
+stat.c: contiene il codice che effettua l'analisi semantica e la generazione di codice degli statement della EBNF 
+symtab.c: contiene le funzioni di base per operare sulle tabelle dei simboli
+def.h: file di intestazione
+lexer.lex: analizzatore lessicale
+parser.y: analizzatore sintattico che genera un albero sintattico astratto
+makefile:
+test_compiler.py: modulo python utilizzato per il test
+
