@@ -541,9 +541,7 @@ class TestTableCompiler(unittest.TestCase):
 		self.do_test(name_file)
 
 	
-	
-'''Test da aggiungere una volta tornata online la pagina e generato il risultato esatto'''	
-'''
+
 	def test_es_23(self):
 		#definisco il nome del file da testare
 		name_file = "es_23.table"
@@ -566,14 +564,6 @@ class TestTableCompiler(unittest.TestCase):
 		#chiamo il codice che fa il test
 		self.do_test(name_file)
 
-
-
-	def test_es_26(self):
-		#definisco il nome del file da testare
-		name_file = "es_26.table"
-		#chiamo il codice che fa il test
-		self.do_test(name_file)
-'''
 
 
 if __name__ == '__main__':

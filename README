@@ -72,4 +72,3 @@ lexer.lex: analizzatore lessicale
 parser.y: analizzatore sintattico che genera un albero sintattico astratto
 makefile:
 test_compiler.py: modulo python utilizzato per il test
-
